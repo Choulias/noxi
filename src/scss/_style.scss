@@ -1,0 +1,119 @@
+*,
+*:after,
+*:before {
+	box-sizing: border-box;
+}
+
+body{
+  @apply text-white font-sans bg-gradient-to-b from-darker to-dark overflow-x-hidden;
+}
+
+#root{
+  isolation: isolate;
+}
+
+.conteneur{
+  @apply min-h-full mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+}
+
+//-------------------------------------------------------------------------------
+// COMPONENTS -------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+
+a{
+  @apply text-white hover:text-main transition-all duration-300;
+}
+
+h1, h2, h3{
+  @apply font-title;
+}
+
+h1{
+  @apply font-bold text-5xl;
+}
+
+h2{
+  @apply font-semibold text-4xl;
+}
+
+h3{
+  @apply font-medium text-xl;
+}
+
+p{
+  @apply font-sans;
+}
+
+.main-btn{
+  
+  @apply inline-flex w-full justify-center border-none outline-none relative px-3 py-2 text-sm  font-sans font-semibold text-darker rounded-md;
+
+  background: linear-gradient(45deg, $main 0%, $secondary 60%);
+  background-size: 200% 100%;
+  border-radius: 100px;
+  transition: .3s;
+  
+  &:hover {
+      @apply text-darker;
+      animation: btanimation 3s linear infinite;
+  }
+}
+
+ @keyframes btanimation {
+    0% {
+        background-position: 0 0;
+    }
+
+    50% {
+        background-position: 100% 0;
+    }
+
+    100% {
+        background-position: 0 0;
+    }
+ }
+
+
+
+input{
+  @apply text-black;
+}
+
+.title-border{
+  @apply h-[3px] bg-gradient-to-r from-main to-secondary mb-8 rounded-full;
+}
+
+.subtitle-border{
+  @apply h-[3px] bg-gradient-to-r from-main to-secondary mb-8 rounded-full;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  // @apply bg-white bg-opacity-20;
+  // background: rgba($color: white, $alpha: 0.2);
+  background: #45618a;
+  // border-radius: 50px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  @apply bg-white;
+  background: rgb(149,253,252);
+  background: linear-gradient(0deg, rgba(149,253,252,1) 0%, rgba(254,190,253,1) 100%);
+  border-radius: 5px;
+  transition: all .5s;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  // background: rgb(149,253,252);
+  // background: linear-gradient(0deg, rgba(149,253,252,1) 0%, rgba(254,190,253,1) 100%);
+  // @apply bg-white;
+  background: white;
+}
+  

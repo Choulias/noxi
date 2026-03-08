@@ -1,0 +1,184 @@
+.events{
+    @apply relative z-10;
+
+    h2{
+        @apply mb-5 mt-10;
+    }
+
+    .spotlight-border{
+        @apply w-[218px] mb-12;
+    }
+
+    .other-border{
+        @apply w-[340px] mb-10;
+    }
+    
+
+    .spotlight-event{
+        background-color: rgba($color: white, $alpha: 0.07);
+        @apply py-12 px-16 rounded-3xl flex flex-row mb-12;
+
+        img{
+            @apply w-64 rounded-full mr-16;
+        }
+
+        .spotlight-text{
+            @apply flex flex-col w-full;
+
+            .spotlight-info{
+                @apply self-stretch h-full ;
+
+                .spotlight-theme{
+                    @apply flex flex-row items-center;
+                    
+                    span{
+                        @apply font-normal;
+                    }
+
+                    svg{
+                        @apply mr-4;
+                    }
+                }
+
+                h2{
+                    @apply mt-4;
+                }
+
+                p{
+                    @apply font-light;
+                }
+        
+            }
+
+            .spotlight-interractions{
+                @apply flex flex-row items-center justify-between w-full;
+
+                .event-info{
+                    @apply flex flex-row items-center font-medium;
+
+                    .event-attendees{
+                        @apply flex flex-row items-center;
+
+                        svg{
+                            @apply mr-3;
+                        }
+                    }
+
+                    .event-likers{
+                        @apply flex flex-row ml-10 items-center;
+
+                        svg{
+                            @apply mr-3;
+                        }
+                    }
+                }
+            }
+           
+        }
+    }
+
+    .event-filter{
+        @apply mb-8;
+
+        button{
+            @apply inline-flex w-full justify-center rounded-md  px-3 py-2 text-sm font-semibold text-white shadow-sm sm:w-auto hover:text-main;
+        }
+
+        // .active{
+        //     background: rgb(149,253,252);
+        //     background: linear-gradient(45deg, rgba(149,253,252,1) 0%, rgba(254,190,253,1) 100%);
+        //     -webkit-background-clip: text;
+        //     -webkit-text-fill-color: transparent;
+        //     text-align: center;
+        // }
+
+        .active{
+            @apply text-main;
+        }
+        
+    }
+
+    .notspotlight-event{
+        @apply flex flex-row flex-wrap justify-center gap-8 mb-20;
+
+        .event-card{
+            background-color: rgba($color: white, $alpha: 0.07);
+            
+            @apply max-w-sm rounded-3xl flex flex-col;
+
+            img{
+                @apply w-[384px] max-h-52 object-cover h-auto rounded-t-3xl;
+            }
+
+            .event-text{
+                @apply flex flex-col px-8 py-10 self-stretch h-full;
+                
+                .event-info{
+                    @apply h-full mb-6;
+
+                    h2{
+                        @apply mt-5 text-3xl;
+                    }
+    
+                    p{
+                        @apply font-light;
+                    }
+
+                    .event-theme{
+                        @apply flex flex-row items-center;
+    
+                        svg{
+                            @apply mr-4;
+                        }
+                    }
+                }
+
+                .event-interractions{
+                    @apply flex flex-row justify-between;
+
+                    .event-interactors{
+                        @apply flex flex-row items-center;
+
+                        .event-attendees{
+                            @apply flex flex-row items-center mr-5;
+
+                            svg{
+                                @apply mr-2;
+                            }
+                        }
+
+                        .event-likers{
+                            @apply flex flex-row items-center;
+
+                            svg{
+                                @apply mr-2;
+                            }
+                        }
+                    }
+                }
+                
+            }
+        }
+    }
+
+}
+
+.message-banner{
+
+    @apply relative z-20 w-full bg-gradient-to-r from-main to-secondary text-darker py-20;
+
+    .message-container {
+        @apply flex flex-row justify-between items-center;
+
+        h6{
+            @apply font-medium text-3xl leading-normal;
+        }
+        div{
+            @apply flex-grow pl-5 flex justify-center;
+            svg{
+                @apply mr-5;
+            }
+        }
+        
+    }
+}

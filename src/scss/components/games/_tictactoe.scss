@@ -1,0 +1,142 @@
+ // TIC-TAC-TOE --------------------------------------------------------
+#tic-tac-toe {
+    border-spacing: 0px;
+    border-collapse: separate;
+    margin: 30px auto;
+
+    td {
+        @apply border-white;
+        border: 2px solid;
+        height: 100px;
+        width: 100px;
+        text-align: center;
+    }
+  
+    tr:first-child td {
+        border-top: none
+    }
+  
+    tr:last-child td {
+        border-bottom: none
+    }
+    
+    tr td:first-child {
+        border-left: none;
+    }
+  
+    tr td:last-child {
+        border-right: none;
+    }
+    
+    td.X {
+        color: $secondary;
+        @apply bg-secondary bg-opacity-10;
+    }
+  
+    td.O {
+        color: $main;
+        @apply bg-main bg-opacity-10;
+    }
+
+    #square_0{
+        @apply rounded-tl-lg;
+    }
+
+    #square_2{
+        @apply rounded-tr-lg;
+    }
+  
+    #square_6{
+        @apply rounded-bl-lg;
+    }
+
+    #square_8{
+        @apply rounded-br-lg;
+    }
+}
+
+#scoreboard .score {
+    text-align: center;
+    font-size: 30px
+}
+
+#scoreboard .score#player1 {
+    color: $secondary;
+}
+
+#scoreboard .score#player2 {
+    color: $main;
+}
+
+
+.board{
+    @apply relative z-10;
+
+    #oxoBoard{
+        @apply relative bg-white bg-opacity-[0.07] mb-12 mt-12 rounded-3xl p-8 min-h-[600px] h-[600px] flex flex-row;
+        
+        .boardinfo{
+            @apply flex flex-col justify-between border-r-2 border-white border-opacity-[0.07] pr-10;
+            
+            .players{
+                @apply w-[220px];
+    
+                h4{
+                    @apply text-center w-full mb-4 text-xl;
+                }
+    
+                #divPlayers{
+                    @apply relative bg-transparent flex flex-col items-center;
+                }
+            }
+
+            .boardbuttons{
+                @apply flex flex-col;
+
+                .copy-btn{
+                    @apply inline-flex w-full px-3 py-2 text-sm font-semibold text-white shadow-sm hover:text-main sm:w-auto mb-4;
+
+                    svg{
+                        @apply mr-3;
+                        fill: white;
+                    }
+
+                    &:hover{
+
+                        svg{
+                            // stroke: $main;
+                            fill: $main;
+                        }
+                    }
+                }
+
+            }
+        }
+
+        .boardholder{
+            @apply relative w-full flex flex-col items-center h-full overflow-hidden;
+    
+            #placeholder{
+                @apply invisible;
+            }
+    
+            #waitholder{
+                @apply flex flex-col items-center pt-40;
+    
+                span{
+                    @apply font-medium text-lg;
+                }
+            }
+
+            .alert{
+                @apply invisible mt-8 text-xl font-title font-medium;
+                
+                #winnerAlert{
+                    @apply text-center mt-2 text-base;
+                }
+            
+            }
+            
+        }
+    }
+}

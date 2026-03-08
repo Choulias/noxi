@@ -1,0 +1,123 @@
+.support{
+    @apply relative z-10;
+
+    ::-webkit-scrollbar-track {
+        border-radius: 50px;
+    }
+
+    h2{
+        @apply mb-5 mt-10;
+    }
+
+    .title-border{
+        @apply w-[140px] mb-12;
+    }
+
+    .support-container{
+        @apply flex flex-row mb-16;
+
+        .questions-container{
+            @apply shadow-sm w-6/12 rounded pr-8;
+
+            h3{
+                @apply mb-10 font-semibold text-2xl;
+            }
+
+            .blocs-container{
+                @apply max-h-[384px] overflow-y-scroll pr-4 rounded-lg;
+            }
+
+            .accordion-bloc{
+                @apply bg-white bg-opacity-[0.07] mb-4;
+                border-radius: 50px;
+                transition: border-radius 0.3s ease;
+            
+                .accordion-header{
+                    @apply transition-all duration-300 cursor-pointer flex space-x-5 px-5 items-center h-20;
+                
+                    i{
+                        @apply pl-2 m-0;
+                        svg{
+                            fill: white;
+                        }
+
+                    }
+
+                    .minus-icon{
+                        @apply hidden;
+
+                        svg{
+                            @apply mb-[2px];
+                        }
+                    }
+
+                    h4{
+                        @apply text-left;
+                    }
+                }
+
+                .accordion-content {
+                    @apply px-5 pt-0 overflow-hidden max-h-0;
+                    transition: max-height 0.3s ease-out, padding 0.3s ease;
+
+                    p{
+                        @apply leading-6 font-light text-justify px-5 pb-8;
+
+                        b{
+                            @apply font-medium;
+                        }
+                    }
+
+                }
+
+                &:not(.opened):hover{
+                    background: linear-gradient(45deg, $main 0%, $secondary 60%);
+                    background-size: 200% 100%;
+                    @apply text-darker;
+                    animation: btanimation 3s linear infinite;
+
+                    .accordion-header{
+                        i{
+                            svg{
+                                fill: black;
+                            }
+                        }
+
+                        h4{
+                            @apply font-medium;
+                        }
+                    }
+                }
+            }
+
+           
+        }
+
+        .support-img{
+            @apply relative w-[450px] mx-auto;
+
+            svg{
+                @apply absolute left-0 top-14 max-w-md h-auto w-[390px];
+            }
+
+            img{
+                @apply absolute left-0 -top-14 max-w-[560px];
+            }
+        }
+    }
+
+}
+
+@keyframes btanimation {
+    0% {
+        background-position: 0 0;
+    }
+
+    50% {
+        background-position: 100% 0;
+    }
+
+    100% {
+        background-position: 0 0;
+    }
+}

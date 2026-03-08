@@ -1,0 +1,64 @@
+.pop-up{
+    @apply relative z-30;
+
+    .pop-up-background{
+        @apply fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity;
+    }
+
+    .pop-up-content{
+        @apply fixed inset-0 z-10 overflow-y-auto;
+        
+        .pop-up-window{
+            @apply flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0;
+            
+            .pop-up-panel{
+                @apply relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg;
+                
+                .content-container{
+                    @apply bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4;
+                    
+                    .content{
+                        @apply sm:flex sm:items-start;
+
+                        .title-icon{
+                            @apply mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10;
+                        
+                            svg{
+                                @apply h-6 w-6 text-red-600;
+                            }
+                        }
+
+                        .content-text{
+                            @apply  mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left;
+
+                            h3{
+                                @apply text-base font-semibold leading-6 text-gray-900;
+                            }
+
+                            .text-bloc{
+                                @apply mt-2;
+
+                                p{
+                                    @apply text-sm text-gray-500;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .btn-container{
+                    @apply bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6;
+                
+                    .btn-continue{
+                        @apply inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto;
+                    }
+
+                    .btn-cancel{
+                        @apply mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto;
+                    }
+                }
+            }
+        }
+    }
+}
+

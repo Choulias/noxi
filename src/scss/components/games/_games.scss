@@ -1,0 +1,78 @@
+.gameModels{
+    @apply relative z-10;
+    .gameModels-swiper{
+        @apply relative mt-12 mb-7 z-20;
+
+        .swiper-wrapper{
+            @apply pb-16;
+        }
+
+        .swiper-pagination-bullet-active{
+            @apply relative z-10;
+            background: rgb(149,253,252) !important;
+            background: linear-gradient(45deg, rgba(149,253,252,1) 0%, rgba(254,190,253,1) 100%) !important;
+            width: 13px !important;
+            height: 13px !important;
+        }
+
+        .gameModel{
+            background-color: rgba(255, 255, 255, 0.07);
+            @apply rounded-3xl flex flex-row max-h-[450px];
+
+            .game-illustration{
+                @apply w-1/2 rounded-l-3xl max-h-[450px] overflow-hidden;
+                
+                img{
+                    @apply object-cover rounded-l-3xl object-center max-h-[450px] w-full;  
+                }
+            }
+
+            .game-description{
+                @apply w-1/2 p-8 flex flex-col justify-between;
+
+                .game-text{
+                    h4{
+                        @apply font-semibold text-3xl mb-8;
+                    }
+        
+                    p{
+                        @apply text-base mb-8 font-light;
+                    }
+                }
+                
+                .game-launcher{
+                    @apply flex flex-row items-center justify-between;
+
+                    .game-parameters{
+                        @apply flex flex-row font-medium items-center;
+                    }
+
+                    button{
+                        @apply self-end;
+                    }
+                }
+
+            }
+
+            .tictactoe{
+                .game-text{
+                    .title-border{
+                        @apply w-[215px]
+                    }
+                }
+            }
+        }
+    }
+
+    h2{
+        @apply mb-5;
+    }
+    .title-border{
+        @apply w-[450px]
+    }
+
+    .join-btn{
+        @apply px-3 py-2 rounded-lg;
+    }
+
+}

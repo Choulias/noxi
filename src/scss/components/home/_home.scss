@@ -1,0 +1,162 @@
+.home{
+    .home-parralax{
+        @apply relative w-full h-screen overflow-hidden z-10;
+        margin-top: -88px;
+        padding-top: 88px;
+
+        .parallax-fond{
+            @apply absolute inset-0 bg-no-repeat bg-cover;
+            background-position: bottom center;
+            z-index: 1;
+        }
+
+        .parallax-layer2{
+            @apply absolute bottom-0 left-0 w-full;
+            z-index: 2;
+            will-change: transform;
+        }
+
+        .home-title{
+            @apply absolute inset-0 flex flex-col justify-center pb-24;
+            z-index: 3;
+            will-change: transform;
+
+            h1{
+                @apply mb-12;
+            }
+
+            h3{
+                @apply mb-8;
+            }
+        }
+
+        .parallax-layer1{
+            @apply absolute bottom-0 left-0 w-full;
+            z-index: 4;
+            will-change: transform;
+        }
+
+        .home-gradient-transition{
+            @apply absolute -bottom-40 h-80 w-full bg-gradient-to-b from-transparent via-darker to-transparent;
+            z-index: 5;
+        }
+    }
+
+    .home-content{
+        @apply relative;
+        background: theme('colors.darker');
+        z-index: 11;
+
+        &::before{
+            content: '';
+            @apply absolute top-0 left-0 w-full pointer-events-none;
+            height: 300px;
+            background: linear-gradient(to bottom, transparent 0%, theme('colors.darker') 100%);
+            transform: translateY(-100%);
+            z-index: 12;
+        }
+
+
+        .home-content-child{
+            @apply flex flex-col gap-24 pt-16;
+
+            .home-paragraph{
+                @apply flex justify-around items-center gap-16 relative z-20;
+
+                &:nth-child(2n) {
+                    @apply flex-row-reverse;
+                }
+
+                &:first-child{
+                    .paragraph-text{
+                        .title-border{
+                            @apply w-[330px];
+                        }
+                    }   
+
+                    .paragraph-image{
+                        img{
+                            @apply left-[10%] top-[-20px] ;
+                        }
+                    }
+                }
+
+                &:nth-child(2){
+
+                    .paragraph-text{
+                        .title-border{
+                            @apply w-[453px];
+                        }
+                    }  
+                    
+                    .paragraph-image{
+                        img{
+                            @apply left-[20%] top-[-7.9%] ;
+                        }
+                    }
+                }
+
+                &:last-child{
+                    @apply mb-32;
+
+                    .paragraph-text{
+                        .title-border{
+                            @apply w-[535px];
+                        }
+                    }  
+
+                    .paragraph-image{
+                        img{
+                            @apply left-[10%] top-[-20px] ;
+                        }
+                    }
+                }
+
+                .paragraph-text{
+                    @apply w-1/2;
+
+                    .subtitle{
+                        @apply flex flex-row items-center mb-5;
+
+                        svg{
+                            @apply mr-4;
+                        }
+                    }
+
+                    h2{
+                        @apply text-white mb-5;
+                    }
+
+                    p{
+                        @apply mb-8;
+                    }
+                }
+
+                .paragraph-image{
+                    @apply w-1/2 relative pt-6 mx-auto;
+
+                    .gradient-circle{
+                        @apply w-auto max-w-[400px] h-auto;
+                    }
+
+                    img{
+                        @apply absolute max-w-md;
+                    }
+                }
+            }
+            
+        }
+
+        .game-quote{
+            @apply flex flex-col justify-center items-center py-24 font-title;
+
+            h3{
+                @apply font-medium text-5xl text-center leading-tight mb-8;
+            }
+
+            span{
+                @apply text-secondary text-xl ;
+            }
+        }
+    }
+}

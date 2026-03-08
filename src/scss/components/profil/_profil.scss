@@ -1,0 +1,183 @@
+.profil{
+    @apply relative mb-20 z-10;
+
+    ::-webkit-scrollbar-track {
+        background: #45618a;
+        border-radius: 50px;
+    }
+
+    h2{
+        @apply mt-10 mb-5;
+    }
+
+    .title-border{
+        @apply w-[173px];
+    }
+
+    .profile-board{
+        @apply bg-white bg-opacity-[0.07] px-12 py-14 rounded-3xl;
+    
+        .profile-banner{
+            @apply flex flex-row items-center mb-20;
+
+            img{
+                @apply w-40 h-40 rounded-full mr-8 ;
+                background: rgb(149,253,252);
+                background: linear-gradient(45deg, rgba(149,253,252,1) 0%, rgba(254,190,253,1) 100%);
+            }
+
+            .profile-resume{
+                @apply flex flex-col justify-between h-36;
+
+                .profile-name{
+                    h3{
+                        @apply font-medium font-sans text-4xl mb-1;
+                    }
+    
+                    span{
+                        @apply font-extralight italic;
+                    }
+                }
+
+                .profile-level{
+                    @apply flex flex-col;
+
+                    span{
+                        @apply mb-2;
+                    }
+
+                    .barre{
+                        @apply bg-white bg-opacity-20 relative w-64 h-2 rounded-full;
+
+                        .filled{
+                            @apply absolute top-0 left-0 w-48 h-2 bg-gradient-to-r from-main to-secondary rounded-full;
+                        }
+                    }
+                }
+            }
+        }
+
+        .info-container{
+            @apply flex flex-row;
+
+            h4{
+                @apply font-medium font-title text-white text-2xl mb-4;
+            }
+
+            p{
+                @apply font-light font-sans;
+            }
+
+            .left-info{
+                @apply w-2/4 pr-6;
+
+                .biography{
+                    @apply mb-14;
+
+                    .subtitle-border{
+                        @apply w-[125px]
+                    }
+                }
+
+                .history{
+                    @apply w-full;
+
+                    .subtitle-border{
+                        @apply w-[245px];
+                    }
+
+                    .history-container{
+                        @apply  w-full bg-transparent h-96 overflow-y-auto pr-4;
+
+                        .history-bloc{
+                            @apply h-28 w-full rounded-3xl mb-4 bg-darker px-6 py-5 flex flex-row items-center;
+                            
+                            img{
+                                @apply w-16 h-16 rounded-full mr-5;
+                            }
+
+                            .subsub{
+                                @apply font-medium mr-1;
+                            }
+
+                            .history-lines{
+                                .top-line{
+                                    @apply mb-3 flex flex-row;
+
+                                    p{
+                                        @apply mr-6;
+
+                                        .result{
+                                            @apply font-light;
+                                        }
+    
+                                        .victory{
+                                            @apply text-main;
+                                        }
+    
+                                        .defeat{
+                                            @apply text-secondary;
+                                        }
+    
+                                        .even{
+                                            @apply text-white;
+                                        }
+                                    }
+                                    
+                                }
+
+                                .bottom-line{
+                                    @apply flex flex-row;
+
+                                    .players-list{
+                                        @apply flex flex-row ml-2 mr-2; 
+
+                                        li{
+                                            @apply mr-4 font-light;
+                                        }
+
+                                        li::marker{
+                                            @apply mr-[2px];
+                                        }
+                                    }
+                                }
+                            }
+                            
+                        }
+                    }
+                }
+            }
+
+            .right-info{
+                @apply w-2/4 pl-16;
+
+                .best-game{
+                    @apply mb-14;
+
+                    .subtitle-border{
+                        @apply w-[130px];
+                    }
+
+                    .game-line{
+                        @apply flex flex-row items-center;
+
+                        img{
+                            @apply w-28 h-28 rounded-full mr-8;
+                        }
+
+                        span{
+                            @apply text-lg;
+                        }
+                    }
+                }
+
+                .badge{
+
+                    .subtitle-border{
+                        @apply w-[85px];
+                    }
+                }
+            }
+        }
+    }
+}

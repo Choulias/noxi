@@ -1,0 +1,21 @@
+.home-content-counter{
+    @apply w-full bg-gradient-to-r from-main to-secondary text-darker py-20;
+
+    .counter-container {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+    }
+    
+    .counter {
+        text-align: center;
+        h3 {
+            @apply text-6xl font-extrabold py-2 mb-4;
+        }
+        
+        h6 {
+            @apply text-lg font-medium;
+        }
+    }
+    
+}

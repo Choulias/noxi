@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install -D sass)",
+      "Bash(npx update-browserslist-db@latest --update-db)"
+    ]
+  }
+}

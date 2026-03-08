@@ -1,0 +1,1535 @@
+@charset "UTF-8";
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Quicksand:wght@300;400;500;600;700&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+*,
+*:after,
+*:before {
+  box-sizing: border-box;
+}
+
+body {
+  @apply text-white font-sans bg-gradient-to-b from-darker to-dark;
+}
+
+.conteneur {
+  @apply min-h-full mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+}
+
+a {
+  @apply text-white hover:text-main transition-all duration-300;
+}
+
+h1, h2, h3 {
+  @apply font-title;
+}
+
+h1 {
+  @apply font-bold text-5xl;
+}
+
+h2 {
+  @apply font-semibold text-4xl;
+}
+
+h3 {
+  @apply font-medium text-xl;
+}
+
+p {
+  @apply font-sans;
+}
+
+.main-btn {
+  @apply inline-flex w-full justify-center border-none outline-none relative px-3 py-2 text-sm font-sans font-semibold text-darker rounded-md;
+  background: linear-gradient(45deg, #95FDFC 0%, #FEBEFD 60%);
+  background-size: 200% 100%;
+  border-radius: 100px;
+  transition: 0.3s;
+}
+.main-btn:hover {
+  @apply text-darker;
+  animation: btanimation 3s linear infinite;
+}
+
+@keyframes btanimation {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+input {
+  @apply text-black;
+}
+
+.title-border {
+  @apply h-[3px] bg-gradient-to-r from-main to-secondary mb-8 rounded-full;
+}
+
+.subtitle-border {
+  @apply h-[3px] bg-gradient-to-r from-main to-secondary mb-8 rounded-full;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #45618a;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  @apply bg-white;
+  background: rgb(149, 253, 252);
+  background: linear-gradient(0deg, rgb(149, 253, 252) 0%, rgb(254, 190, 253) 100%);
+  border-radius: 5px;
+  -webkit-transition: all 0.5s;
+  transition: all 0.5s;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: white;
+}
+
+header {
+  @apply sticky z-20;
+}
+header .navbar {
+  @apply bg-darker md:bg-transparent font-title sticky;
+}
+header .navbar .navbar-container {
+  @apply mx-auto max-w-7xl px-4 sm:px-6 sm:py-3 lg:px-8;
+}
+header .navbar .navbar-container .navbar-container-child {
+  @apply flex h-16 items-center justify-between;
+}
+header .navbar .navbar-container .navbar-container-child .navbar-brand {
+  @apply flex-shrink-0;
+}
+header .navbar .navbar-container .navbar-container-child .navbar-brand img {
+  @apply w-20;
+}
+header .navbar .navbar-container .navbar-container-child .navbar-menu {
+  @apply hidden md:block;
+}
+header .navbar .navbar-container .navbar-container-child .navbar-menu .navbar-menu-child {
+  @apply flex items-baseline justify-center space-x-4;
+}
+header .navbar .navbar-container .navbar-container-child .navbar-menu .navbar-menu-child li {
+  @apply outline-none cursor-pointer;
+}
+header .navbar .navbar-container .navbar-container-child .navbar-menu .navbar-menu-child li a {
+  @apply rounded-md mx-3 py-2 font-semibold outline-none relative;
+}
+header .navbar .navbar-container .navbar-container-child .navbar-menu .navbar-menu-child li a::after {
+  content: "";
+  @apply absolute bottom-0 left-0 w-full h-[3px];
+  background: linear-gradient(to left, #95FDFC, #FEBEFD);
+  @apply opacity-0;
+}
+header .navbar .navbar-container .navbar-container-child .navbar-menu .navbar-menu-child li a.active {
+  @apply text-white outline-none place-items-center text-lg;
+}
+header .navbar .navbar-container .navbar-container-child .navbar-menu .navbar-menu-child li a.active::after {
+  @apply opacity-100;
+}
+header .navbar .navbar-container .navbar-container-child .navbar-menu .navbar-menu-child li a:hover {
+  @apply text-white;
+}
+header .navbar .navbar-container .navbar-container-child .navbar-menu .navbar-menu-child li .dropdown-btn svg {
+  fill: white;
+}
+header .navbar .navbar-container .navbar-container-child .navbar-menu .navbar-menu-child li.dropdown a.dropdown-btn {
+  @apply flex items-center gap-x-1 font-semibold leading-6;
+}
+header .navbar .navbar-container .navbar-container-child .navbar-menu .navbar-menu-child li.dropdown a.dropdown-btn .chevron-icon {
+  @apply h-5 w-5 flex-none text-gray-400;
+}
+header .navbar .navbar-container .navbar-container-child .navbar-menu .navbar-menu-child li.dropdown .sub-menu {
+  @apply absolute -left-8 top-full z-10 mt-3 w-screen max-w-xs overflow-hidden rounded-3xl bg-darker bg-opacity-70 shadow-lg;
+}
+header .navbar .navbar-container .navbar-container-child .navbar-menu .navbar-menu-child li.dropdown .sub-menu li {
+  @apply relative flex items-center gap-x-6 rounded-lg p-4 leading-6 hover:bg-gray-50;
+}
+header .navbar .navbar-container .navbar-container-child .navbar-menu .navbar-menu-child li.dropdown .sub-menu li .icon-container {
+  @apply flex h-11 w-11 flex-none items-center justify-center group-hover:bg-black;
+}
+header .navbar .navbar-container .navbar-container-child .navbar-menu .navbar-menu-child li.dropdown .sub-menu li .icon-container .icon {
+  @apply invert;
+}
+header .navbar .navbar-container .navbar-container-child .navbar-menu .navbar-menu-child li.dropdown .sub-menu li a {
+  @apply block font-semibold text-white duration-0 pointer-events-none;
+}
+header .navbar .navbar-container .navbar-container-child .navbar-menu .navbar-menu-child li.dropdown .sub-menu li:hover .icon-container .icon {
+  @apply invert-0;
+}
+header .navbar .navbar-container .navbar-container-child .navbar-menu .navbar-menu-child li.dropdown .sub-menu li:hover a {
+  @apply text-black;
+}
+header .navbar .navbar-container .navbar-container-child .navbar-menu .navbar-menu-child li.dropdown .sub-menu li:nth-child(1) .icon {
+  @apply h-4/5;
+}
+header .navbar .navbar-container .navbar-container-child .navbar-menu .navbar-menu-child li.dropdown .sub-menu li:nth-child(3) .icon {
+  @apply h-4/5;
+}
+header .navbar .navbar-container .navbar-container-child .navbar-profile {
+  @apply hidden md:block;
+}
+header .navbar .navbar-container .navbar-container-child .navbar-profile .navbar-profile-child {
+  @apply ml-4 flex items-center md:ml-6;
+}
+header .navbar .navbar-container .navbar-container-child .navbar-profile .navbar-profile-child button {
+  @apply rounded-full bg-white text-black hover:text-main focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800;
+}
+header .navbar .navbar-container .navbar-container-child .navbar-profile .navbar-profile-child button span {
+  @apply sr-only;
+}
+header .navbar .navbar-container .navbar-container-child .navbar-profile .navbar-profile-child .notification-btn {
+  @apply p-1;
+}
+header .navbar .navbar-container .navbar-container-child .navbar-profile .navbar-profile-child .profile-dropdown {
+  @apply relative ml-3;
+}
+header .navbar .navbar-container .navbar-container-child .navbar-profile .navbar-profile-child .profile-dropdown .profile-btn {
+  @apply flex max-w-xs items-center rounded-full bg-transparent focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800;
+}
+header .navbar .navbar-container .navbar-container-child .navbar-profile .navbar-profile-child .profile-dropdown .profile-btn img:not(.not-connected) {
+  @apply h-8 w-8 rounded-full;
+  background: rgb(149, 253, 252);
+  background: linear-gradient(45deg, rgb(149, 253, 252) 0%, rgb(254, 190, 253) 100%);
+}
+header .navbar .navbar-container .navbar-container-child .navbar-profile .navbar-profile-child .profile-dropdown .profile-btn .not-connected {
+  @apply h-8 w-8 rounded-full;
+  @apply bg-transparent;
+}
+header .navbar .navbar-container .navbar-container-child .navbar-profile .navbar-profile-child .profile-dropdown .dropdown-list {
+  @apply absolute right-0 z-50 mt-2 w-48 origin-top-right rounded-xl bg-darker bg-opacity-70 p-4 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none;
+}
+header .navbar .navbar-container .navbar-container-child .navbar-profile .navbar-profile-child .profile-dropdown .dropdown-list a {
+  @apply font-medium block px-4 py-2 text-white rounded-md hover:bg-white hover:text-black;
+}
+header .navbar .navbar-container .navbar-container-child .mobile-btn {
+  @apply -mr-2 flex md:hidden;
+}
+header .navbar .navbar-container .navbar-container-child .mobile-btn button {
+  @apply inline-flex items-center justify-center rounded-md bg-transparent p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800;
+}
+header .navbar .navbar-container .navbar-container-child .mobile-btn button span {
+  @apply sr-only;
+}
+header .navbar .mobile-navbar {
+  @apply md:hidden;
+}
+header .navbar .mobile-navbar .mobile-menu {
+  @apply space-y-1 px-2 pb-3 pt-2 sm:px-3;
+}
+header .navbar .mobile-navbar .mobile-menu a {
+  @apply flex w-full cursor-pointer items-center justify-between pl-3 pr-3.5 leading-7 text-white hover:text-white rounded-md px-3 py-2 text-base font-medium;
+}
+header .navbar .mobile-navbar .mobile-menu .active {
+  @apply bg-gray-900 text-white;
+}
+header .navbar .mobile-navbar .mobile-links {
+  @apply border-t border-gray-700 pb-3 pt-4;
+}
+header .navbar .mobile-navbar .mobile-links .mobile-profile-main {
+  @apply mb-3 flex items-center px-5;
+}
+header .navbar .mobile-navbar .mobile-links .mobile-profile-main .image-container {
+  @apply flex-shrink-0;
+}
+header .navbar .mobile-navbar .mobile-links .mobile-profile-main .image-container img {
+  @apply h-10 w-10 rounded-full;
+}
+header .navbar .mobile-navbar .mobile-links .mobile-profile-main .profile-info {
+  @apply ml-3;
+}
+header .navbar .mobile-navbar .mobile-links .mobile-profile-main .profile-info .profile-name {
+  @apply text-base font-medium leading-none text-white;
+}
+header .navbar .mobile-navbar .mobile-links .mobile-profile-main .profile-info .profile-mail {
+  @apply text-sm font-medium leading-none text-gray-400;
+}
+header .navbar .mobile-navbar .mobile-links .mobile-profile-main button {
+  @apply ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800;
+}
+header .navbar .mobile-navbar .mobile-links .mobile-profile-links {
+  @apply space-y-1 px-2;
+}
+header .navbar .mobile-navbar .mobile-links .mobile-profile-links a {
+  @apply block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white;
+}
+
+footer {
+  @apply bg-darker pt-12 pb-8 text-white relative z-10;
+}
+footer .footer-container {
+  @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center;
+}
+footer .footer-container .footer-brand {
+  @apply sm:mr-16 lg:mr-40 sm:h-full flex items-center;
+}
+footer .footer-container .footer-brand img {
+  @apply h-auto min-w-full;
+}
+footer .footer-container .footer-menu {
+  @apply flex w-full justify-between sm:h-full items-center;
+}
+footer .footer-container .footer-menu h4 {
+  @apply font-semibold text-white text-lg mb-6;
+}
+footer .footer-container .footer-menu h4::after {
+  content: "";
+  @apply h-[3px] bg-gradient-to-r from-main to-secondary mb-8 rounded-full block mt-2;
+}
+footer .footer-container .footer-menu ul li {
+  @apply mb-3;
+}
+footer .footer-container .footer-menu ul li a {
+  @apply text-sm;
+}
+footer .footer-container .footer-menu .navigation-column h4::after {
+  @apply w-[105px];
+}
+footer .footer-container .footer-menu .community-column h4::after {
+  @apply w-[132px];
+}
+footer .footer-container .footer-menu .legal-column h4::after {
+  @apply w-[50px];
+}
+footer .footer-container .footer-menu .social-column h4::after {
+  @apply w-[115px];
+}
+footer .copyright {
+  @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex justify-center items-center sm:mt-8 text-xs;
+}
+
+.Auth-global {
+  @apply w-screen h-screen relative z-20 flex flex-row;
+}
+
+.Auth-form-container {
+  @apply relative flex justify-center items-center h-full w-2/4 text-white bg-darker;
+}
+.Auth-form-container .logo-link {
+  @apply absolute left-12 top-16;
+}
+.Auth-form-container .logo-link img {
+  @apply h-8 w-auto;
+}
+.Auth-form-container .Auth-form {
+  @apply relative w-[550px] h-screen rounded-2xl flex flex-col justify-center items-center;
+}
+.Auth-form-container .Auth-form-content {
+  @apply px-10 py-10;
+}
+.Auth-form-container .Auth-form-content .intro-msg {
+  @apply flex flex-col items-center;
+}
+.Auth-form-container .Auth-form-content .intro-msg h2 {
+  @apply font-normal text-7xl mb-8 font-sans text-center;
+}
+.Auth-form-container .Auth-form-content .intro-msg span {
+  @apply mb-12 font-sans font-normal text-base text-center;
+}
+.Auth-form-container .Auth-form .form-group {
+  @apply md:flex md:justify-between md:items-center mb-5 mt-3;
+}
+.Auth-form-container .Auth-form .password-forget {
+  @apply flex flex-row justify-end mb-2;
+}
+.Auth-form-container .Auth-form .form-group {
+  @apply mt-1;
+}
+.Auth-form-container .Auth-form .form-group input {
+  @apply w-full p-5 rounded-md;
+}
+.Auth-form-container .Auth-form .form-group input::-moz-placeholder {
+  @apply text-darker;
+}
+.Auth-form-container .Auth-form .form-group input::placeholder {
+  @apply text-darker;
+}
+.Auth-form-container .Auth-form label {
+  @apply text-sm font-semibold text-black mr-3;
+}
+.Auth-form-container .Auth-form .button-container {
+  @apply gap-2 mt-4;
+}
+.Auth-form-container .Auth-form .button-container button {
+  @apply w-full cursor-pointer;
+}
+.Auth-form-container .Auth-form .no-login {
+  @apply flex justify-center mt-6 text-sm;
+}
+.Auth-form-container .Auth-form .no-login a {
+  @apply ml-2;
+}
+.Auth-form-container a {
+  @apply text-main hover:text-white text-sm;
+}
+
+.Auth-image {
+  @apply w-2/4 h-full relative;
+  background-image: url(../assets/img/astronaut.jpg);
+  background-size: cover;
+  background-position: center;
+}
+.Auth-image button {
+  @apply transition-all duration-300;
+}
+.Auth-image button svg {
+  fill: white;
+  @apply absolute top-5 right-5;
+}
+.Auth-image button:hover svg {
+  fill: #95FDFC;
+}
+
+.pop-up {
+  @apply relative z-30;
+}
+.pop-up .pop-up-background {
+  @apply fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity;
+}
+.pop-up .pop-up-content {
+  @apply fixed inset-0 z-10 overflow-y-auto;
+}
+.pop-up .pop-up-content .pop-up-window {
+  @apply flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0;
+}
+.pop-up .pop-up-content .pop-up-window .pop-up-panel {
+  @apply relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg;
+}
+.pop-up .pop-up-content .pop-up-window .pop-up-panel .content-container {
+  @apply bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4;
+}
+.pop-up .pop-up-content .pop-up-window .pop-up-panel .content-container .content {
+  @apply sm:flex sm:items-start;
+}
+.pop-up .pop-up-content .pop-up-window .pop-up-panel .content-container .content .title-icon {
+  @apply mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10;
+}
+.pop-up .pop-up-content .pop-up-window .pop-up-panel .content-container .content .title-icon svg {
+  @apply h-6 w-6 text-red-600;
+}
+.pop-up .pop-up-content .pop-up-window .pop-up-panel .content-container .content .content-text {
+  @apply mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left;
+}
+.pop-up .pop-up-content .pop-up-window .pop-up-panel .content-container .content .content-text h3 {
+  @apply text-base font-semibold leading-6 text-gray-900;
+}
+.pop-up .pop-up-content .pop-up-window .pop-up-panel .content-container .content .content-text .text-bloc {
+  @apply mt-2;
+}
+.pop-up .pop-up-content .pop-up-window .pop-up-panel .content-container .content .content-text .text-bloc p {
+  @apply text-sm text-gray-500;
+}
+.pop-up .pop-up-content .pop-up-window .pop-up-panel .btn-container {
+  @apply bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6;
+}
+.pop-up .pop-up-content .pop-up-window .pop-up-panel .btn-container .btn-continue {
+  @apply inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto;
+}
+.pop-up .pop-up-content .pop-up-window .pop-up-panel .btn-container .btn-cancel {
+  @apply mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto;
+}
+
+.button-switch {
+  @apply relative w-[167px] h-[48px] rounded-full;
+}
+.button-switch .checkbox {
+  @apply relative w-full h-full p-0 m-0 opacity-0 cursor-pointer z-30 rounded-full;
+}
+.button-switch .checkbox:checked + .knobs span {
+  @apply text-darker;
+}
+.button-switch .checkbox:checked + .knobs:before {
+  @apply bg-secondary left-24 pr-7;
+}
+.button-switch .checkbox:checked + .knobs:after {
+  @apply text-darker;
+}
+.button-switch .checkbox:checked ~ .layer {
+  background-color: #fcebeb;
+}
+.button-switch .knobs,
+.button-switch .layer {
+  @apply absolute top-0 right-0 bottom-0 left-0 rounded-full;
+}
+.button-switch .knobs {
+  @apply z-20;
+}
+.button-switch .knobs:before,
+.button-switch .knobs:after,
+.button-switch .knobs span {
+  @apply absolute top-1 h-3 text-base text-center leading-none py-3 px-1 rounded-sm transition-all duration-300 ease-in;
+}
+.button-switch .knobs:before {
+  content: "";
+  @apply pl-12 pr-14 pb-[2.25rem] pt-3 left-0 top-0 bg-main rounded-full text-darker;
+}
+.button-switch .knobs:after {
+  content: "PRIVÉ";
+  @apply px-12 left-[4.1rem] top-1 text-darker rounded-full font-medium;
+}
+.button-switch .knobs span {
+  @apply inline-block left-3 text-darker z-10;
+}
+.button-switch .layer {
+  @apply w-[172px] bg-slate-100 transition-all duration-300 ease-in z-10 rounded-full;
+}
+
+.tailwind-select {
+  @apply relative mr-4 border-none;
+}
+.tailwind-select .selected-btn {
+  @apply relative w-full cursor-pointer rounded-full bg-white py-3 pl-3 pr-10 text-left text-gray-900 ring-0 ring-inset focus:outline-none focus:ring-2 focus:ring-main sm:text-sm sm:leading-6;
+}
+.tailwind-select .selected-btn .selected-text {
+  @apply flex items-center;
+}
+.tailwind-select .selected-btn .selected-text span {
+  @apply ml-3 block truncate text-base;
+}
+.tailwind-select .selected-btn .selected-icon {
+  @apply pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2;
+}
+.tailwind-select .tailwind-options {
+  @apply absolute z-20 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base ring-0 focus:outline-none sm:text-sm;
+}
+.tailwind-select .tailwind-options .active-option {
+  background: rgb(149, 253, 252);
+  background: linear-gradient(45deg, rgb(149, 253, 252) 0%, rgb(254, 190, 253) 100%);
+  @apply text-darker;
+}
+.tailwind-select .tailwind-options .non-active-option {
+  @apply text-gray-900;
+}
+.tailwind-select .tailwind-options .option {
+  @apply relative cursor-pointer select-none py-2 pl-3 pr-9;
+}
+
+.games-table {
+  @apply mb-16;
+}
+.games-table .fond-table {
+  @apply inline-block min-w-full rounded-3xl overflow-hidden bg-white bg-opacity-[0.07] min-h-[500px] p-6;
+}
+.games-table .fond-table table {
+  @apply min-w-full leading-normal;
+}
+.games-table .fond-table table thead th {
+  @apply px-5 pt-3 pb-7 border-b-2 bg-transparent text-center font-semibold text-white tracking-wider border-none;
+}
+.games-table .fond-table table thead th:first-child {
+  @apply pl-10 text-left;
+}
+.games-table .fond-table table tbody tr td {
+  @apply px-5 py-5 border-b text-center border-gray-200 bg-white text-white text-sm border-none;
+}
+.games-table .fond-table table tbody tr td:first-child {
+  @apply rounded-l-full;
+}
+.games-table .fond-table table tbody tr td:last-child {
+  @apply rounded-r-full;
+}
+.games-table .fond-table table tbody tr:nth-child(odd) td {
+  @apply bg-darker;
+}
+.games-table .fond-table table tbody tr:nth-child(even) td {
+  @apply bg-transparent;
+}
+.games-table .fond-table .empty-table {
+  @apply flex flex-row items-center justify-center h-full min-h-[394px] pb-12;
+}
+
+.home .home-parralax {
+  background-image: url(../assets/img/home-bg.png);
+  background-position: bottom center;
+  @apply w-full h-screen bg-no-repeat bg-cover absolute top-0 left-0 bottom-0 right-0 z-10;
+}
+.home .home-parralax .home-parralax-child {
+  @apply relative w-full h-full;
+}
+.home .home-parralax .home-parralax-child .home-title {
+  @apply flex flex-col justify-center pb-24;
+}
+.home .home-parralax .home-parralax-child .home-title h1 {
+  @apply mb-12;
+}
+.home .home-parralax .home-parralax-child .home-title h3 {
+  @apply mb-8;
+}
+.home .home-parralax .home-parralax-child .home-gradient-transition {
+  @apply absolute -bottom-40 h-80 w-full bg-gradient-to-b from-transparent via-darker to-transparent;
+}
+.home .home-content {
+  margin-top: calc(100vh - 88px);
+  @apply bg-gradient-to-b from-darker to-dark;
+}
+.home .home-content .home-content-child {
+  @apply flex flex-col gap-24;
+}
+.home .home-content .home-content-child .home-paragraph {
+  @apply flex justify-around items-center gap-16 relative z-20;
+}
+.home .home-content .home-content-child .home-paragraph:nth-child(2n) {
+  @apply flex-row-reverse;
+}
+.home .home-content .home-content-child .home-paragraph:first-child .paragraph-text .title-border {
+  @apply w-[330px];
+}
+.home .home-content .home-content-child .home-paragraph:first-child .paragraph-image img {
+  @apply left-[10%] top-[-20px];
+}
+.home .home-content .home-content-child .home-paragraph:nth-child(2) .paragraph-text .title-border {
+  @apply w-[453px];
+}
+.home .home-content .home-content-child .home-paragraph:nth-child(2) .paragraph-image img {
+  @apply left-[20%] top-[-7.9%];
+}
+.home .home-content .home-content-child .home-paragraph:last-child {
+  @apply mb-32;
+}
+.home .home-content .home-content-child .home-paragraph:last-child .paragraph-text .title-border {
+  @apply w-[535px];
+}
+.home .home-content .home-content-child .home-paragraph:last-child .paragraph-image img {
+  @apply left-[10%] top-[-20px];
+}
+.home .home-content .home-content-child .home-paragraph .paragraph-text {
+  @apply w-1/2;
+}
+.home .home-content .home-content-child .home-paragraph .paragraph-text .subtitle {
+  @apply flex flex-row items-center mb-5;
+}
+.home .home-content .home-content-child .home-paragraph .paragraph-text .subtitle svg {
+  @apply mr-4;
+}
+.home .home-content .home-content-child .home-paragraph .paragraph-text h2 {
+  @apply text-white mb-5;
+}
+.home .home-content .home-content-child .home-paragraph .paragraph-text p {
+  @apply mb-8;
+}
+.home .home-content .home-content-child .home-paragraph .paragraph-image {
+  @apply w-1/2 relative pt-6 mx-auto;
+}
+.home .home-content .home-content-child .home-paragraph .paragraph-image .gradient-circle {
+  @apply w-auto max-w-[400px] h-auto;
+}
+.home .home-content .home-content-child .home-paragraph .paragraph-image img {
+  @apply absolute max-w-md;
+}
+.home .home-content .game-quote {
+  @apply flex flex-col justify-center items-center py-24 font-title;
+}
+.home .home-content .game-quote h3 {
+  @apply font-medium text-5xl text-center leading-tight mb-8;
+}
+.home .home-content .game-quote span {
+  @apply text-secondary text-xl;
+}
+
+:root {
+  --transition: 0.3s;
+  --spark: 1.8s;
+  --hue: 205;
+}
+
+.galaxy-btn {
+  @apply z-50 text-base font-medium cursor-pointer px-6 py-4 flex items-center gap-1 whitespace-nowrap rounded-full relative overflow-hidden;
+  --cut: 0em;
+  --active: 0;
+  --bg:
+  	radial-gradient(
+  		120% 120% at 126% 126%,
+  		hsl(var(--hue) calc(var(--active) * 97%) 98% / calc(var(--active) * 0.9)) 40%,
+  		transparent 50%
+  	) calc(100px - (var(--active) * 100px)) 0 / 100% 100% no-repeat,
+  	radial-gradient(
+  		120% 120% at 120% 120%,
+  		hsl(var(--hue) calc(var(--active) * 97%) 70% / calc(var(--active) * 1)) 30%,
+  		transparent 70%
+  	) calc(100px - (var(--active) * 100px)) 0 / 100% 100% no-repeat,
+  	hsl(var(--hue) calc(var(--active) * 100%) calc(12% - (var(--active) * 8%)));
+  background: var(--bg);
+  border: solid white 2px;
+  background: transparent;
+  transition: box-shadow var(--transition), scale var(--transition), background var(--transition);
+  scale: calc(1 + var(--active) * 0.1);
+  transform-style: preserve-3d;
+  perspective: 100vmin;
+}
+
+.galaxy-btn:active {
+  scale: 1;
+}
+
+.star {
+  height: calc(var(--size) * 1px);
+  aspect-ratio: 1;
+  background: white;
+  border-radius: 50%;
+  /*	filter: blur(4px);*/
+  position: absolute;
+  opacity: var(--alpha);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(10deg) rotate(0deg) translateY(calc(var(--distance) * 1px));
+  animation: orbit calc(var(--duration) * 1s) calc(var(--delay) * -1s) infinite linear;
+}
+
+@keyframes orbit {
+  to {
+    transform: translate(-50%, -50%) rotate(10deg) rotate(360deg) translateY(calc(var(--distance) * 1px));
+  }
+}
+.galaxy {
+  position: absolute;
+  width: 100%;
+  aspect-ratio: 1;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  overflow: hidden;
+  opacity: var(--active);
+  transition: opacity var(--transition);
+}
+
+.galaxy__ring {
+  height: 200%;
+  width: 200%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  transform: translate(-28%, -40%) rotateX(-24deg) rotateY(-30deg) rotateX(90deg);
+  transform-style: preserve-3d;
+}
+
+.galaxy__container {
+  position: absolute;
+  inset: 0;
+  opacity: var(--active);
+  transition: opacity var(--transition);
+  -webkit-mask: radial-gradient(white, transparent);
+          mask: radial-gradient(white, transparent);
+}
+
+.star--static {
+  animation: none;
+  top: 50%;
+  left: 50%;
+  transform: translate(0, 0);
+  max-height: 4px;
+  filter: brightness(4);
+  opacity: 0.9;
+  animation: move-x calc(var(--duration) * 0.1s) calc(var(--delay) * -0.1s) infinite linear, move-y calc(var(--duration) * 0.2s) calc(var(--delay) * -0.2s) infinite linear;
+}
+
+.galaxy-btn:hover .star--static {
+  animation-play-state: paused;
+}
+
+@keyframes move-x {
+  0% {
+    translate: -100px 0;
+  }
+  100% {
+    translate: 100px 0;
+  }
+}
+@keyframes move-y {
+  0% {
+    transform: translate(0, -50px);
+  }
+  100% {
+    transform: translate(0, 50px);
+  }
+}
+@keyframes flip {
+  to {
+    rotate: 360deg;
+  }
+}
+.backdrop {
+  position: absolute;
+  inset: var(--cut);
+  background: transparent;
+  transition: all var(--transition);
+  @apply border-transparent;
+}
+
+.galaxy-btn:hover .backdrop {
+  background: var(--bg);
+}
+
+@keyframes rotate {
+  to {
+    transform: rotate(90deg);
+  }
+}
+@supports (selector(:has(:is(+ *)))) {
+  body:has(.galaxy-btn:is(:hover, :focus-visible)) {
+    --active: 1;
+    --play-state: running;
+  }
+  .bodydrop {
+    display: none;
+  }
+}
+.galaxy-btn:is(:hover, :focus-visible) ~ :is(.bodydrop, .particle-pen) {
+  --active: 1;
+  --play-state: running;
+}
+
+.galaxy-btn:is(:hover, :focus-visible) {
+  --active: 1;
+  --play-state: running;
+}
+
+.galaxy-.galaxy-btn {
+  position: relative;
+}
+
+@keyframes float-out {
+  to {
+    rotate: 360deg;
+  }
+}
+.text {
+  padding-top: 4px;
+  translate: 2% -6%;
+  letter-spacing: 0.01ch;
+  color: white;
+  @apply font-semibold;
+}
+
+.galaxy-btn:hover .text {
+  color: white;
+}
+
+.galaxy-btn:hover {
+  border-color: transparent;
+  border: none;
+}
+
+.galaxy-btn svg {
+  inline-size: 1.25em;
+  translate: -25% -5%;
+}
+
+.home-content-counter {
+  @apply w-full bg-gradient-to-r from-main to-secondary text-darker py-20;
+}
+.home-content-counter .counter-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.home-content-counter .counter {
+  text-align: center;
+}
+.home-content-counter .counter h3 {
+  @apply text-6xl font-extrabold py-2 mb-4;
+}
+.home-content-counter .counter h6 {
+  @apply text-lg font-medium;
+}
+
+.events {
+  @apply relative z-10;
+}
+.events h2 {
+  @apply mb-5 mt-10;
+}
+.events .spotlight-border {
+  @apply w-[218px] mb-12;
+}
+.events .other-border {
+  @apply w-[340px] mb-10;
+}
+.events .spotlight-event {
+  background-color: rgba(255, 255, 255, 0.07);
+  @apply py-12 px-16 rounded-3xl flex flex-row mb-12;
+}
+.events .spotlight-event img {
+  @apply w-64 rounded-full mr-16;
+}
+.events .spotlight-event .spotlight-text {
+  @apply flex flex-col w-full;
+}
+.events .spotlight-event .spotlight-text .spotlight-info {
+  @apply self-stretch h-full;
+}
+.events .spotlight-event .spotlight-text .spotlight-info .spotlight-theme {
+  @apply flex flex-row items-center;
+}
+.events .spotlight-event .spotlight-text .spotlight-info .spotlight-theme span {
+  @apply font-normal;
+}
+.events .spotlight-event .spotlight-text .spotlight-info .spotlight-theme svg {
+  @apply mr-4;
+}
+.events .spotlight-event .spotlight-text .spotlight-info h2 {
+  @apply mt-4;
+}
+.events .spotlight-event .spotlight-text .spotlight-info p {
+  @apply font-light;
+}
+.events .spotlight-event .spotlight-text .spotlight-interractions {
+  @apply flex flex-row items-center justify-between w-full;
+}
+.events .spotlight-event .spotlight-text .spotlight-interractions .event-info {
+  @apply flex flex-row items-center font-medium;
+}
+.events .spotlight-event .spotlight-text .spotlight-interractions .event-info .event-attendees {
+  @apply flex flex-row items-center;
+}
+.events .spotlight-event .spotlight-text .spotlight-interractions .event-info .event-attendees svg {
+  @apply mr-3;
+}
+.events .spotlight-event .spotlight-text .spotlight-interractions .event-info .event-likers {
+  @apply flex flex-row ml-10 items-center;
+}
+.events .spotlight-event .spotlight-text .spotlight-interractions .event-info .event-likers svg {
+  @apply mr-3;
+}
+.events .event-filter {
+  @apply mb-8;
+}
+.events .event-filter button {
+  @apply inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm sm:w-auto hover:text-main;
+}
+.events .event-filter .active {
+  @apply text-main;
+}
+.events .notspotlight-event {
+  @apply flex flex-row flex-wrap justify-center gap-8 mb-20;
+}
+.events .notspotlight-event .event-card {
+  background-color: rgba(255, 255, 255, 0.07);
+  @apply max-w-sm rounded-3xl flex flex-col;
+}
+.events .notspotlight-event .event-card img {
+  @apply w-[384px] max-h-52 object-cover h-auto rounded-t-3xl;
+}
+.events .notspotlight-event .event-card .event-text {
+  @apply flex flex-col px-8 py-10 self-stretch h-full;
+}
+.events .notspotlight-event .event-card .event-text .event-info {
+  @apply h-full mb-6;
+}
+.events .notspotlight-event .event-card .event-text .event-info h2 {
+  @apply mt-5 text-3xl;
+}
+.events .notspotlight-event .event-card .event-text .event-info p {
+  @apply font-light;
+}
+.events .notspotlight-event .event-card .event-text .event-info .event-theme {
+  @apply flex flex-row items-center;
+}
+.events .notspotlight-event .event-card .event-text .event-info .event-theme svg {
+  @apply mr-4;
+}
+.events .notspotlight-event .event-card .event-text .event-interractions {
+  @apply flex flex-row justify-between;
+}
+.events .notspotlight-event .event-card .event-text .event-interractions .event-interactors {
+  @apply flex flex-row items-center;
+}
+.events .notspotlight-event .event-card .event-text .event-interractions .event-interactors .event-attendees {
+  @apply flex flex-row items-center mr-5;
+}
+.events .notspotlight-event .event-card .event-text .event-interractions .event-interactors .event-attendees svg {
+  @apply mr-2;
+}
+.events .notspotlight-event .event-card .event-text .event-interractions .event-interactors .event-likers {
+  @apply flex flex-row items-center;
+}
+.events .notspotlight-event .event-card .event-text .event-interractions .event-interactors .event-likers svg {
+  @apply mr-2;
+}
+
+.message-banner {
+  @apply relative z-20 w-full bg-gradient-to-r from-main to-secondary text-darker py-20;
+}
+.message-banner .message-container {
+  @apply flex flex-row justify-between items-center;
+}
+.message-banner .message-container h6 {
+  @apply font-medium text-3xl leading-normal;
+}
+.message-banner .message-container div {
+  @apply flex-grow pl-5 flex justify-center;
+}
+.message-banner .message-container div svg {
+  @apply mr-5;
+}
+
+.gamers {
+  @apply relative z-10 mb-20;
+}
+.gamers h2 {
+  @apply mb-5 mt-10;
+}
+.gamers .title-border {
+  @apply w-[399px] mb-12;
+}
+.gamers .leaderboard .player-finder {
+  @apply flex flex-row justify-between items-center mb-4;
+}
+.gamers .leaderboard .player-finder .game-filter button {
+  @apply inline-flex w-full justify-center rounded-full bg-white bg-opacity-[0.07] px-8 py-2 text-sm font-semibold text-white shadow-sm sm:w-auto mr-3;
+}
+.gamers .leaderboard .player-finder .game-filter button:hover {
+  background: rgb(149, 253, 252);
+  background: linear-gradient(45deg, rgb(149, 253, 252) 0%, rgb(254, 190, 253) 100%);
+  @apply text-darker;
+}
+.gamers .leaderboard .player-finder .game-filter .active {
+  background: rgb(149, 253, 252);
+  background: linear-gradient(45deg, rgb(149, 253, 252) 0%, rgb(254, 190, 253) 100%);
+  @apply text-darker;
+}
+.gamers .leaderboard .player-finder .player-search {
+  @apply flex flex-row h-full items-center;
+}
+.gamers .leaderboard .player-finder .player-search input {
+  @apply bg-white bg-opacity-[0.07] py-1 px-4 text-white rounded-full outline-0;
+}
+.gamers .leaderboard .player-finder .player-search svg {
+  @apply h-4/6 w-auto ml-4;
+}
+
+.support {
+  @apply relative z-10;
+}
+.support ::-webkit-scrollbar-track {
+  border-radius: 50px;
+}
+.support h2 {
+  @apply mb-5 mt-10;
+}
+.support .title-border {
+  @apply w-[140px] mb-12;
+}
+.support .support-container {
+  @apply flex flex-row mb-16;
+}
+.support .support-container .questions-container {
+  @apply shadow-sm w-6/12 rounded pr-8;
+}
+.support .support-container .questions-container h3 {
+  @apply mb-10 font-semibold text-2xl;
+}
+.support .support-container .questions-container .blocs-container {
+  @apply max-h-[384px] overflow-y-auto pr-4 rounded-lg;
+}
+.support .support-container .questions-container .accordion-bloc {
+  @apply transition bg-white bg-opacity-[0.07] rounded-full mb-4 duration-0;
+}
+.support .support-container .questions-container .accordion-bloc .accordion-header {
+  @apply transition-all duration-300 cursor-pointer flex space-x-5 px-5 items-center h-20;
+}
+.support .support-container .questions-container .accordion-bloc .accordion-header i {
+  @apply pl-2 m-0;
+}
+.support .support-container .questions-container .accordion-bloc .accordion-header i svg {
+  fill: white;
+}
+.support .support-container .questions-container .accordion-bloc .accordion-header .minus-icon {
+  @apply hidden;
+}
+.support .support-container .questions-container .accordion-bloc .accordion-header .minus-icon svg {
+  @apply mb-[2px];
+}
+.support .support-container .questions-container .accordion-bloc .accordion-header h4 {
+  @apply text-left;
+}
+.support .support-container .questions-container .accordion-bloc .accordion-content {
+  @apply px-5 pt-0 overflow-hidden max-h-0;
+  transition: max-height 0.3s ease-out, padding 0.3s ease;
+}
+.support .support-container .questions-container .accordion-bloc .accordion-content p {
+  @apply leading-6 font-light text-justify px-5 pb-8;
+}
+.support .support-container .questions-container .accordion-bloc .accordion-content p b {
+  @apply font-medium;
+}
+.support .support-container .questions-container .accordion-bloc:not(.opened):hover {
+  background: linear-gradient(45deg, #95FDFC 0%, #FEBEFD 60%);
+  background-size: 200% 100%;
+  @apply text-darker;
+  animation: btanimation 3s linear infinite;
+}
+.support .support-container .questions-container .accordion-bloc:not(.opened):hover .accordion-header i svg {
+  fill: black;
+}
+.support .support-container .questions-container .accordion-bloc:not(.opened):hover .accordion-header h4 {
+  @apply font-medium;
+}
+.support .support-container .support-img {
+  @apply relative w-[450px] mx-auto;
+}
+.support .support-container .support-img svg {
+  @apply absolute left-0 top-14 max-w-md h-auto w-[390px];
+}
+.support .support-container .support-img img {
+  @apply absolute left-0 -top-14 max-w-[560px];
+}
+
+@keyframes btanimation {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+.admin {
+  @apply relative mb-20 z-10;
+}
+.admin h2 {
+  @apply mt-10 mb-5;
+}
+.admin .title-border {
+  @apply w-[110px];
+}
+.admin .admin-filter {
+  @apply mb-8;
+}
+.admin .admin-filter a {
+  @apply inline-flex w-full justify-center rounded-full bg-white bg-opacity-[0.07] px-8 py-2 text-sm font-semibold text-white shadow-sm sm:w-auto mr-3;
+}
+.admin .admin-filter a:hover {
+  background: rgb(149, 253, 252);
+  background: linear-gradient(45deg, rgb(149, 253, 252) 0%, rgb(254, 190, 253) 100%);
+  @apply text-darker;
+}
+.admin .admin-filter .active {
+  background: rgb(149, 253, 252);
+  background: linear-gradient(45deg, rgb(149, 253, 252) 0%, rgb(254, 190, 253) 100%);
+  @apply text-darker;
+}
+.admin .admin-btn {
+  @apply border-none outline-none relative w-8 h-8 font-sans font-medium text-darker;
+  background: linear-gradient(45deg, #95FDFC 0%, #FEBEFD 60%);
+  background-size: 200% 100%;
+  border-radius: 100px;
+  transition: 0.3s;
+}
+.admin .admin-btn:hover {
+  @apply text-darker;
+  animation: btanimation 3s linear infinite;
+}
+@keyframes btanimation {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+.admin .delete-btn {
+  @apply w-8 h-8;
+}
+.admin .add-group {
+  @apply mt-6;
+}
+.admin .add-group .add-btn {
+  @apply w-12 h-12 mr-3 font-semibold text-xl;
+}
+
+.admin-table {
+  color: white !important;
+}
+.admin-table .MuiDataGrid-cellContent {
+  color: white !important;
+}
+
+.profil {
+  @apply relative mb-20 z-10;
+}
+.profil ::-webkit-scrollbar-track {
+  background: #45618a;
+  border-radius: 50px;
+}
+.profil h2 {
+  @apply mt-10 mb-5;
+}
+.profil .title-border {
+  @apply w-[173px];
+}
+.profil .profile-board {
+  @apply bg-white bg-opacity-[0.07] px-12 py-14 rounded-3xl;
+}
+.profil .profile-board .profile-banner {
+  @apply flex flex-row items-center mb-20;
+}
+.profil .profile-board .profile-banner img {
+  @apply w-40 h-40 rounded-full mr-8;
+  background: rgb(149, 253, 252);
+  background: linear-gradient(45deg, rgb(149, 253, 252) 0%, rgb(254, 190, 253) 100%);
+}
+.profil .profile-board .profile-banner .profile-resume {
+  @apply flex flex-col justify-between h-36;
+}
+.profil .profile-board .profile-banner .profile-resume .profile-name h3 {
+  @apply font-medium font-sans text-4xl mb-1;
+}
+.profil .profile-board .profile-banner .profile-resume .profile-name span {
+  @apply font-extralight italic;
+}
+.profil .profile-board .profile-banner .profile-resume .profile-level {
+  @apply flex flex-col;
+}
+.profil .profile-board .profile-banner .profile-resume .profile-level span {
+  @apply mb-2;
+}
+.profil .profile-board .profile-banner .profile-resume .profile-level .barre {
+  @apply bg-white bg-opacity-20 relative w-64 h-2 rounded-full;
+}
+.profil .profile-board .profile-banner .profile-resume .profile-level .barre .filled {
+  @apply absolute top-0 left-0 w-48 h-2 bg-gradient-to-r from-main to-secondary rounded-full;
+}
+.profil .profile-board .info-container {
+  @apply flex flex-row;
+}
+.profil .profile-board .info-container h4 {
+  @apply font-medium font-title text-white text-2xl mb-4;
+}
+.profil .profile-board .info-container p {
+  @apply font-light font-sans;
+}
+.profil .profile-board .info-container .left-info {
+  @apply w-2/4 pr-6;
+}
+.profil .profile-board .info-container .left-info .biography {
+  @apply mb-14;
+}
+.profil .profile-board .info-container .left-info .biography .subtitle-border {
+  @apply w-[125px];
+}
+.profil .profile-board .info-container .left-info .history {
+  @apply w-full;
+}
+.profil .profile-board .info-container .left-info .history .subtitle-border {
+  @apply w-[245px];
+}
+.profil .profile-board .info-container .left-info .history .history-container {
+  @apply w-full bg-transparent h-96 overflow-y-auto pr-4;
+}
+.profil .profile-board .info-container .left-info .history .history-container .history-bloc {
+  @apply h-28 w-full rounded-3xl mb-4 bg-darker px-6 py-5 flex flex-row items-center;
+}
+.profil .profile-board .info-container .left-info .history .history-container .history-bloc img {
+  @apply w-16 h-16 rounded-full mr-5;
+}
+.profil .profile-board .info-container .left-info .history .history-container .history-bloc .subsub {
+  @apply font-medium mr-1;
+}
+.profil .profile-board .info-container .left-info .history .history-container .history-bloc .history-lines .top-line {
+  @apply mb-3 flex flex-row;
+}
+.profil .profile-board .info-container .left-info .history .history-container .history-bloc .history-lines .top-line p {
+  @apply mr-6;
+}
+.profil .profile-board .info-container .left-info .history .history-container .history-bloc .history-lines .top-line p .result {
+  @apply font-light;
+}
+.profil .profile-board .info-container .left-info .history .history-container .history-bloc .history-lines .top-line p .victory {
+  @apply text-main;
+}
+.profil .profile-board .info-container .left-info .history .history-container .history-bloc .history-lines .top-line p .defeat {
+  @apply text-secondary;
+}
+.profil .profile-board .info-container .left-info .history .history-container .history-bloc .history-lines .top-line p .even {
+  @apply text-white;
+}
+.profil .profile-board .info-container .left-info .history .history-container .history-bloc .history-lines .bottom-line {
+  @apply flex flex-row;
+}
+.profil .profile-board .info-container .left-info .history .history-container .history-bloc .history-lines .bottom-line .players-list {
+  @apply flex flex-row ml-2 mr-2;
+}
+.profil .profile-board .info-container .left-info .history .history-container .history-bloc .history-lines .bottom-line .players-list li {
+  @apply mr-4 font-light;
+}
+.profil .profile-board .info-container .left-info .history .history-container .history-bloc .history-lines .bottom-line .players-list li::marker {
+  @apply mr-[2px];
+}
+.profil .profile-board .info-container .right-info {
+  @apply w-2/4 pl-16;
+}
+.profil .profile-board .info-container .right-info .best-game {
+  @apply mb-14;
+}
+.profil .profile-board .info-container .right-info .best-game .subtitle-border {
+  @apply w-[130px];
+}
+.profil .profile-board .info-container .right-info .best-game .game-line {
+  @apply flex flex-row items-center;
+}
+.profil .profile-board .info-container .right-info .best-game .game-line img {
+  @apply w-28 h-28 rounded-full mr-8;
+}
+.profil .profile-board .info-container .right-info .best-game .game-line span {
+  @apply text-lg;
+}
+.profil .profile-board .info-container .right-info .badge .subtitle-border {
+  @apply w-[85px];
+}
+
+.btn {
+  @apply border-none outline-none relative px-6 py-4 font-sans font-medium text-darker rounded-full;
+  background: linear-gradient(45deg, #95FDFC 0%, #FEBEFD 60%);
+  background-size: 200% 100%;
+  border-radius: 100px;
+  transition: 0.3s;
+}
+.btn:hover {
+  @apply text-darker;
+  animation: btanimation 3s linear infinite;
+}
+
+@keyframes btanimation {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+.clicked-btn {
+  @apply flex flex-row items-center border-none outline-none relative px-6 py-4 font-sans font-medium text-darker rounded-full bg-white bg-opacity-60;
+}
+.clicked-btn svg {
+  @apply ml-2 pb-[2px];
+}
+
+.circle-1 {
+  position: fixed;
+  left: -200px;
+  top: 33vh;
+  width: 800px;
+  height: 800px;
+  border-radius: 50%;
+  margin: 116.9px 31.5px 11.2px 0;
+  opacity: 0.1;
+  filter: blur(50px);
+  transition: transform ease-in-out 0.3s;
+  background: linear-gradient(to top, rgba(255, 255, 255, 0.53), rgba(236, 230, 255, 0.81) 21%, rgba(158, 128, 227, 0.75) 46%, rgba(202, 79, 213, 0.73) 69%, rgba(114, 78, 224, 0.97));
+  animation: balloon 12s ease-in-out infinite;
+  z-index: 0;
+}
+
+.circle-2 {
+  position: fixed;
+  right: -200px;
+  top: 10vh;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  margin: 116.9px 31.5px 11.2px 0;
+  opacity: 0.1;
+  transition: transform ease-in-out 0.3s;
+  filter: blur(50px);
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.53), rgba(236, 230, 255, 0.81) 21%, rgba(158, 128, 227, 0.75) 46%, rgba(202, 79, 213, 0.73) 69%, rgba(114, 78, 224, 0.97));
+  animation: balloon 8s -2.5s ease-in-out infinite reverse;
+  z-index: 0;
+}
+
+@keyframes balloon {
+  0%, 100% {
+    transform: translate(0, 0px) rotate(12deg) scale(1);
+  }
+  50% {
+    transform: translate(-80px, 160px) rotate(-16deg) scale(0.8);
+  }
+}
+.gameModels {
+  @apply relative z-10;
+}
+.gameModels .gameModels-swiper {
+  @apply relative mt-12 mb-7 z-20;
+}
+.gameModels .gameModels-swiper .swiper-wrapper {
+  @apply pb-16;
+}
+.gameModels .gameModels-swiper .swiper-pagination-bullet-active {
+  @apply relative z-10;
+  background: rgb(149, 253, 252) !important;
+  background: linear-gradient(45deg, rgb(149, 253, 252) 0%, rgb(254, 190, 253) 100%) !important;
+  width: 13px !important;
+  height: 13px !important;
+}
+.gameModels .gameModels-swiper .gameModel {
+  background-color: rgba(255, 255, 255, 0.07);
+  @apply rounded-3xl flex flex-row max-h-[450px];
+}
+.gameModels .gameModels-swiper .gameModel .game-illustration {
+  @apply w-1/2 rounded-l-3xl max-h-[450px] overflow-hidden;
+}
+.gameModels .gameModels-swiper .gameModel .game-illustration img {
+  @apply object-cover rounded-l-3xl object-center max-h-[450px] w-full;
+}
+.gameModels .gameModels-swiper .gameModel .game-description {
+  @apply w-1/2 p-8 flex flex-col justify-between;
+}
+.gameModels .gameModels-swiper .gameModel .game-description .game-text h4 {
+  @apply font-semibold text-3xl mb-8;
+}
+.gameModels .gameModels-swiper .gameModel .game-description .game-text p {
+  @apply text-base mb-8 font-light;
+}
+.gameModels .gameModels-swiper .gameModel .game-description .game-launcher {
+  @apply flex flex-row items-center justify-between;
+}
+.gameModels .gameModels-swiper .gameModel .game-description .game-launcher .game-parameters {
+  @apply flex flex-row font-medium items-center;
+}
+.gameModels .gameModels-swiper .gameModel .game-description .game-launcher button {
+  @apply self-end;
+}
+.gameModels .gameModels-swiper .gameModel .tictactoe .game-text .title-border {
+  @apply w-[215px];
+}
+.gameModels h2 {
+  @apply mb-5;
+}
+.gameModels .title-border {
+  @apply w-[450px];
+}
+.gameModels .join-btn {
+  @apply px-3 py-2 rounded-lg;
+}
+
+#tic-tac-toe {
+  border-spacing: 0px;
+  border-collapse: separate;
+  margin: 30px auto;
+}
+#tic-tac-toe td {
+  @apply border-white;
+  border: 2px solid;
+  height: 100px;
+  width: 100px;
+  text-align: center;
+}
+#tic-tac-toe tr:first-child td {
+  border-top: none;
+}
+#tic-tac-toe tr:last-child td {
+  border-bottom: none;
+}
+#tic-tac-toe tr td:first-child {
+  border-left: none;
+}
+#tic-tac-toe tr td:last-child {
+  border-right: none;
+}
+#tic-tac-toe td.X {
+  color: #FEBEFD;
+  @apply bg-secondary bg-opacity-10;
+}
+#tic-tac-toe td.O {
+  color: #95FDFC;
+  @apply bg-main bg-opacity-10;
+}
+#tic-tac-toe #square_0 {
+  @apply rounded-tl-lg;
+}
+#tic-tac-toe #square_2 {
+  @apply rounded-tr-lg;
+}
+#tic-tac-toe #square_6 {
+  @apply rounded-bl-lg;
+}
+#tic-tac-toe #square_8 {
+  @apply rounded-br-lg;
+}
+
+#scoreboard .score {
+  text-align: center;
+  font-size: 30px;
+}
+
+#scoreboard .score#player1 {
+  color: #FEBEFD;
+}
+
+#scoreboard .score#player2 {
+  color: #95FDFC;
+}
+
+.board {
+  @apply relative z-10;
+}
+.board #oxoBoard {
+  @apply relative bg-white bg-opacity-[0.07] mb-12 mt-12 rounded-3xl p-8 min-h-[600px] h-[600px] flex flex-row;
+}
+.board #oxoBoard .boardinfo {
+  @apply flex flex-col justify-between border-r-2 border-white border-opacity-[0.07] pr-10;
+}
+.board #oxoBoard .boardinfo .players {
+  @apply w-[220px];
+}
+.board #oxoBoard .boardinfo .players h4 {
+  @apply text-center w-full mb-4 text-xl;
+}
+.board #oxoBoard .boardinfo .players #divPlayers {
+  @apply relative bg-transparent flex flex-col items-center;
+}
+.board #oxoBoard .boardinfo .boardbuttons {
+  @apply flex flex-col;
+}
+.board #oxoBoard .boardinfo .boardbuttons .copy-btn {
+  @apply inline-flex w-full px-3 py-2 text-sm font-semibold text-white shadow-sm hover:text-main sm:w-auto mb-4;
+}
+.board #oxoBoard .boardinfo .boardbuttons .copy-btn svg {
+  @apply mr-3;
+  fill: white;
+}
+.board #oxoBoard .boardinfo .boardbuttons .copy-btn:hover svg {
+  fill: #95FDFC;
+}
+.board #oxoBoard .boardholder {
+  @apply relative w-full flex flex-col items-center h-full overflow-hidden;
+}
+.board #oxoBoard .boardholder #placeholder {
+  @apply invisible;
+}
+.board #oxoBoard .boardholder #waitholder {
+  @apply flex flex-col items-center pt-40;
+}
+.board #oxoBoard .boardholder #waitholder span {
+  @apply font-medium text-lg;
+}
+.board #oxoBoard .boardholder .alert {
+  @apply invisible mt-8 text-xl font-title font-medium;
+}
+.board #oxoBoard .boardholder .alert #winnerAlert {
+  @apply text-center mt-2 text-base;
+}/*# sourceMappingURL=input.css.map */

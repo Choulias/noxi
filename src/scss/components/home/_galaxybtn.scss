@@ -1,0 +1,217 @@
+:root {
+	--transition: 0.3s;
+	--spark: 1.8s;
+	// Calculateur HSL https://hslpicker.com/#febefd
+	// --hue: 245;
+	// --hue: 320;
+	// --hue: 179;
+	--hue: 205;
+}
+
+.galaxy-btn {
+    @apply z-50 text-base font-medium cursor-pointer px-6 py-4 flex items-center gap-1 whitespace-nowrap rounded-full relative overflow-hidden;
+	--cut: 0em;
+	--active: 0;
+
+	//Background lors du hover
+	--bg:
+		radial-gradient(
+			120% 120% at 126% 126%,
+			hsl(var(--hue) calc(var(--active) * 97%) 98% / calc(var(--active) * 0.9)) 40%,
+			transparent 50%
+		) calc(100px - (var(--active) * 100px)) 0 / 100% 100% no-repeat, 
+		radial-gradient(
+			120% 120% at 120% 120%,
+			hsl(var(--hue) calc(var(--active) * 97%) 70% / calc(var(--active) * 1)) 30%,
+			transparent 70%
+		) calc(100px - (var(--active) * 100px)) 0 / 100% 100% no-repeat,
+		hsl(var(--hue) calc(var(--active) * 100%) calc(12% - (var(--active) * 8%)));
+	background: var(--bg);
+	
+	border: solid white 2px;
+	background: transparent;
+
+	// Fond radial
+	// box-shadow:
+	// 	0 0 calc(var(--active) * 1em) calc(var(--active) * 0.5em) hsl(var(--hue) 97% 61% / 0.5),
+	// 	0 0.05em 0 0 hsl(var(--hue) calc(var(--active) * 97%) calc((var(--active) * 50%) + 30%)) inset,
+	// 	0 -0.05em 0 0 hsl(var(--hue) calc(var(--active) * 97%) calc(var(--active) * 10%)) inset;
+	
+	transition: box-shadow var(--transition), scale var(--transition), background var(--transition);
+	scale: calc(1 + (var(--active) * 0.1));
+	transform-style: preserve-3d;
+	perspective: 100vmin;
+}
+
+.galaxy-btn:active {
+  scale: 1;
+}
+
+.star {
+	height: calc(var(--size) * 1px);
+	aspect-ratio: 1;
+	background: white;
+	border-radius: 50%;
+/*	filter: blur(4px);*/
+	position: absolute;
+	opacity: var(--alpha);
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%) rotate(10deg) rotate(0deg) translateY(calc(var(--distance) * 1px)) ;
+	animation: orbit calc(var(--duration) * 1s) calc(var(--delay) * -1s) infinite linear;
+}
+
+@keyframes orbit {
+	to {
+		transform: translate(-50%, -50%) rotate(10deg) rotate(360deg) translateY(calc(var(--distance) * 1px));
+	}
+}
+
+.galaxy {
+	position: absolute;
+	width: 100%;
+	aspect-ratio: 1;
+	top: 50%;
+	left: 50%;
+	translate: -50% -50%;
+	overflow: hidden;
+	opacity: var(--active);
+	transition: opacity var(--transition);
+}
+
+.galaxy__ring {
+	height: 200%;
+	width: 200%;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	border-radius: 50%;
+	transform: translate(-28%, -40%) rotateX(-24deg) rotateY(-30deg) rotateX(90deg);
+	transform-style: preserve-3d;
+}
+
+.galaxy__container {
+	position: absolute;
+	inset: 0;
+	opacity: var(--active);
+	transition: opacity var(--transition);
+  	mask: radial-gradient(white, transparent);
+}
+
+.star--static {
+	animation: none;
+	top: 50%;
+	left: 50%;
+	transform: translate(0, 0);
+	max-height: 4px;
+	filter: brightness(4);
+	opacity: 0.9;
+	animation:
+		move-x calc(var(--duration) * 0.1s) calc(var(--delay) * -0.1s) infinite linear,
+		move-y calc(var(--duration) * 0.2s) calc(var(--delay) * -0.2s) infinite linear;
+}
+
+.galaxy-btn:hover .star--static {
+	animation-play-state: paused;
+}
+
+@keyframes move-x {
+	0% {
+		translate: -100px 0;
+	}
+	100% {
+		translate: 100px 0;
+	}
+}
+
+@keyframes move-y {
+	0% {
+		transform: translate(0, -50px);
+	}
+	100% {
+		transform: translate(0, 50px);
+	}
+}
+
+
+@keyframes flip {
+	to {
+		rotate: 360deg;
+	}
+}
+
+.backdrop {
+	position: absolute;
+	inset: var(--cut);
+	background: transparent;
+	transition: all var(--transition);
+	@apply border-transparent;
+}
+
+
+.galaxy-btn:hover .backdrop{
+	background: var(--bg);
+}
+
+@keyframes rotate {
+	to {
+		transform: rotate(90deg);
+	}
+}
+
+
+
+@supports(selector(:has(:is(+ *)))) {
+	body:has(.galaxy-btn:is(:hover, :focus-visible)) {
+		--active: 1;
+		--play-state: running;
+	}
+	.bodydrop {
+		display: none;
+	}
+}
+
+.galaxy-btn:is(:hover, :focus-visible) ~ :is(.bodydrop, .particle-pen) {
+	--active: 1;
+	--play-state: running;
+}
+
+
+.galaxy-btn:is(:hover, :focus-visible) {
+	--active: 1;
+	--play-state: running;
+}
+
+
+.galaxy-.galaxy-btn {
+	position: relative;
+}
+
+@keyframes float-out {
+	to {
+		rotate: 360deg;
+	}
+}
+
+.text {
+	padding-top: 4px;
+	translate: 2% -6%;
+	letter-spacing: 0.01ch;
+	// color: hsl(0 0% calc(60% + (var(--active) * 26%)));
+	color: white;
+	@apply font-semibold;
+}
+
+.galaxy-btn:hover .text {
+	color: white;
+}
+
+.galaxy-btn:hover{
+	border-color: transparent;
+	border: none;
+}
+
+.galaxy-btn svg {
+	inline-size: 1.25em;
+	translate: -25% -5%;
+}

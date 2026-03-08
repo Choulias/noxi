@@ -1,0 +1,59 @@
+.circle-1 {
+    position: fixed;
+    left: -200px;
+    top: 33vh;
+    width: 800px;
+    height: 800px;
+    border-radius: 50%;
+    margin: 116.9px 31.5px 11.2px 0;
+    opacity: .07;
+    -webkit-filter: blur(50px);
+    filter: blur(50px);
+    -webkit-transition: -webkit-transform ease-in-out .3s;
+    transition: -webkit-transform ease-in-out .3s;
+    -o-transition: transform ease-in-out .3s;
+    transition: transform ease-in-out .3s;
+    transition: transform ease-in-out .3s,-webkit-transform ease-in-out .3s;
+    background: -o-linear-gradient(bottom,rgba(255,255,255,0.53),rgba(236,230,255,0.81) 21%,rgba(158,128,227,0.75) 46%,rgba(202,79,213,0.73) 69%,rgba(114,78,224,0.97));
+    background: -webkit-gradient(linear,left bottom,left top,from(rgba(255,255,255,0.53)),color-stop(21%,rgba(236,230,255,0.81)),color-stop(46%,rgba(158,128,227,0.75)),color-stop(69%,rgba(202,79,213,0.73)),to(rgba(114,78,224,0.97)));
+    background: linear-gradient(to top,rgba(255,255,255,0.53),rgba(236,230,255,0.81) 21%,rgba(158,128,227,0.75) 46%,rgba(202,79,213,0.73) 69%,rgba(114,78,224,0.97));
+    -webkit-animation: balloon  12s ease-in-out infinite;
+    animation: balloon  12s ease-in-out infinite;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.circle-2 {
+    position: fixed;
+    right: -200px;
+    top: 10vh;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    margin: 116.9px 31.5px 11.2px 0;
+    opacity: .07;
+    -webkit-transition: -webkit-transform ease-in-out .3s;
+    transition: -webkit-transform ease-in-out .3s;
+    -o-transition: transform ease-in-out .3s;
+    transition: transform ease-in-out .3s;
+    transition: transform ease-in-out .3s,-webkit-transform ease-in-out .3s;
+    -webkit-filter: blur(50px);
+    filter: blur(50px);
+    background: -o-linear-gradient(top,rgba(255,255,255,0.53),rgba(236,230,255,0.81) 21%,rgba(158,128,227,0.75) 46%,rgba(202,79,213,0.73) 69%,rgba(114,78,224,0.97));
+    background: -webkit-gradient(linear,left top,left bottom,from(rgba(255,255,255,0.53)),color-stop(21%,rgba(236,230,255,0.81)),color-stop(46%,rgba(158,128,227,0.75)),color-stop(69%,rgba(202,79,213,0.73)),to(rgba(114,78,224,0.97)));
+    background: linear-gradient(to bottom,rgba(255,255,255,0.53),rgba(236,230,255,0.81) 21%,rgba(158,128,227,0.75) 46%,rgba(202,79,213,0.73) 69%,rgba(114,78,224,0.97));
+    animation: balloon 8s -2.5s ease-in-out infinite reverse;
+    z-index: -1;
+    pointer-events: none;
+}
+
+@keyframes balloon {
+    0%, 100% {
+        -webkit-transform: translate(0,0px) rotate(12deg) scale(1);
+        transform: translate(0,0px) rotate(12deg) scale(1);
+    }
+    50% {
+        -webkit-transform: translate(-80px,160px) rotate(-16deg) scale(.8);
+        transform: translate(-80px,160px) rotate(-16deg) scale(.8);
+    }
+}

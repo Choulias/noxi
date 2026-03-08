@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Quicksand:wght@300;400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import 'variables';
+@import 'style';
+
+// Components
+@import 'components/header';
+@import 'components/footer';
+@import 'components/login';
+@import 'components/popup';
+@import 'components/switch';
+@import 'components/select';
+@import 'components/table';
+@import 'components/home/home';
+@import 'components/home/galaxybtn';
+@import 'components/home/counter';
+@import 'components/events/events';
+@import 'components/gamers/gamers';
+@import 'components/support/support';
+@import 'components/admin/admin';
+@import 'components/profil/profil';
+@import 'components/btn';
+@import 'components/circles';
+@import 'components/page-transition';
+@import 'components/games/games';
+@import 'components/games/tictactoe';

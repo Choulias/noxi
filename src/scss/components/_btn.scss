@@ -1,0 +1,35 @@
+.btn{
+    @apply border-none outline-none relative px-6 py-4 font-sans font-medium text-darker rounded-full;
+
+    background: linear-gradient(45deg, $main 0%, $secondary 60%);
+    background-size: 200% 100%;
+    border-radius: 100px;
+    transition: .3s;
+    
+    &:hover {
+        @apply text-darker;
+       animation: btanimation 3s linear infinite;
+    }
+ }
+ 
+ @keyframes btanimation {
+     0% {
+         background-position: 0 0;
+     }
+ 
+     50% {
+         background-position: 100% 0;
+     }
+ 
+     100% {
+         background-position: 0 0;
+     }
+ }
+
+.clicked-btn{
+    @apply flex flex-row items-center border-none outline-none relative px-6 py-4 font-sans font-medium text-darker rounded-full bg-white bg-opacity-60;
+
+    svg{
+        @apply ml-2 pb-[2px];
+    }
+ }
