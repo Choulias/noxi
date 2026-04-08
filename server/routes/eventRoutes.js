@@ -1,5 +1,6 @@
 import express from "express";
 import { authMiddleware, adminMiddleware } from "../middleware/auth.js";
+import { uploadEventImage } from "../middleware/upload.js";
 import {
     getAllEvents,
     getEvents,
@@ -24,9 +25,9 @@ router.get('/', authMiddleware, getAllEvents);
 router.get('/:id', authMiddleware, getEventById);
 
 // Admin
-router.post('/', authMiddleware, adminMiddleware, createEvent);
-router.patch('/:id', authMiddleware, adminMiddleware, updateEvent);
+router.post('/', authMiddleware, adminMiddleware, uploadEventImage.single('image'), createEvent);
 router.patch('/unspot/:value', authMiddleware, adminMiddleware, unspotEvent);
+router.patch('/:id', authMiddleware, adminMiddleware, uploadEventImage.single('image'), updateEvent);
 router.delete('/:id', authMiddleware, adminMiddleware, deleteEvent);
 
 export default router;

@@ -1,11 +1,7 @@
 :root {
 	--transition: 0.3s;
 	--spark: 1.8s;
-	// Calculateur HSL https://hslpicker.com/#febefd
-	// --hue: 245;
-	// --hue: 320;
-	// --hue: 179;
-	--hue: 205;
+	--hue: 179;
 }
 
 .galaxy-btn {
@@ -37,7 +33,7 @@
 	// 	0 0.05em 0 0 hsl(var(--hue) calc(var(--active) * 97%) calc((var(--active) * 50%) + 30%)) inset,
 	// 	0 -0.05em 0 0 hsl(var(--hue) calc(var(--active) * 97%) calc(var(--active) * 10%)) inset;
 	
-	transition: box-shadow var(--transition), scale var(--transition), background var(--transition);
+	transition: box-shadow var(--transition), scale var(--transition), background var(--transition), border-color var(--transition);
 	scale: calc(1 + (var(--active) * 0.1));
 	transform-style: preserve-3d;
 	perspective: 100vmin;
@@ -50,7 +46,7 @@
 .star {
 	height: calc(var(--size) * 1px);
 	aspect-ratio: 1;
-	background: white;
+	background: #95FDFC;
 	border-radius: 50%;
 /*	filter: blur(4px);*/
 	position: absolute;
@@ -150,7 +146,7 @@
 
 
 .galaxy-btn:hover .backdrop{
-	background: var(--bg);
+	background: linear-gradient(135deg, #030b16, #0c2240);
 }
 
 @keyframes rotate {
@@ -208,7 +204,6 @@
 
 .galaxy-btn:hover{
 	border-color: transparent;
-	border: none;
 }
 
 .galaxy-btn svg {

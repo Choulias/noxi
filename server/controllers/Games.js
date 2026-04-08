@@ -1,4 +1,5 @@
 import Game from "../models/gameModel.js";
+import User from "../models/userModel.js";
 import { Op } from "sequelize";
  
 export const getAllGames = async (req, res) => {
@@ -7,7 +8,16 @@ export const getAllGames = async (req, res) => {
         res.json(games);
     } catch (error) {
         res.json({ message: error.message });
-    }  
+    }
+}
+
+export const getGameCount = async (req, res) => {
+    try {
+        const count = await Game.count();
+        res.json({ count });
+    } catch (error) {
+        res.json({ message: error.message });
+    }
 }
 
 export const getPublicGames = async (req, res) => {
@@ -15,28 +25,37 @@ export const getPublicGames = async (req, res) => {
         const games = await Game.findAll({
             where: {
                 reach: "public",
-                status: { [Op.not]: "ended"}
-                // Il faut ajouter : And not ended 
+                status: { [Op.not]: "ended"},
+                numberPlayers: { [Op.gt]: 0 }
             }
         });
-        res.json(games);
+        // Enrichir avec le username du propriétaire
+        const gamesWithOwner = await Promise.all(games.map(async (game) => {
+            const gameData = game.toJSON();
+            if (gameData.ownerId) {
+                try {
+                    const owner = await User.findByPk(gameData.ownerId, { attributes: ['username'] });
+                    gameData.ownerName = owner ? owner.username : null;
+                } catch (e) {
+                    gameData.ownerName = null;
+                }
+            }
+            return gameData;
+        }));
+        res.json(gamesWithOwner);
     } catch (error) {
         res.json({ message: error.message });
-    }  
+    }
 }
  
 export const getGameById = async (req, res) => {
     try {
-        const game = await Game.findAll({
-            where: {
-                id: req.params.id,
-
-            }
-        });
-        res.json(game[0]);
+        const game = await Game.findByPk(req.params.id);
+        if (!game) return res.status(404).json({ message: "Not found" });
+        res.json(game);
     } catch (error) {
         res.json({ message: error.message });
-    }  
+    }
 }
  
 export const getGameByGameId = async (req, res) => {

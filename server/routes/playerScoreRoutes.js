@@ -14,12 +14,14 @@ import {
 
 const router = express.Router();
 
+// Public (classement visible par tous)
+router.get('/slug/:slug', getPlayersScoreBySlug);
+router.get('/slugntext/:slug/:text', getPlayersScoreBySlugNText);
+
 // Protégé
 router.get('/', authMiddleware, getAllPlayerScores);
-router.get('/:id', authMiddleware, getPlayerScoreById);
-router.get('/slug/:slug', authMiddleware, getPlayersScoreBySlug);
 router.get('/slugnid/:slug/:playerId', authMiddleware, getPlayerScoreBySlugNId);
-router.get('/slugntext/:slug/:text', authMiddleware, getPlayersScoreBySlugNText);
+router.get('/:id', authMiddleware, getPlayerScoreById);
 router.post('/', authMiddleware, createPlayerScore);
 router.patch('/:id', authMiddleware, updatePlayerScore);
 router.patch('/slugnid/:slug/:playerId', authMiddleware, updatePlayerScoreBySlugNId);

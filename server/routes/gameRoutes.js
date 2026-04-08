@@ -3,6 +3,7 @@ import { authMiddleware } from "../middleware/auth.js";
 import {
     getAllGames,
     getPublicGames,
+    getGameCount,
     createGame,
     getGameById,
     getGameByGameId,
@@ -15,11 +16,12 @@ const router = express.Router();
 
 // Public
 router.get('/public', getPublicGames);
+router.get('/count', getGameCount);
+router.get('/gameid/:gameid', getGameByGameId);
 
 // Protégé
 router.get('/', authMiddleware, getAllGames);
 router.get('/:id', authMiddleware, getGameById);
-router.get('/gameid/:gameid', authMiddleware, getGameByGameId);
 router.post('/', authMiddleware, createGame);
 router.patch('/:id', authMiddleware, updateGame);
 router.delete('/:id', authMiddleware, deleteGame);

@@ -18,7 +18,9 @@
     }
 
     .tailwind-options{
-        @apply absolute z-20 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base ring-0 focus:outline-none sm:text-sm;
+        @apply absolute z-20 mt-1 max-h-72 overflow-auto rounded-md bg-white py-1 text-base ring-0 focus:outline-none sm:text-sm;
+        min-width: 100%;
+        width: max-content;
     
         .active-option{
             background: rgb(149,253,252);

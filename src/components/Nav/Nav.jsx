@@ -4,6 +4,9 @@ import { Disclosure, Menu, Transition, Popover } from '@headlessui/react';
 import {
   Bars3Icon,
   XMarkIcon,
+  ArrowRightOnRectangleIcon,
+  UserIcon,
+  Cog6ToothIcon,
 } from '@heroicons/react/24/outline';
 import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid'
 import { Context } from '../GlobalInfo';
@@ -59,15 +62,15 @@ export default function Nav() {
   
   const userNavigation = [
     { name: 'Se connecter', link: <Link to="/login">Se connecter</Link>, status: 'not connected',role:'user'},
-    { name: 'Votre Profil', link: <Link to="/myprofile">Votre Profil</Link>, status: 'connected', role:'user'},
-    { name: 'Administration', link: <Link to="/admin">Administration</Link>, status: 'connected', role:'admin'},
-    { name: 'Déconnexion', link: <a href="#" onClick={logOut} className="btn btn-primary">Se deconnecter</a>, status: 'connected'},
+    { name: 'Votre Profil', link: <Link to="/myprofile" className="dropdown-item"><UserIcon className="dropdown-item-icon" />Votre Profil</Link>, status: 'connected', role:'user'},
+    { name: 'Administration', link: <Link to="/admin" className="dropdown-item"><Cog6ToothIcon className="dropdown-item-icon" />Administration</Link>, status: 'connected', role:'admin'},
+    { name: 'Déconnexion', link: <a href="#" onClick={logOut} className="disconnect-link"><ArrowRightOnRectangleIcon className="disconnect-icon" />Se deconnecter</a>, status: 'connected'},
   ]
 
   const communitySubMenu = [
     { name: 'Evenements', link: <Link to="/events">Evenements</Link>, icon: EventIcon },
     { name: 'Classements & Joueurs', link: <Link to="/players">Classements & Joueurs</Link>, icon: LeaderboardIcon },
-    { name: 'Discord', link: <Link to={{ pathname: "https://discord.com/invite/kZyA5UgusJ" }}>Discord</Link>, icon: DiscordIcon },
+    { name: 'Discord', link: <Link to={{ pathname: "https://discord.gg/FEMtGpTcz9" }}>Discord</Link>, icon: DiscordIcon },
   ]
 
   function classNames(...classes) {
@@ -79,7 +82,7 @@ export default function Nav() {
 
     if( (e.target.querySelector('a').innerHTML == "Discord")){
       // Lorsqu'il s'agit d'un lien non interne, j'ouvre celui-ci à l'aide du Javascript sur un autre tab
-      window.open("https://discord.com/invite/kZyA5UgusJ", '_blank');
+      window.open("https://discord.gg/FEMtGpTcz9", '_blank');
     }else{
       navigate(e.target.querySelector("a").getAttribute( "href" ))
     }

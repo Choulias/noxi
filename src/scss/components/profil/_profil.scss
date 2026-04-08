@@ -8,10 +8,19 @@
 
     h2{
         @apply mt-10 mb-5;
-    }
+        width: fit-content;
+        padding-bottom: 8px;
+        position: relative;
 
-    .title-border{
-        @apply w-[173px];
+        &::after{
+            content: '';
+            display: block;
+            width: 100%;
+            height: 3px;
+            margin-top: 8px;
+            border-radius: 9999px;
+            background: linear-gradient(45deg, $main, $secondary);
+        }
     }
 
     .profile-board{
@@ -33,7 +42,7 @@
                     h3{
                         @apply font-medium font-sans text-4xl mb-1;
                     }
-    
+
                     span{
                         @apply font-extralight italic;
                     }
@@ -47,12 +56,225 @@
                     }
 
                     .barre{
-                        @apply bg-white bg-opacity-20 relative w-64 h-2 rounded-full;
+                        @apply bg-white bg-opacity-20 relative w-64 h-2 rounded-full cursor-pointer;
 
                         .filled{
-                            @apply absolute top-0 left-0 w-48 h-2 bg-gradient-to-r from-main to-secondary rounded-full;
+                            @apply absolute top-0 left-0 h-2 bg-gradient-to-r from-main to-secondary rounded-full;
+                            transition: width 0.5s ease;
+                        }
+
+                        .barre-tooltip{
+                            @apply absolute text-xs font-light rounded-lg px-3 py-1 pointer-events-none;
+                            bottom: calc(100% + 8px);
+                            left: 50%;
+                            transform: translateX(-50%);
+                            background: rgba(6, 18, 47, 0.9);
+                            border: 1px solid rgba(149, 253, 252, 0.2);
+                            color: $main;
+                            white-space: nowrap;
+                            opacity: 0;
+                            transition: opacity 0.2s ease;
+                        }
+
+                        &:hover .barre-tooltip{
+                            opacity: 1;
                         }
                     }
+                }
+            }
+
+            .friend-actions{
+                @apply flex flex-row gap-2 ml-auto items-center;
+
+                button, span{
+                    @apply flex items-center justify-center transition-all duration-300;
+                    width: 38px;
+                    height: 38px;
+                    border-radius: 50%;
+                    border: none;
+                    cursor: pointer;
+
+                    svg{ flex-shrink: 0; }
+                    &:disabled{ opacity: 0.5; cursor: not-allowed; }
+                }
+
+                .btn-add-friend{
+                    background: linear-gradient(45deg, $main, $secondary);
+                    color: $darker;
+
+                    &:hover{
+                        box-shadow: 0 0 20px rgba(149, 253, 252, 0.4);
+                        transform: scale(1.08);
+                    }
+                }
+
+                .btn-pending{
+                    background: rgba(255, 255, 255, 0.1);
+                    color: rgba(255, 255, 255, 0.4);
+                    cursor: default;
+                }
+
+                .btn-friends-badge{
+                    background: rgba(149, 253, 252, 0.15);
+                    color: $main;
+                    border: 1px solid rgba(149, 253, 252, 0.3);
+                    cursor: default;
+                }
+
+                .btn-remove-friend{
+                    background: rgba(255, 100, 100, 0.1);
+                    color: rgba(255, 150, 150, 0.8);
+                    border: 1px solid rgba(255, 100, 100, 0.2);
+
+                    &:hover{
+                        background: rgba(255, 100, 100, 0.2);
+                        box-shadow: 0 0 15px rgba(255, 100, 100, 0.2);
+                        transform: scale(1.08);
+                    }
+                }
+
+                .btn-accept{
+                    background: linear-gradient(45deg, $main, $secondary);
+                    color: $darker;
+
+                    &:hover{
+                        box-shadow: 0 0 15px rgba(149, 253, 252, 0.3);
+                        transform: scale(1.08);
+                    }
+                }
+
+                .btn-reject{
+                    background: rgba(255, 255, 255, 0.1);
+                    color: rgba(255, 255, 255, 0.6);
+
+                    &:hover{
+                        background: rgba(255, 255, 255, 0.2);
+                        transform: scale(1.08);
+                    }
+                }
+            }
+
+            // Edit icon button (top right of banner)
+            .btn-profile-edit-icon{
+                @apply flex items-center justify-center ml-auto cursor-pointer transition-all duration-300;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                background: rgba(255, 255, 255, 0.06);
+                color: rgba(255, 255, 255, 0.5);
+                flex-shrink: 0;
+
+                &:hover{
+                    color: $main;
+                    border-color: rgba(149, 253, 252, 0.3);
+                    background: rgba(149, 253, 252, 0.08);
+                    transform: scale(1.08);
+                }
+            }
+
+            // Save/Cancel icons when editing
+            .profile-edit-actions-inline{
+                @apply flex gap-2 ml-auto;
+
+                button{
+                    @apply flex items-center justify-center cursor-pointer transition-all duration-300;
+                    width: 38px;
+                    height: 38px;
+                    border-radius: 50%;
+                    border: none;
+                    flex-shrink: 0;
+                }
+
+                .btn-save-icon{
+                    background: linear-gradient(45deg, $main, $secondary);
+                    color: $darker;
+                    &:hover{ box-shadow: 0 0 15px rgba(149, 253, 252, 0.3); transform: scale(1.08); }
+                }
+
+                .btn-cancel-icon{
+                    background: rgba(255, 255, 255, 0.1);
+                    color: rgba(255, 255, 255, 0.6);
+                    &:hover{ background: rgba(255, 255, 255, 0.2); transform: scale(1.08); }
+                }
+            }
+        }
+
+        /* profile-edit-form removed — replaced by inline editing */
+
+        .profile-age{
+            @apply mt-2 text-sm;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .empty-state{
+            @apply font-light italic text-sm;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        // Inline edit styles
+        .inline-edit-name{
+            @apply text-4xl font-medium font-sans text-white mb-1;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(149, 253, 252, 0.3);
+            border-radius: 10px;
+            padding: 4px 12px;
+            outline: none;
+            width: 100%;
+
+            &:focus{ border-color: $main; }
+        }
+
+        .inline-edit-bio{
+            @apply w-full font-light font-sans text-white text-sm;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            padding: 10px 14px;
+            outline: none;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+
+            &:focus{ border-color: $main; }
+            &::placeholder{ color: rgba(255, 255, 255, 0.25); }
+        }
+
+        .inline-edit-age{
+            @apply flex items-center gap-3 mt-3;
+
+            label{
+                @apply text-sm font-light;
+                color: rgba(255, 255, 255, 0.5);
+            }
+
+            input{
+                @apply text-sm text-white font-light;
+                width: 80px;
+                padding: 4px 10px;
+                border-radius: 8px;
+                background: rgba(255, 255, 255, 0.06);
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                outline: none;
+
+                &:focus{ border-color: $main; }
+            }
+        }
+
+        // Footer with logout
+        .profile-footer{
+            @apply flex justify-center pt-8 mt-4;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+
+            .btn-profile-logout{
+                @apply flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium cursor-pointer;
+                background: rgba(255, 255, 255, 0.07);
+                color: rgba(255, 255, 255, 0.6);
+                border: none;
+                transition: background 0.3s ease, color 0.3s ease;
+
+                &:hover{
+                    background: rgba(255, 100, 100, 0.12);
+                    color: rgba(255, 150, 150, 0.9);
                 }
             }
         }
@@ -87,13 +309,33 @@
                     }
 
                     .history-container{
-                        @apply  w-full bg-transparent h-96 overflow-y-auto pr-4;
+                        @apply w-full bg-transparent h-96 overflow-y-auto overflow-x-hidden pr-4;
 
                         .history-bloc{
-                            @apply h-28 w-full rounded-3xl mb-4 bg-darker px-6 py-5 flex flex-row items-center;
-                            
+                            @apply w-full rounded-3xl mb-4 bg-darker px-6 py-5 flex flex-row items-center;
+                            min-height: 7rem;
+
+                            &.result-victory {
+                                border-left: 3px solid $main;
+                            }
+
+                            &.result-defeat {
+                                border-left: 3px solid rgba(255, 100, 100, 0.5);
+                            }
+
+                            &.result-draw {
+                                border-left: 3px solid rgba(255, 255, 255, 0.2);
+                            }
+
                             img{
                                 @apply w-16 h-16 rounded-full mr-5;
+                            }
+
+                            .history-game-icon{
+                                @apply w-16 h-16 rounded-full mr-5 flex items-center justify-center flex-shrink-0;
+                                background: linear-gradient(135deg, rgba(149, 253, 252, 0.1), rgba(254, 190, 253, 0.1));
+                                border: 1px solid rgba(255, 255, 255, 0.08);
+                                font-size: 1.5rem;
                             }
 
                             .subsub{
@@ -101,8 +343,10 @@
                             }
 
                             .history-lines{
+                                @apply min-w-0 flex-1;
+
                                 .top-line{
-                                    @apply mb-3 flex flex-row;
+                                    @apply mb-3 flex flex-row flex-wrap;
 
                                     p{
                                         @apply mr-6;
@@ -127,13 +371,13 @@
                                 }
 
                                 .bottom-line{
-                                    @apply flex flex-row;
+                                    @apply flex flex-row flex-wrap;
 
                                     .players-list{
-                                        @apply flex flex-row ml-2 mr-2; 
+                                        @apply flex flex-row flex-wrap ml-2 mr-2;
 
                                         li{
-                                            @apply mr-4 font-light;
+                                            @apply mr-3 font-light text-sm;
                                         }
 
                                         li::marker{
@@ -143,6 +387,50 @@
                                 }
                             }
                             
+                        }
+                    }
+                }
+            }
+
+            // Stats grid
+            .profile-stats {
+                @apply mb-14;
+
+                .subtitle-border {
+                    @apply w-[150px];
+                }
+
+                .stats-grid {
+                    @apply grid grid-cols-4 gap-4 mt-2;
+
+                    .stat-item {
+                        @apply flex flex-col items-center py-4 rounded-2xl;
+                        background: rgba(255, 255, 255, 0.04);
+                        border: 1px solid rgba(255, 255, 255, 0.06);
+                        transition: all 0.3s ease;
+
+                        &:hover {
+                            background: rgba(255, 255, 255, 0.06);
+                            transform: translateY(-2px);
+                        }
+
+                        .stat-value {
+                            @apply text-2xl font-bold mb-1;
+                            font-family: 'Quicksand', sans-serif;
+                            color: #fff;
+                        }
+
+                        .stat-label {
+                            @apply text-xs font-light;
+                            color: rgba(255, 255, 255, 0.45);
+                        }
+
+                        &.stat-win .stat-value {
+                            color: $main;
+                        }
+
+                        &.stat-loss .stat-value {
+                            color: $secondary;
                         }
                     }
                 }
@@ -175,6 +463,134 @@
 
                     .subtitle-border{
                         @apply w-[85px];
+                    }
+
+                    .badges-grid {
+                        @apply flex flex-wrap gap-3 mt-1;
+
+                        .badge-item {
+                            @apply flex flex-col items-center gap-1 py-3 px-4 rounded-xl;
+                            background: rgba(255, 255, 255, 0.04);
+                            border: 1px solid rgba(255, 255, 255, 0.06);
+                            cursor: default;
+                            transition: all 0.3s ease;
+                            min-width: 80px;
+
+                            &:hover {
+                                background: rgba(149, 253, 252, 0.06);
+                                border-color: rgba(149, 253, 252, 0.15);
+                                transform: translateY(-2px);
+                            }
+
+                            .badge-icon {
+                                font-size: 1.5rem;
+                            }
+
+                            .badge-name {
+                                @apply text-xs font-medium text-center;
+                                color: rgba(255, 255, 255, 0.7);
+                            }
+                        }
+                    }
+                }
+
+                .friend-requests-section{
+                    @apply mt-14;
+
+                    .subtitle-border{
+                        @apply w-[185px];
+                    }
+
+                    .requests-list{
+                        @apply flex flex-col gap-3;
+
+                        .request-item{
+                            @apply flex flex-row items-center justify-between p-3 rounded-2xl;
+                            background: rgba(255, 255, 255, 0.05);
+                            border: 1px solid rgba(255, 255, 255, 0.08);
+                            transition: background 0.3s ease;
+
+                            .request-user{
+                                @apply flex flex-row items-center gap-3 cursor-pointer;
+
+                                img{
+                                    @apply w-8 h-8 rounded-full;
+                                    background: linear-gradient(45deg, $main, $secondary);
+                                }
+
+                                span{
+                                    @apply text-sm font-light text-white;
+                                    transition: color 0.3s ease;
+                                }
+
+                                &:hover span{
+                                    color: $main;
+                                }
+                            }
+
+                            .request-actions{
+                                @apply flex flex-row gap-2;
+
+                                .btn-accept{
+                                    @apply px-4 py-1.5 rounded-full text-xs font-medium cursor-pointer transition-all duration-300;
+                                    background: linear-gradient(45deg, $main, $secondary);
+                                    color: $darker;
+
+                                    &:hover{
+                                        box-shadow: 0 0 12px rgba(149, 253, 252, 0.3);
+                                    }
+                                }
+
+                                .btn-reject{
+                                    @apply px-4 py-1.5 rounded-full text-xs font-medium cursor-pointer transition-all duration-300;
+                                    background: rgba(255, 255, 255, 0.08);
+                                    color: rgba(255, 255, 255, 0.6);
+
+                                    &:hover{
+                                        background: rgba(255, 255, 255, 0.15);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .friends-section{
+                    @apply mt-14;
+
+                    .subtitle-border{
+                        @apply w-[115px];
+                    }
+
+                    .friends-list{
+                        @apply flex flex-col gap-2 max-h-72 overflow-y-auto pr-2;
+
+                        .friend-item{
+                            @apply flex flex-row items-center gap-3 p-3 rounded-2xl cursor-pointer;
+                            background: rgba(255, 255, 255, 0.05);
+                            border: 1px solid rgba(255, 255, 255, 0.08);
+                            transition: all 0.3s ease;
+
+                            img{
+                                @apply w-8 h-8 rounded-full;
+                                background: linear-gradient(45deg, $main, $secondary);
+                            }
+
+                            span{
+                                @apply text-sm font-light text-white;
+                                transition: color 0.3s ease;
+                            }
+
+                            &:hover{
+                                background: rgba(149, 253, 252, 0.08);
+                                border-color: rgba(149, 253, 252, 0.2);
+                                box-shadow: 0 0 15px rgba(149, 253, 252, 0.05);
+
+                                span{
+                                    color: $main;
+                                }
+                            }
+                        }
                     }
                 }
             }

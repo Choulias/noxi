@@ -7,7 +7,7 @@ export default function Board() {
   let gameId = null;
   let playerColor = null;
 
-  let ws = new WebSocket("ws://localhost:9090");
+  let ws = new WebSocket(import.meta.env.VITE_WS_URL || "ws://localhost:9090");
 
   const[gameIdValue, setGameIdValue] = useState('');
 

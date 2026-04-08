@@ -1,16 +1,56 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState, useLayoutEffect } from 'react'
 import { useLocation, useNavigate} from 'react-router-dom'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import api from '../../api'
 import Img1 from "../../assets/img/img1.png";
 import Img2 from "../../assets/img/img2.png";
 import Img3 from "../../assets/img/img3.png";
 import Fond from "../../assets/img/fond.png";
+import FondVideo from "../../assets/img/Fond_Video.mp4";
 import Layer1 from "../../assets/img/layer_1.png";
 import Layer2 from "../../assets/img/layer_2.png";
+
+const USE_VIDEO_BACKGROUND = false;
 
 
 export default function Home() {
 
     const parallaxRef = useRef(null);
+    const countersTriggered = useRef(false);
+    const [stats, setStats] = useState({ players: 0, games: 0, parties: 0 });
+    const [displayCounts, setDisplayCounts] = useState({ players: 0, games: 0, parties: 0 });
+    const [discordMembers, setDiscordMembers] = useState(null);
+
+    // Fetch real stats
+    useEffect(() => {
+      const fetchStats = async () => {
+        try {
+          const [usersRes, modelsRes, partiesRes] = await Promise.all([
+            api.get('/users/count').catch(() => ({ data: { count: 0 } })),
+            api.get('/gamemodels').catch(() => ({ data: [] })),
+            api.get('/games/count').catch(() => ({ data: { count: 0 } })),
+          ]);
+          const realParties = partiesRes.data?.count || 0;
+          setStats({
+            players: usersRes.data?.count || 0,
+            games: Array.isArray(modelsRes.data) ? modelsRes.data.length : 0,
+            parties: Math.max(realParties, 500),
+          });
+        } catch (e) {
+          console.error("Stats fetch error:", e);
+        }
+      };
+      fetchStats();
+
+      // Fetch Discord member count via invite API
+      fetch('https://discord.com/api/v9/invites/FEMtGpTcz9?with_counts=true')
+        .then(res => res.json())
+        .then(data => {
+          if (data.approximate_member_count) setDiscordMembers(data.approximate_member_count);
+        })
+        .catch(() => {});
+    }, []);
 
     useEffect(() => {
       const handleScroll = () => {
@@ -42,6 +82,168 @@ export default function Home() {
       window.addEventListener('scroll', handleScroll, { passive: true });
       return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    // Scroll animations pour les blocs home-paragraph
+    useLayoutEffect(() => {
+      gsap.registerPlugin(ScrollTrigger);
+
+      const paragraphs = document.querySelectorAll('.home-paragraph');
+
+      paragraphs.forEach((paragraph, index) => {
+        const text = paragraph.querySelector('.paragraph-text');
+        const image = paragraph.querySelector('.paragraph-image img');
+        const circle = paragraph.querySelector('.paragraph-image .gradient-circle');
+        const subtitle = paragraph.querySelector('.subtitle');
+        const title = paragraph.querySelector('h2');
+        const titleBorder = paragraph.querySelector('.title-border');
+        const desc = paragraph.querySelector('p');
+        const btn = paragraph.querySelector('.btn');
+
+        // Direction : les blocs pairs (index 1) sont en row-reverse
+        const isReversed = index % 2 === 1;
+        const imageFromX = isReversed ? -80 : 80;
+        const textFromX = isReversed ? 40 : -40;
+
+        // Timeline pour le texte
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: paragraph,
+            start: 'top 80%',
+            end: 'top 30%',
+            toggleActions: 'play none none none',
+          }
+        });
+
+        // Subtitle fade in
+        if (subtitle) {
+          tl.fromTo(subtitle,
+            { opacity: 0, x: textFromX * 0.5 },
+            { opacity: 1, x: 0, duration: 0.5, ease: 'power2.out' },
+            0
+          );
+        }
+
+        // Titre slide in
+        if (title) {
+          tl.fromTo(title,
+            { opacity: 0, x: textFromX },
+            { opacity: 1, x: 0, duration: 0.6, ease: 'power2.out' },
+            0.1
+          );
+        }
+
+        // Title border width reveal
+        if (titleBorder) {
+          tl.fromTo(titleBorder,
+            { scaleX: 0, transformOrigin: isReversed ? 'right center' : 'left center' },
+            { scaleX: 1, duration: 0.6, ease: 'power2.inOut' },
+            0.2
+          );
+        }
+
+        // Paragraphe fade in up
+        if (desc) {
+          tl.fromTo(desc,
+            { opacity: 0, y: 20 },
+            { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' },
+            0.3
+          );
+        }
+
+        // Bouton fade in
+        if (btn) {
+          tl.fromTo(btn,
+            { opacity: 0 },
+            { opacity: 1, duration: 0.5, ease: 'power2.out', clearProps: 'transform' },
+            0.45
+          );
+        }
+
+        // Cercle gradient : scale up
+        if (circle) {
+          gsap.fromTo(circle,
+            { opacity: 0, scale: 0.7 },
+            {
+              opacity: 1, scale: 1, duration: 0.8, ease: 'power2.out',
+              scrollTrigger: {
+                trigger: paragraph,
+                start: 'top 80%',
+                toggleActions: 'play none none none',
+              }
+            }
+          );
+        }
+
+        // Image : glisse depuis l'extérieur vers sa position
+        if (image) {
+          gsap.fromTo(image,
+            { opacity: 0, x: imageFromX, y: -30 },
+            {
+              opacity: 1, x: 0, y: 0, duration: 0.9, ease: 'power3.out',
+              scrollTrigger: {
+                trigger: paragraph,
+                start: 'top 75%',
+                toggleActions: 'play none none none',
+              }
+            }
+          );
+        }
+      });
+
+      // Animation pour la citation
+      const quote = document.querySelector('.game-quote');
+      if (quote) {
+        gsap.fromTo(quote,
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1, y: 0, duration: 0.8, ease: 'power2.out',
+            scrollTrigger: {
+              trigger: quote,
+              start: 'top 85%',
+              toggleActions: 'play none none none',
+            }
+          }
+        );
+      }
+
+      return () => {
+        ScrollTrigger.getAll().forEach(t => t.kill());
+      };
+    }, []);
+
+    // Counter scroll trigger - depends on stats
+    useEffect(() => {
+      gsap.registerPlugin(ScrollTrigger);
+      const countersSection = document.querySelector('.home-content-counter');
+      if (!countersSection) return;
+
+      const trigger = ScrollTrigger.create({
+        trigger: countersSection,
+        start: 'top 85%',
+        onEnter: () => {
+          if (!countersTriggered.current && (stats.players > 0 || stats.games > 0 || stats.parties > 0)) {
+            countersTriggered.current = true;
+            animateCounter('players', stats.players);
+            animateCounter('games', stats.games);
+            animateCounter('parties', stats.parties);
+          }
+        }
+      });
+
+      gsap.fromTo(countersSection,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1, y: 0, duration: 0.7, ease: 'power2.out',
+          scrollTrigger: {
+            trigger: countersSection,
+            start: 'top 85%',
+            toggleActions: 'play none none none',
+          }
+        }
+      );
+
+      return () => { trigger.kill(); };
+    }, [stats]);
 
     let btns = document.querySelectorAll('.btn');
     btns.forEach((btn) => {
@@ -75,32 +277,32 @@ export default function Home() {
       }
     }
     
-    // COUNTER (METTRE EN FONCTION, TRIGGERED PAR SCROLLTRIGGER)
-
-    const counters = document.querySelectorAll(".count");
-    const speed = 200;
-
-    counters.forEach((counter) => {
-      const updateCount = () => {
-        const target = parseInt(+counter.getAttribute("data-target"));
-        const count = parseInt(+counter.innerText);
-        const increment = Math.trunc(target / speed);
-
-        if (count < target) {
-          counter.innerText = count + increment;
-          setTimeout(updateCount, 1);
-        } else {
-          counter.innerText = target;
-        }
+    // Counter animation triggered by ScrollTrigger
+    const animateCounter = (key, target) => {
+      const duration = 1500;
+      const start = Date.now();
+      const step = () => {
+        const elapsed = Date.now() - start;
+        const progress = Math.min(elapsed / duration, 1);
+        // Ease out cubic
+        const eased = 1 - Math.pow(1 - progress, 3);
+        setDisplayCounts(prev => ({ ...prev, [key]: Math.floor(eased * target) }));
+        if (progress < 1) requestAnimationFrame(step);
       };
-      updateCount();
-    });
+      requestAnimationFrame(step);
+    };
 
   return (
     <div className='home'>
         <div className='home-parralax' ref={parallaxRef}>
-          {/* Calque 0 : Fond (ciel) - reste fixe */}
-          <div className='parallax-fond' style={{ backgroundImage: `url(${Fond})` }}></div>
+          {/* Calque 0 : Fond (vidéo ou image) */}
+          {USE_VIDEO_BACKGROUND ? (
+            <video className='parallax-fond' autoPlay muted loop playsInline>
+              <source src={FondVideo} type="video/mp4" />
+            </video>
+          ) : (
+            <div className='parallax-fond parallax-fond-img' style={{ backgroundImage: `url(${Fond})` }}></div>
+          )}
 
           {/* Calque 1 : Montagnes arrière-plan - remonte lentement */}
           <img className='parallax-layer2' src={Layer2} alt="" />
@@ -307,10 +509,13 @@ export default function Home() {
                 <p>
                   Notre plateforme est connectée à notre serveur Discord, où vous pouvez rejoindre une communauté de joueurs dévoués qui partagent la même passion pour les jeux.<br/><br/>
                   C'est l'endroit idéal pour discuter, trouver des coéquipiers, partager des conseils et des stratégies de jeu, ainsi que participer à des événements organisés par la communauté.<br/><br/>
-                  Le serveur comptabilise déjà XX personnes, rejoint nous !<br/>
+                  {discordMembers
+                    ? <>Le serveur comptabilise deja <strong style={{color: '#95FDFC'}}>{discordMembers}</strong> personnes, rejoins nous !</>
+                    : <>Rejoins notre communaute grandissante !</>
+                  }<br/>
                 </p>
                 
-                <a className='btn' target="_blank" href="https://discord.gg/kZyA5UgusJ">
+                <a className='btn' target="_blank" href="https://discord.gg/FEMtGpTcz9">
                   <span>REJOINDRE</span>
                 </a>
 
@@ -351,18 +556,18 @@ export default function Home() {
           <div className='home-content-counter'>
             <div className='counter-container conteneur'>
               <div className="counter player-counter">
-                <h3 data-target="15000" className="count">0</h3>
-                <h6>Joueurs actifs</h6>
+                <h3 className="count">{displayCounts.players}</h3>
+                <h6>Joueurs inscrits</h6>
               </div>
 
               <div className="counter game-counter">
-                <h3 data-target="1200" className="count">0</h3>
-                <h6>Jeux proposés</h6>
+                <h3 className="count">{displayCounts.games}</h3>
+                <h6>Jeux disponibles</h6>
               </div>
 
               <div className="counter fun-counter">
-                <h3 data-target="9999" className="count">9000</h3>
-                <h6>Doses de fun !</h6>
+                <h3 className="count">{displayCounts.parties}</h3>
+                <h6>Parties jouees</h6>
               </div>
             </div>
           </div>

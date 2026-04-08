@@ -18,3 +18,13 @@ export const getTicTacToeGameInfo =  (gameId, playersLimit, squares, state) => {
         "state": state
     }
 }
+
+export const getMascaradeGameInfo = (gameId, playersLimit, engine) => {
+    return {
+        "id": gameId,
+        "model": "mascarade",
+        "playersLimit": playersLimit,
+        "clients": [],
+        "engine": engine
+    }
+}

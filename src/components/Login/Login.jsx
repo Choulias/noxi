@@ -12,15 +12,8 @@ export default function Login() {
   const [state, setState] = useContext(Context);
   
   useEffect(() => {
-    let header = document.querySelector(".header-navbar");
-    let footer = document.querySelector('footer')
-    if(header){
-      header.style.display = "none"
-    }
-    if(footer){
-      footer.style.display = 'none'
-    }
-    
+    document.body.classList.add('auth-page');
+
     if(!user && state.userInfo.connected !== 0){
       setState({ userInfo: {
         connected : 0,
@@ -33,12 +26,7 @@ export default function Login() {
     }
 
     return () => {
-      if(header){
-        header.style.display = "block"
-      }
-      if(footer){
-        footer.style.display = 'block'
-      }
+      document.body.classList.remove('auth-page');
     };
   }, []);
   
@@ -50,18 +38,27 @@ export default function Login() {
 
   const onLogInClicked = async (e) => {
     e.preventDefault();
-    const res = await api.post('/users/login',{
-      mail: mailValue,
-      password: passwordValue
-    });
-    
-    if(res.data.message){
-      // console.log(res.data.message);
-    }else{
-      const { token } = res.data;
-      setToken(token);
-      window.location.reload();
-      navigate('/myprofile');
+    setErrorMessage('');
+    try {
+      const res = await api.post('/users/login',{
+        mail: mailValue,
+        password: passwordValue
+      });
+
+      if(res.data.message){
+        setErrorMessage("Email ou mot de passe incorrect");
+      }else{
+        const { token } = res.data;
+        setToken(token);
+        window.location.reload();
+        navigate('/myprofile');
+      }
+    } catch (err) {
+      if (err.response?.status === 401) {
+        setErrorMessage("Email ou mot de passe incorrect");
+      } else {
+        setErrorMessage("Erreur de connexion au serveur");
+      }
     }
   }
 

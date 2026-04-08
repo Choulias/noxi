@@ -1,4 +1,4 @@
- // TIC-TAC-TOE --------------------------------------------------------
+// TIC-TAC-TOE --------------------------------------------------------
 #tic-tac-toe {
     border-spacing: 0px;
     border-collapse: separate;
@@ -10,29 +10,42 @@
         height: 100px;
         width: 100px;
         text-align: center;
+        font-size: 2rem;
+        font-weight: 700;
+        font-family: 'Quicksand', sans-serif;
+        transition: background 0.2s ease;
+        cursor: default;
+
+        &.clickable{
+            cursor: pointer;
+
+            &:hover{
+                background: rgba(255, 255, 255, 0.05);
+            }
+        }
     }
-  
+
     tr:first-child td {
         border-top: none
     }
-  
+
     tr:last-child td {
         border-bottom: none
     }
-    
+
     tr td:first-child {
         border-left: none;
     }
-  
+
     tr td:last-child {
         border-right: none;
     }
-    
+
     td.X {
         color: $secondary;
         @apply bg-secondary bg-opacity-10;
     }
-  
+
     td.O {
         color: $main;
         @apply bg-main bg-opacity-10;
@@ -45,7 +58,7 @@
     #square_2{
         @apply rounded-tr-lg;
     }
-  
+
     #square_6{
         @apply rounded-bl-lg;
     }
@@ -55,88 +68,133 @@
     }
 }
 
-#scoreboard .score {
-    text-align: center;
-    font-size: 30px
-}
-
-#scoreboard .score#player1 {
-    color: $secondary;
-}
-
-#scoreboard .score#player2 {
-    color: $main;
-}
-
-
 .board{
     @apply relative z-10;
 
     #oxoBoard{
         @apply relative bg-white bg-opacity-[0.07] mb-12 mt-12 rounded-3xl p-8 min-h-[600px] h-[600px] flex flex-row;
-        
+
         .boardinfo{
             @apply flex flex-col justify-between border-r-2 border-white border-opacity-[0.07] pr-10;
-            
+
             .players{
                 @apply w-[220px];
-    
+
                 h4{
                     @apply text-center w-full mb-4 text-xl;
+                    font-family: 'Quicksand', sans-serif;
                 }
-    
+
                 #divPlayers{
-                    @apply relative bg-transparent flex flex-col items-center;
+                    @apply relative bg-transparent flex flex-col items-center gap-2;
                 }
             }
 
             .boardbuttons{
-                @apply flex flex-col;
+                @apply flex flex-col gap-3;
 
                 .copy-btn{
-                    @apply inline-flex w-full px-3 py-2 text-sm font-semibold text-white shadow-sm hover:text-main sm:w-auto mb-4;
+                    @apply inline-flex items-center w-full px-4 py-2 text-sm font-medium rounded-full transition-all duration-300 cursor-pointer;
+                    background: rgba(255, 255, 255, 0.08);
+                    color: rgba(255, 255, 255, 0.7);
+                    border: 1px solid rgba(255, 255, 255, 0.12);
 
                     svg{
-                        @apply mr-3;
-                        fill: white;
+                        @apply mr-3 flex-shrink-0;
+                        stroke: currentColor;
                     }
 
                     &:hover{
-
-                        svg{
-                            // stroke: $main;
-                            fill: $main;
-                        }
+                        color: $main;
+                        border-color: rgba(149, 253, 252, 0.3);
+                        background: rgba(149, 253, 252, 0.08);
                     }
                 }
 
+                .quit-btn{
+                    @apply w-full px-4 py-2 text-sm font-medium rounded-full transition-all duration-300 cursor-pointer text-center;
+                    background: rgba(255, 100, 100, 0.1);
+                    color: rgba(255, 150, 150, 0.8);
+                    border: 1px solid rgba(255, 100, 100, 0.2);
+
+                    &:hover{
+                        background: rgba(255, 100, 100, 0.2);
+                        box-shadow: 0 0 15px rgba(255, 100, 100, 0.15);
+                    }
+                }
             }
         }
 
         .boardholder{
-            @apply relative w-full flex flex-col items-center h-full overflow-hidden;
-    
-            #placeholder{
-                @apply invisible;
-            }
-    
+            @apply relative w-full flex flex-col items-center justify-center h-full overflow-hidden;
+
             #waitholder{
-                @apply flex flex-col items-center pt-40;
-    
-                span{
-                    @apply font-medium text-lg;
+                @apply flex flex-col items-center;
+
+                .oxo-waiting-text{
+                    @apply font-medium text-lg mb-6;
+                    color: rgba(255, 255, 255, 0.6);
+                    animation-name: oxoWaitPulse;
+                    animation-duration: 2s;
+                    animation-timing-function: ease-in-out;
+                    animation-iteration-count: infinite;
                 }
             }
 
             .alert{
-                @apply invisible mt-8 text-xl font-title font-medium;
-                
+                @apply mt-8 text-xl font-medium text-center;
+                font-family: 'Quicksand', sans-serif;
+
                 #winnerAlert{
                     @apply text-center mt-2 text-base;
+                    min-height: 24px;
                 }
-            
             }
-            
         }
     }
+}
+
+// --- Player cards (JSX version) ---
+.oxo-player{
+    @apply w-[220px] flex items-center justify-between px-5 py-2.5 rounded-full mb-0;
+    transition: background 0.3s ease;
+
+    &--primary{
+        background: #061A4A;
+    }
+
+    &--secondary{
+        background: transparent;
+    }
+
+    &__left{
+        @apply flex items-center;
+    }
+
+    &__avatar{
+        @apply w-10 h-10 rounded-full mr-3;
+        background: linear-gradient(135deg, rgba(149, 253, 252, 0.2), rgba(254, 190, 253, 0.2));
+    }
+
+    &__info{
+        @apply flex flex-col;
+    }
+
+    &__name{
+        @apply text-base font-medium text-white;
+        font-family: 'Quicksand', sans-serif;
+    }
+
+    &__score{
+        @apply text-xs font-light;
+    }
+
+    &__dot{
+        @apply w-3.5 h-3.5 rounded-full flex-shrink-0;
+    }
+}
+
+@keyframes oxoWaitPulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
 }

@@ -24,6 +24,10 @@ const Game = db.define('ncs_games',{
     },
     reach:{
         type: DataTypes.STRING
+    },
+    gameMode:{
+        type: DataTypes.STRING,
+        defaultValue: 'classique'
     }
 },{
     freezeTableName: true

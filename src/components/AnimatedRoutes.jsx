@@ -1,42 +1,50 @@
+import { lazy, Suspense } from 'react';
 import { Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from 'framer-motion';
 import PageTransition from './PageTransition';
 import HomeTransition from './HomeTransition';
 
+// Keep light imports direct
 import Home from "./Home/Home";
-import Support from "./Support/Support";
-import Games from './Games/Games';
-import Profile from "./Profile/Profile";
-import UserProfile from './Profile/UserProfile';
-import Admin from './Admin/Admin';
-import NotFound from './404/404';
 import Login from './Login/Login';
 import SignUp from './Login/SignUp';
+import NotFound from './404/404';
 import PleaseVerifyEmail from './Email/PleaseVerifyEmail';
 import { EmailVerificationLandingPage } from './Email/EmailVerificationLanding';
 import ForgotPassword from './Login/ForgotPassword';
 import { PrivateRoute } from './Auth/PrivateRoute';
 import { RedirectRoute } from './Auth/redirectRoute';
-import Board from './Games/Board';
-import TicTacToe from './Games/TicTacToe';
 import { AdminRoute } from './Auth/AdminRoute';
-import PlayersList from './Admin/PlayersList/PlayersList';
-import GameModelsList from './Admin/GamesList/GameModelsList';
-import EventsList from './Admin/EventsList/EventsList';
-import Events from './Community/Events/Events';
-import Gamers from './Community/Gamers/Gamers';
+
+// Lazy load heavy components
+const Games = lazy(() => import('./Games/Games'));
+const TicTacToe = lazy(() => import('./Games/TicTacToe'));
+const Mascarade = lazy(() => import('./Games/Mascarade/Mascarade'));
+const Board = lazy(() => import('./Games/Board'));
+const Events = lazy(() => import('./Community/Events/Events'));
+const Gamers = lazy(() => import('./Community/Gamers/Gamers'));
+const Profile = lazy(() => import('./Profile/Profile'));
+const UserProfile = lazy(() => import('./Profile/UserProfile'));
+const Admin = lazy(() => import('./Admin/Admin'));
+const Support = lazy(() => import('./Support/Support'));
 
 export default function AnimatedRoutes() {
   const location = useLocation();
 
   return (
     <AnimatePresence mode="wait">
+      <Suspense fallback={<div style={{ display: 'flex', justifyContent: 'center', padding: '100px 0' }}><div className="noxi-spinner"><div className="spinner-ring"><div className="ring"></div></div></div></div>}>
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<HomeTransition><Home/></HomeTransition>} />
         <Route path="/games" element={<PageTransition><Games/></PageTransition>} />
         <Route path="/tictactoe" element={<PageTransition><TicTacToe/></PageTransition>} />
         <Route path="/tictactoe/:id" element={<PageTransition><TicTacToe/></PageTransition>} />
         <Route path="/tictactoe/:reach/:numberplayers" element={<PageTransition><TicTacToe/></PageTransition>} />
+
+        <Route path="/mascarade" element={<PageTransition><Mascarade/></PageTransition>} />
+        <Route path="/mascarade/:id" element={<PageTransition><Mascarade/></PageTransition>} />
+        <Route path="/mascarade/:reach/:numberplayers" element={<PageTransition><Mascarade/></PageTransition>} />
+        <Route path="/mascarade/:reach/:numberplayers/:mode" element={<PageTransition><Mascarade/></PageTransition>} />
 
         <Route path="/events" element={<PageTransition><Events/></PageTransition>} />
         <Route path="/events/:model" element={<PageTransition><Events/></PageTransition>} />
@@ -64,15 +72,15 @@ export default function AnimatedRoutes() {
         <Route exact path='/profile/:username' element={<PageTransition><Profile/></PageTransition>}/>
 
         <Route exact path='/admin' element={<AdminRoute/>}>
-          <Route exact path='/admin' element={<PageTransition><Admin/></PageTransition>}>
-            <Route path="/admin/players" element={<PlayersList/>} />
-            <Route path="/admin/games" element={<GameModelsList/>} />
-            <Route path="/admin/events" element={<EventsList/>} />
-          </Route>
+          <Route exact path='/admin' element={<PageTransition><Admin/></PageTransition>} />
+        </Route>
+        <Route path='/admin/*' element={<AdminRoute/>}>
+          <Route path='*' element={<PageTransition><Admin/></PageTransition>} />
         </Route>
 
         <Route path="*" element={<PageTransition><NotFound/></PageTransition>} />
       </Routes>
+      </Suspense>
     </AnimatePresence>
   );
 }

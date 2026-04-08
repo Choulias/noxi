@@ -48,25 +48,30 @@ export default function SignUp() {
 
   const onSignUpClicked = async (e) => {
     e.preventDefault();
-    const res = await api.post('/users',{
-        username: usernameValue,
-        password: passwordValue,
-        mail: mailValue,
-        role: "", 
-        status: "",
-        // verificationString: ""
-    });
+    setErrorMessage('');
+    try {
+      const res = await api.post('/users',{
+          username: usernameValue,
+          password: passwordValue,
+          mail: mailValue,
+          role: "",
+          status: "",
+          // verificationString: ""
+      });
 
-    if(res.data.message){
-      // console.log(res.data);
-    }else{
-      const { token } = res.data;
-      setToken(token);
-      const encodedPayload = token.split('.')[1];
-      const user = JSON.parse(atob(encodedPayload));
-      savePlayerProfile(user);
-      savePlayerScores(user);
-      navigate("/please-verify");
+      if(res.data.message){
+        setErrorMessage(res.data.message);
+      }else{
+        const { token } = res.data;
+        setToken(token);
+        const encodedPayload = token.split('.')[1];
+        const user = JSON.parse(atob(encodedPayload));
+        savePlayerProfile(user);
+        savePlayerScores(user);
+        navigate("/please-verify");
+      }
+    } catch (err) {
+      setErrorMessage(err.response?.data?.message || "Erreur lors de l'inscription");
     }
   }
 
@@ -75,6 +80,7 @@ export default function SignUp() {
       <form className="Auth-form">
         <div className="Auth-form-content">
           <h3 className="Auth-form-title">S'inscrire</h3>
+          {errorMessage && <div className="fail">{errorMessage}</div>}
           <div className="form-group">
             <label>Nom d'utilisateur : </label>
             <input

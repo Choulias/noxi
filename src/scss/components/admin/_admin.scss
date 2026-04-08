@@ -1,82 +1,349 @@
-.admin{
-    @apply relative mb-20 z-10;
+.admin {
+  @apply relative mb-20 z-10;
 
-    h2{
-        @apply mt-10 mb-5;
+  h2 {
+    @apply mt-10 mb-5;
+  }
+
+  .title-border {
+    @apply w-[110px];
+  }
+
+  .admin-filter {
+    @apply mb-8 flex flex-wrap gap-2 items-center;
+
+    a, button {
+      @apply inline-flex justify-center rounded-full px-5 py-1.5 text-sm font-semibold text-white cursor-pointer;
+      background: rgba(255, 255, 255, 0.07);
+      border: none;
+      transition: all 0.3s ease;
     }
 
-    .title-border{
-        @apply w-[110px];
+    .active {
+      background: linear-gradient(45deg, $main, $secondary);
+      @apply text-darker;
     }
-
-    .admin-filter{
-        @apply mb-8;
-
-        a{
-            @apply inline-flex w-full justify-center rounded-full bg-white bg-opacity-[0.07] px-8 py-2 text-sm font-semibold text-white shadow-sm sm:w-auto mr-3;
-            
-            &:hover{
-                background: rgb(149,253,252);
-                background: linear-gradient(45deg, rgba(149,253,252,1) 0%, rgba(254,190,253,1) 100%);
-                @apply text-darker;
-            }
-        }
-
-        .active{
-            background: rgb(149,253,252);
-            background: linear-gradient(45deg, rgba(149,253,252,1) 0%, rgba(254,190,253,1) 100%);
-            @apply text-darker;
-        }
-    }
-
-    
-    .admin-btn{
-        @apply border-none outline-none relative w-8 h-8 font-sans font-medium text-darker;
-    
-        background: linear-gradient(45deg, $main 0%, $secondary 60%);
-        background-size: 200% 100%;
-        border-radius: 100px;
-        transition: .3s;
-    
-        &:hover {
-            @apply text-darker;
-            animation: btanimation 3s linear infinite;
-        }
-    
-    
-        @keyframes btanimation {
-            0% {
-                background-position: 0 0;
-            }
-    
-            50% {
-                background-position: 100% 0;
-            }
-    
-            100% {
-                background-position: 0 0;
-            }
-        }
-    }
-
-    .delete-btn{
-        @apply w-8 h-8;
-    }
-    
-    .add-group{
-        @apply mt-6;
-
-        .add-btn{
-            @apply w-12 h-12 mr-3 font-semibold text-xl;
-        }
-    }
-   
+  }
 }
 
-.admin-table{
-    color: white !important;
-    .MuiDataGrid-cellContent{
-        color: white !important;
+// --- Custom glassy admin tables ---
+.admin-table-custom {
+  @apply rounded-2xl p-6;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+
+  .admin-table-header {
+    @apply flex items-center justify-between mb-5;
+
+    h3 {
+      @apply text-lg font-title font-semibold text-white;
     }
+
+    .admin-table-header-actions {
+      @apply flex items-center gap-3;
+    }
+  }
+
+  .admin-search {
+    @apply rounded-full px-4 py-2 text-sm font-sans text-white;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    outline: none;
+    min-width: 200px;
+    transition: all 0.3s;
+
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    &:focus {
+      border-color: rgba(149, 253, 252, 0.4);
+      box-shadow: 0 0 12px rgba(149, 253, 252, 0.1);
+    }
+  }
+
+  .admin-add-btn {
+    @apply rounded-full px-5 py-2 text-sm font-semibold text-darker transition-all duration-300;
+    background: linear-gradient(45deg, $main, $secondary);
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(149, 253, 252, 0.3);
+    }
+  }
+
+  .admin-table-wrap {
+    @apply overflow-x-auto rounded-xl;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+
+    table {
+      @apply w-full;
+      border-collapse: collapse;
+    }
+
+    thead th {
+      @apply text-left text-xs font-sans font-semibold uppercase tracking-wider py-3 px-4 cursor-pointer select-none;
+      color: rgba(255, 255, 255, 0.45);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      transition: color 0.2s;
+      white-space: nowrap;
+
+      &:hover {
+        color: rgba(149, 253, 252, 0.7);
+      }
+
+      .sort-icon {
+        @apply ml-1 text-xs;
+        color: $main;
+      }
+    }
+
+    tbody {
+      tr {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        transition: background 0.2s;
+
+        &:hover { background: rgba(255, 255, 255, 0.03); }
+        &:last-child { border-bottom: none; }
+      }
+
+      td {
+        @apply py-3 px-4 text-sm font-sans text-white;
+      }
+    }
+  }
+
+  .cell-id {
+    color: rgba(255, 255, 255, 0.35);
+    @apply text-xs;
+    font-family: ui-monospace, SFMono-Regular, monospace;
+  }
+
+  .cell-muted { color: rgba(255, 255, 255, 0.5); }
+  .cell-bold { @apply font-semibold; }
+
+  .cell-desc {
+    color: rgba(255, 255, 255, 0.55);
+    max-width: 250px;
+    @apply truncate;
+  }
+
+  .cell-center { @apply text-center; }
+
+  .cell-user {
+    @apply flex items-center gap-3;
+    .cell-avatar {
+      @apply w-8 h-8 rounded-full;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    &.cell-user-link {
+      @apply cursor-pointer;
+      span {
+        @apply transition-colors duration-200;
+        &:hover { color: $main; }
+      }
+    }
+  }
+
+  .cell-actions { @apply flex gap-2 justify-end; }
+
+  .empty-row {
+    @apply text-center py-8;
+    color: rgba(255, 255, 255, 0.25);
+  }
+
+  .status-badge {
+    @apply inline-block px-3 py-0.5 rounded-full text-xs font-semibold;
+    &.verified { background: rgba(107, 203, 119, 0.15); color: #6BCB77; }
+    &.pending { background: rgba(255, 179, 71, 0.15); color: #FFB347; }
+  }
+
+  .slug-badge {
+    @apply inline-block px-2.5 py-0.5 rounded-md text-xs;
+    font-family: ui-monospace, SFMono-Regular, monospace;
+    background: rgba(149, 253, 252, 0.08);
+    color: rgba(149, 253, 252, 0.7);
+    border: 1px solid rgba(149, 253, 252, 0.15);
+  }
+
+  .admin-select-inline {
+    @apply rounded-lg px-3 py-1 text-sm font-sans text-white cursor-pointer;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    outline: none;
+    option { background: #0a1e3d; color: white; }
+  }
+
+  .admin-action-btn {
+    @apply w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.5);
+
+    &:hover { transform: translateY(-1px); }
+    &.edit:hover { background: rgba(149, 253, 252, 0.12); border-color: rgba(149, 253, 252, 0.3); color: $main; }
+    &.delete:hover { background: rgba(255, 107, 107, 0.12); border-color: rgba(255, 107, 107, 0.3); color: #FF6B6B; }
+  }
+
+  .admin-table-footer {
+    @apply flex items-center justify-between mt-4;
+  }
+
+  .admin-table-count {
+    @apply text-xs font-sans;
+    color: rgba(255, 255, 255, 0.35);
+  }
+
+  .admin-pagination {
+    @apply flex items-center gap-1;
+
+    button {
+      @apply w-8 h-8 rounded-lg text-sm font-sans transition-all duration-200;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.5);
+
+      &:hover:not(:disabled) { background: rgba(149, 253, 252, 0.1); border-color: rgba(149, 253, 252, 0.25); color: $main; }
+      &.active { background: linear-gradient(135deg, rgba(149, 253, 252, 0.15), rgba(254, 190, 253, 0.15)); border-color: rgba(149, 253, 252, 0.3); color: $main; }
+      &:disabled { opacity: 0.3; cursor: default; }
+    }
+  }
 }
 
+// --- Admin modals ---
+.admin-modal {
+  @apply relative rounded-2xl p-6 text-left shadow-xl transition-all w-full max-w-md;
+  background: rgba(6, 18, 47, 0.95);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  .admin-modal-icon {
+    @apply w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4;
+    &.delete { background: rgba(255, 107, 107, 0.12); color: #FF6B6B; svg { @apply w-6 h-6; } }
+  }
+
+  .admin-modal-title { @apply text-lg font-title font-semibold text-white text-center mb-2; }
+  .admin-modal-text { @apply text-sm font-sans text-center mb-4; color: rgba(255, 255, 255, 0.5); }
+  .admin-modal-form { @apply mb-6; }
+
+  .admin-modal-cascade-list {
+    @apply text-sm mb-6 mx-auto;
+    max-width: 280px;
+
+    li {
+      @apply py-1.5 pl-4 relative;
+      color: rgba(255, 255, 255, 0.55);
+
+      &::before {
+        content: '•';
+        @apply absolute left-0;
+        color: #FF6B6B;
+      }
+    }
+  }
+
+  .admin-modal-buttons { @apply flex gap-3 justify-end; }
+
+  .admin-modal-btn {
+    @apply px-5 py-2 rounded-full text-sm font-semibold transition-all duration-300;
+
+    &.danger {
+      background: rgba(255, 107, 107, 0.15);
+      border: 1px solid rgba(255, 107, 107, 0.3);
+      color: #FF6B6B;
+      &:hover { background: rgba(255, 107, 107, 0.25); }
+    }
+
+    &.confirm {
+      @apply text-darker;
+      background: linear-gradient(45deg, $main, $secondary);
+      &:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(149, 253, 252, 0.3); }
+    }
+
+    &.cancel {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.6);
+      &:hover { background: rgba(255, 255, 255, 0.1); }
+    }
+  }
+}
+
+// --- Form fields ---
+.admin-field {
+  @apply mb-4;
+
+  label {
+    @apply block text-sm font-sans font-medium mb-1.5;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  input, textarea, select {
+    @apply w-full rounded-xl px-4 py-2.5 text-sm font-sans text-white;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    outline: none;
+    transition: all 0.3s;
+
+    &::placeholder { color: rgba(255, 255, 255, 0.25); }
+    &:focus { border-color: rgba(149, 253, 252, 0.4); box-shadow: 0 0 12px rgba(149, 253, 252, 0.08); }
+    option { background: #0a1e3d; }
+  }
+
+  textarea { resize: vertical; }
+}
+
+.admin-field-row {
+  @apply flex gap-4;
+  .admin-field { @apply flex-1; }
+}
+
+.admin-image-upload {
+  @apply flex flex-col gap-3;
+
+  .admin-image-preview {
+    @apply rounded-lg;
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  input[type="file"] {
+    @apply text-sm text-white;
+    &::file-selector-button {
+      @apply rounded-full px-4 py-1.5 text-sm font-medium text-white border-0 cursor-pointer mr-3;
+      background: rgba(255, 255, 255, 0.1);
+      &:hover { background: rgba(255, 255, 255, 0.15); }
+    }
+  }
+}
+
+// --- Toggle ---
+.admin-toggle {
+  @apply relative inline-block cursor-pointer;
+  width: 44px;
+  height: 24px;
+
+  input {
+    @apply opacity-0 w-0 h-0;
+    &:checked + .admin-toggle-slider { background: linear-gradient(45deg, $main, $secondary); }
+    &:checked + .admin-toggle-slider::before { transform: translateX(20px); }
+  }
+
+  .admin-toggle-slider {
+    @apply absolute inset-0 rounded-full transition-all duration-300;
+    background: rgba(255, 255, 255, 0.12);
+
+    &::before {
+      content: "";
+      @apply absolute rounded-full transition-all duration-300;
+      width: 18px; height: 18px; left: 3px; top: 3px;
+      background: white;
+    }
+  }
+}

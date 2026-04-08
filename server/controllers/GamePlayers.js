@@ -11,15 +11,12 @@ export const getAllGamePlayers = async (req, res) => {
  
 export const getGamePlayerById = async (req, res) => {
     try {
-        const gamePlayer = await GamePlayer.findAll({
-            where: {
-                id: req.params.id
-            }
-        });
-        res.json(gamePlayer[0]);
+        const gamePlayer = await GamePlayer.findByPk(req.params.id);
+        if (!gamePlayer) return res.status(404).json({ message: "Not found" });
+        res.json(gamePlayer);
     } catch (error) {
         res.json({ message: error.message });
-    }  
+    }
 }
 
 export const getGamesPlayerByUsername = async (req, res) => {

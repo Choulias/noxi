@@ -1,0 +1,107 @@
+.not-found-page{
+    @apply relative flex items-center justify-center z-10;
+    min-height: 70vh;
+    overflow: hidden;
+
+    .not-found-content{
+        @apply flex flex-col items-center text-center relative z-10;
+
+        .not-found-code{
+            @apply flex flex-row items-center gap-2 mb-6;
+
+            .digit{
+                font-family: 'Quicksand', sans-serif;
+                font-size: 120px;
+                font-weight: 700;
+                line-height: 1;
+                background: linear-gradient(45deg, $main, $secondary);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                text-shadow: none;
+                filter: drop-shadow(0 0 30px rgba(149, 253, 252, 0.3));
+            }
+
+            .zero{
+                animation-name: zeroFloat;
+                animation-duration: 3s;
+                animation-timing-function: ease-in-out;
+                animation-iteration-count: infinite;
+            }
+        }
+
+        h2{
+            @apply text-2xl font-light text-white mb-3;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        p{
+            @apply text-sm font-light mb-8;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .not-found-actions{
+            @apply flex flex-row gap-4;
+
+            .btn-home{
+                @apply px-6 py-3 rounded-full text-sm font-medium cursor-pointer transition-all duration-300;
+                background: linear-gradient(45deg, $main, $secondary);
+                color: $darker;
+
+                &:hover{
+                    box-shadow: 0 0 25px rgba(149, 253, 252, 0.4), 0 0 50px rgba(149, 253, 252, 0.1);
+                    transform: translateY(-2px);
+                }
+            }
+
+            .btn-back{
+                @apply px-6 py-3 rounded-full text-sm font-medium cursor-pointer transition-all duration-300;
+                background: rgba(255, 255, 255, 0.08);
+                color: rgba(255, 255, 255, 0.7);
+                border: 1px solid rgba(255, 255, 255, 0.15);
+
+                &:hover{
+                    background: rgba(255, 255, 255, 0.15);
+                    transform: translateY(-2px);
+                }
+            }
+        }
+    }
+
+    .not-found-particles{
+        @apply absolute inset-0 pointer-events-none overflow-hidden;
+
+        .particle{
+            @apply absolute rounded-full;
+            width: 4px;
+            height: 4px;
+            bottom: 0;
+            background: rgba(149, 253, 252, 0.4);
+            animation-name: particleRise;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+        }
+    }
+}
+
+@keyframes zeroFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+}
+
+@keyframes particleRise {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.6;
+    }
+    90% {
+        opacity: 0.2;
+    }
+    100% {
+        transform: translateY(-70vh) scale(0.3);
+        opacity: 0;
+    }
+}

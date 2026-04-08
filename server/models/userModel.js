@@ -5,13 +5,18 @@ const { DataTypes } = Sequelize;
  
 const User = db.define('ncs_users',{
     username:{
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
     },
     password:{
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: false
     },
     mail:{
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
     },
     role:{
         type: DataTypes.STRING

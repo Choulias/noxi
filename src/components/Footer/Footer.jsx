@@ -24,7 +24,7 @@ export default function Footer() {
 
   const social = [
     { name:"Twitch", link: <a href="https://www.twitch.tv/noctis_corp" target="_blank">Twitch</a>},
-    { name:"Discord", link: <a href="https://discord.gg/kZyA5UgusJ" target="_blank">Discord</a>},
+    { name:"Discord", link: <a href="https://discord.gg/FEMtGpTcz9" target="_blank">Discord</a>},
     { name:"TikTok", link: <a href="https://www.tiktok.com/@noctis_discord" target="_blank">Tiktok</a>},
   ]
 

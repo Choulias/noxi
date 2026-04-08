@@ -2,7 +2,22 @@
   "permissions": {
     "allow": [
       "Bash(npm install -D sass)",
-      "Bash(npx update-browserslist-db@latest --update-db)"
+      "Bash(npx update-browserslist-db@latest --update-db)",
+      "Read(//d:/Claude/**)",
+      "Bash(curl -s http://localhost:3006/games)",
+      "Bash(curl -s \"http://localhost:3006/src/components/Games/Games.jsx\")",
+      "Bash(npx vite build)",
+      "Bash(npm run build)",
+      "Bash(node -e \"const bcrypt = require\\(''bcryptjs''\\); bcrypt.compare\\(''Admin1!'', ''$2a$10$2tu7uUInZ4dEKTKN2/oEv.S7o..eEAoe1HNjnzb44I2/4Lombt2Oa''\\).then\\(r => console.log\\(''Match:'', r\\)\\);\")",
+      "Bash(node -e \":*)",
+      "Bash(grep -rn \"next\\(\\)\" /d/Claude/Noxi/server/routes/*.js)",
+      "Bash(find /d/Claude/Noxi/src -name \"*.jsx\" -exec grep -l \"useEffect\" {})",
+      "Bash(grep -rn \"DELETE\" /d/Claude/Noxi/server/routes/*.js)",
+      "WebSearch",
+      "WebFetch(domain:www.ovhcloud.com)"
+    ],
+    "additionalDirectories": [
+      "d:\\Claude\\Noxi\\games\\mascarade\\variantes"
     ]
   }
 }

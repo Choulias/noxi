@@ -53,31 +53,36 @@ export const getSpotlightEvent = async (req, res) => {
 
 export const getEventById = async (req, res) => {
     try {
-        const event = await Event.findAll({
-            where: {
-                id: req.params.id
-            }
-        });
-        res.json(event[0]);
+        const event = await Event.findByPk(req.params.id);
+        if (!event) return res.status(404).json({ message: "Not found" });
+        res.json(event);
     } catch (error) {
         res.json({ message: error.message });
-    }  
+    }
 }
  
 export const createEvent = async (req, res) => {
     try {
-        await Event.create(req.body);
+        const data = { ...req.body };
+        if (req.file) {
+            data.image = "/uploads/events/" + req.file.filename;
+        }
+        await Event.create(data);
         res.json({
             "message": "Event Created"
         });
     } catch (error) {
         res.json({ message: error.message });
-    }  
+    }
 }
  
 export const updateEvent = async (req, res) => {
     try {
-        await Event.update(req.body, {
+        const data = { ...req.body };
+        if (req.file) {
+            data.image = "/uploads/events/" + req.file.filename;
+        }
+        await Event.update(data, {
             where: {
                 id: req.params.id
             }
@@ -87,7 +92,7 @@ export const updateEvent = async (req, res) => {
         });
     } catch (error) {
         res.json({ message: error.message });
-    }  
+    }
 }
 
 export const unspotEvent = async (req, res) => {

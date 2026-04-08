@@ -1,8 +1,12 @@
-import { React, useState, useEffect, useCallback } from "react";
+import { React, useState, useEffect, useCallback, useLayoutEffect } from "react";
+import { createPortal } from "react-dom";
 import api from "../../../api";
-import GameImg from "../../../assets/img/tictactoe.png"
-import { useParams, useNavigate } from 'react-router-dom';
+// Images come from database via API
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import Spinner from "../../UI/Spinner";
 import { useUser } from "../../Auth/useUser";
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 export default function Events() {
 
@@ -11,12 +15,20 @@ export default function Events() {
     const {model} = useParams();
     let userId = user ? user.id : null; // L'id du joueur connecté, sinon null
     const [activeFilter, setActiveFilter] = useState("all");
+    const [showLoginModal, setShowLoginModal] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
       async function fetchData() {
-        const allEvents = await getEvents(); // 1) Functions calls -> 2) getEventsAttendees() that calls -> 3) getEventsLikers()
-        const gameModels = await getGameModels();
-        filterEvents(gameModels, allEvents);
+        try {
+          const allEvents = await getEvents(); // 1) Functions calls -> 2) getEventsAttendees() that calls -> 3) getEventsLikers()
+          const gameModels = await getGameModels();
+          filterEvents(gameModels, allEvents);
+        } catch (err) {
+          console.error('Failed to fetch events data:', err);
+        } finally {
+          setLoading(false);
+        }
       }
       fetchData();
       getSpotlightEvent();
@@ -24,6 +36,96 @@ export default function Events() {
       document.querySelector(".dropdown-btn").classList.add("active");
       return () => {
         document.querySelector(".dropdown-btn").classList.remove("active");
+      };
+    }, []);
+
+    useLayoutEffect(() => {
+      gsap.registerPlugin(ScrollTrigger);
+
+      // Titre principal + border
+      const mainTitle = document.querySelector('.events > h2:first-of-type');
+      const mainBorder = document.querySelector('.events > .spotlight-border');
+      if (mainTitle) {
+        gsap.fromTo(mainTitle,
+          { opacity: 0, y: 25 },
+          { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out',
+            scrollTrigger: { trigger: mainTitle, start: 'top 90%', toggleActions: 'play none none none' }
+          }
+        );
+      }
+      if (mainBorder) {
+        gsap.fromTo(mainBorder,
+          { scaleX: 0, transformOrigin: 'left center' },
+          { scaleX: 1, duration: 0.6, ease: 'power2.inOut',
+            scrollTrigger: { trigger: mainBorder, start: 'top 90%', toggleActions: 'play none none none' }
+          }
+        );
+      }
+
+      // Spotlight event
+      const spotlight = document.querySelector('.spotlight-event');
+      if (spotlight) {
+        gsap.fromTo(spotlight,
+          { opacity: 0, y: 30 },
+          { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out',
+            scrollTrigger: { trigger: spotlight, start: 'top 85%', toggleActions: 'play none none none' }
+          }
+        );
+      }
+
+      // Titre "Autres événements" + border + filtres
+      const otherTitle = document.querySelector('.events .other-border')?.previousElementSibling;
+      const otherBorder = document.querySelector('.events .other-border');
+      const filters = document.querySelector('.event-filter');
+      if (otherTitle) {
+        gsap.fromTo(otherTitle,
+          { opacity: 0, y: 25 },
+          { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out',
+            scrollTrigger: { trigger: otherTitle, start: 'top 85%', toggleActions: 'play none none none' }
+          }
+        );
+      }
+      if (otherBorder) {
+        gsap.fromTo(otherBorder,
+          { scaleX: 0, transformOrigin: 'left center' },
+          { scaleX: 1, duration: 0.6, ease: 'power2.inOut',
+            scrollTrigger: { trigger: otherBorder, start: 'top 85%', toggleActions: 'play none none none' }
+          }
+        );
+      }
+      if (filters) {
+        gsap.fromTo(filters,
+          { opacity: 0, y: 15 },
+          { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out',
+            scrollTrigger: { trigger: filters, start: 'top 85%', toggleActions: 'play none none none' }
+          }
+        );
+      }
+
+      // Cards
+      const cards = document.querySelectorAll('.event-card');
+      cards.forEach((card, i) => {
+        gsap.fromTo(card,
+          { opacity: 0, y: 30 },
+          { opacity: 1, y: 0, duration: 0.5, delay: i * 0.08, ease: 'power2.out',
+            scrollTrigger: { trigger: card, start: 'top 90%', toggleActions: 'play none none none' }
+          }
+        );
+      });
+
+      // Message banner
+      const banner = document.querySelector('.message-banner');
+      if (banner) {
+        gsap.fromTo(banner,
+          { opacity: 0, y: 30 },
+          { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out',
+            scrollTrigger: { trigger: banner, start: 'top 90%', toggleActions: 'play none none none' }
+          }
+        );
+      }
+
+      return () => {
+        ScrollTrigger.getAll().forEach(t => t.kill());
       };
     }, []);
 
@@ -86,41 +188,50 @@ export default function Events() {
       setEvents(nospotevents);
     }
 
-    const [spotlightEvent, setSpotlightEvent] = useState([]);
+    const [spotlightEvent, setSpotlightEvent] = useState(null);
+    const [hasSpotlight, setHasSpotlight] = useState(true);
     const getSpotlightEvent = async () => {
+      try {
         const response = await api.get('/events/spotlight');
-        getSpotlightAttendees(response.data);
+        if (response.data && response.data.id) {
+            setHasSpotlight(true);
+            getSpotlightAttendees(response.data);
+        } else {
+            setHasSpotlight(false);
+        }
+      } catch (err) {
+        console.error('Failed to fetch spotlight event:', err);
+        setHasSpotlight(false);
+      }
     }
 
     // FONCTIONS POUR INTERAGIR AVEC LES EVENEMENTS ------------------------------------------------------
 
     const getEventsAttendees = async(evenements) => {
 
-      evenements.forEach(async (evenement) => {
-        await api.get(`/eventattendees/event/${evenement.id}}`)
-        .then(function(res) {
-          evenement.numberAttendees = res.data.length;
-          evenement.attendees = [];
-          evenement.attended = 0;
+      await Promise.all(evenements.map(async (evenement) => {
+        const res = await api.get(`/eventattendees/event/${evenement.id}`);
+        evenement.numberAttendees = res.data.length;
+        evenement.attendees = [];
+        evenement.attended = 0;
 
-          if(res.data.length > 0){
-            res.data.forEach((attendee) => {
-              evenement.attendees.push(attendee.userId);
-              if(userId == attendee.userId){
-                evenement.attended = 1;
-              }
-            })
-          }
-        });
-      });
+        if(res.data.length > 0){
+          res.data.forEach((attendee) => {
+            evenement.attendees.push(attendee.userId);
+            if(userId == attendee.userId){
+              evenement.attended = 1;
+            }
+          })
+        }
+      }));
 
       return evenements;
     }
 
     const getEventsLikers = async(evenements) => {
 
-      evenements.forEach(async (evenement) => {
-        const res = await api.get(`/eventlikers/event/${evenement.id}}`)
+      await Promise.all(evenements.map(async (evenement) => {
+        const res = await api.get(`/eventlikers/event/${evenement.id}`);
 
         evenement.numberLikers = res.data.length;
         evenement.likers = [];
@@ -134,13 +245,13 @@ export default function Events() {
             }
           })
         }
-      });
+      }));
 
       return evenements;
     }
 
     const getSpotlightAttendees = async(evenement) => {
-      await api.get(`/eventattendees/event/${evenement.id}}`)
+      await api.get(`/eventattendees/event/${evenement.id}`)
       .then(function(res) {
         evenement.numberAttendees = res.data.length;
         evenement.attendees = [];
@@ -160,7 +271,7 @@ export default function Events() {
 
     const getSpotlightLikers = async(evenement) => {
 
-      await api.get(`/eventlikers/event/${evenement.id}}`)
+      await api.get(`/eventlikers/event/${evenement.id}`)
       .then(function(res) {
         evenement.numberLikers = res.data.length;
         evenement.likers = [];
@@ -247,15 +358,26 @@ export default function Events() {
       }
     }
 
+    const displayedEvents = events;
+
+    // Garde : vérifier connexion avant interaction
+    const requireLogin = (callback) => {
+      if (!userId) {
+        setShowLoginModal(true);
+        return;
+      }
+      callback();
+    };
+
     // COMPONENTS BOUTLON LIKE DISLIKE ---------------------------------------------
 
     function ILikeButton(props) {
       const itemId = props.itemId;
       return (<button className="like-btn"
-        onClick={() => {
+        onClick={() => requireLogin(() => {
           likeEvent(itemId, "event");
           switchInterraction(itemId, "event", "like", 1);
-        }}
+        })}
       >
         <svg id="Groupe_61" data-name="Groupe 61" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" width="28.099" height="25.492" viewBox="0 0 28.099 25.492">
           <defs>
@@ -279,10 +401,10 @@ export default function Events() {
     function IUnlikeButton(props) {
       const itemId = props.itemId;
       return  (<button className="unlike-btn"
-        onClick={() => {
+        onClick={() => requireLogin(() => {
           dislikeEvent(itemId, "event");
           switchInterraction(itemId, "event", "like", 0);
-        }}
+        })}
       >
         <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" width="28.099" height="25.492" viewBox="0 0 28.099 25.492">
           <defs>
@@ -313,14 +435,23 @@ export default function Events() {
       return <IUnlikeButton itemId={itemId}/>;
     }
 
+    if (loading) {
+      return (
+        <div className='conteneur events'>
+          <Spinner text="Chargement des evenements..." />
+        </div>
+      );
+    }
+
     return (
       <>
         <div className='conteneur events'>
           <h2 >Mis en avant</h2>
           <div className="spotlight-border title-border"></div>
 
+          {spotlightEvent ? (
           <div className="spotlight-event" key={"event-" + spotlightEvent.id}>
-            <img src={GameImg} alt="" />
+            <img src={spotlightEvent.image ? `${import.meta.env.VITE_API_URL}${spotlightEvent.image}` : ''} alt="" />
 
             <div className="spotlight-text">
               <div className="spotlight-info">
@@ -336,33 +467,33 @@ export default function Events() {
                 </svg>
                   <span>{spotlightEvent.theme}</span>
                 </div>
-                
+
                 <h2>{spotlightEvent.title}</h2>
                 <p>{spotlightEvent.description}</p>
               </div>
-              
+
 
               <div className="spotlight-interractions">
-                {(spotlightEvent.attended == 0) ? // Dans le cas ou l'utilisateur n'a pas like l'évenement
+                {(!spotlightEvent.attended || spotlightEvent.attended == 0) ?
                 (<button className='btn'
-                    onClick={(e) => {
+                    onClick={() => requireLogin(() => {
                       attendEvent(spotlightEvent.id, "spotlight");
                       switchInterraction(spotlightEvent.id, "spotlight", "attend", 1)
-                    }}
+                    })}
                   >
                     JE PARTICIPE
-                </button>) : 
+                </button>) :
                 (<button className='clicked-btn'
-                    onClick={(e) => {
+                    onClick={() => requireLogin(() => {
                       withdrawEvent(spotlightEvent.id, "spotlight");
                       switchInterraction(spotlightEvent.id, "spotlight", "attend", 0)
-                    }}
+                    })}
                   >
                     JE PARTICIPE
 
                     <svg xmlns="http://www.w3.org/2000/svg" width="20.828" height="14.414" viewBox="0 0 20.828 14.414">
                       <path id="Tracé_77" data-name="Tracé 77" d="M3,12l6,6L21,6" transform="translate(-1.586 -4.586)" fill="none" stroke="#06122f" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"/>
-                    </svg>  
+                    </svg>
 
                 </button> )}
 
@@ -390,12 +521,12 @@ export default function Events() {
 
                   <div className="event-likers">
 
-                    {(spotlightEvent.liked == 0) ? // Dans le cas ou l'utilisateur n'a pas like l'évenement
+                    {(!spotlightEvent.liked || spotlightEvent.liked == 0) ?
                     (<button
-                      onClick={(e) => {
+                      onClick={() => requireLogin(() => {
                         likeEvent(spotlightEvent.id, "spotlight")
                         switchInterraction(spotlightEvent.id, "spotlight", "like", 1)
-                      }}
+                      })}
                     >
                       <svg id="Groupe_61" data-name="Groupe 61" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" width="28.099" height="25.492" viewBox="0 0 28.099 25.492">
                         <defs>
@@ -415,10 +546,10 @@ export default function Events() {
                     </button>
                     ) :
                     (<button
-                      onClick={(e) => {
-                        dislikeEvent(spotlightEvent.id,  "spotlight")
+                      onClick={() => requireLogin(() => {
+                        dislikeEvent(spotlightEvent.id, "spotlight")
                         switchInterraction(spotlightEvent.id, "spotlight", "like", 0)
-                      }}
+                      })}
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" width="28.099" height="25.492" viewBox="0 0 28.099 25.492">
                         <defs>
@@ -445,43 +576,48 @@ export default function Events() {
               </div>
             </div>
           </div>
+          ) : (
+            <div className="spotlight-event spotlight-empty">
+              <p>Aucun événement mis en avant pour le moment</p>
+            </div>
+          )}
 
           <h2>Autres evenements</h2>
           <div className="other-border title-border"></div>
           <div className="event-filter">
             <span>Filtres : </span>
             <button
-                className={activeFilter === "all" ? "active" : ""}
+                className={activeFilter === "all" ? "active" : "gradient-hover"}
                 type="button"
-                onClick={(e) => {
+                onClick={() => {
                   getAllEvents()
                   setActiveFilter("all")
-                  navigate(`/events`);
                 }}
                 >Tous
             </button>
 
             {games.map((item) => (
               <button
-                className={activeFilter === item.slug ? "active" : ""}
+                className={activeFilter === item.slug ? "active" : "gradient-hover"}
                 key={item.slug}
                 type="button"
-                onClick={(e) => {
+                onClick={() => {
                   getModelEvents(item.slug)
                   setActiveFilter(item.slug)
-                  navigate(`/events/${item.slug}`);
                 }}
                 >{item.name}
               </button>
             ))}
           </div>
          
-          <div className="notspotlight-event"> 
-            {events.map((item) => (
+          <div className="notspotlight-event" key={`filter-${activeFilter}`}>
+            {displayedEvents.length === 0 ? (
+              <div className="empty-events">Pas d'événements actuellement pour ce jeu</div>
+            ) : displayedEvents.map((item, idx) => (
               (() => {
                 return(
-                    <div className="event-card" key={"event-" + item.id}>
-                      <img src={GameImg} alt="" />
+                    <div className="event-card" key={"event-" + item.id} style={{ animationDelay: `${idx * 0.07}s` }}>
+                      <img src={item.image ? `${import.meta.env.VITE_API_URL}${item.image}` : ''} alt="" />
 
                       <div className="event-text">
                         <div className="event-info">
@@ -528,30 +664,30 @@ export default function Events() {
                             </div>
 
                             <div className="event-likers">
-                              <LikeButton isNotLiked={((item.liked != undefined) && (item.liked == 0))} itemId={item.id} />
+                              <LikeButton isNotLiked={(!item.liked || item.liked == 0)} itemId={item.id} />
                               <span>{item.likers ? item.likers.length : 0}</span>
                             </div>
                           </div>
 
-                          {((item.attended != undefined) && (item.attended == 0))  ? // Dans le cas ou l'utilisateur n'a pas like l'évenement
+                          {(!item.attended || item.attended == 0)  ?
                           (<button className='btn'
-                              onClick={() => {
+                              onClick={() => requireLogin(() => {
                                 attendEvent(item.id, "event");
                                 switchInterraction(item.id, "event", "attend", 1)
-                              }}
+                              })}
                             >
                               JE PARTICIPE
                           </button>) :
                           (<button className='clicked-btn'
-                              onClick={() => {
+                              onClick={() => requireLogin(() => {
                                 withdrawEvent(item.id, "event");
                                 switchInterraction(item.id, "event", "attend", 0)
-                              }}
+                              })}
                             >
                               JE PARTICIPE
                               <svg xmlns="http://www.w3.org/2000/svg" width="20.828" height="14.414" viewBox="0 0 20.828 14.414">
                                 <path id="Tracé_77" data-name="Tracé 77" d="M3,12l6,6L21,6" transform="translate(-1.586 -4.586)" fill="none" stroke="#06122f" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"/>
-                              </svg>  
+                              </svg>
                           </button> )}
 
                         </div>
@@ -562,6 +698,21 @@ export default function Events() {
             ))}
           </div> 
         </div>
+
+        {showLoginModal && createPortal(
+          <div className="login-modal-overlay" onClick={() => setShowLoginModal(false)}>
+            <div className="login-modal" onClick={(e) => e.stopPropagation()}>
+              <button className="login-modal-close" onClick={() => setShowLoginModal(false)}>&times;</button>
+              <h3>Connexion requise</h3>
+              <p>Vous devez être connecté pour interagir avec les événements.</p>
+              <div className="login-modal-actions">
+                <Link to="/login" className="btn">Se connecter</Link>
+                <button className="login-modal-cancel" onClick={() => setShowLoginModal(false)}>Annuler</button>
+              </div>
+            </div>
+          </div>,
+          document.body
+        )}
 
         <div className="message-banner">
           <div className='message-container conteneur'>

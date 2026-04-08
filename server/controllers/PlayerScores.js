@@ -12,15 +12,12 @@ export const getAllPlayerScores = async (req, res) => {
  
 export const getPlayerScoreById = async (req, res) => {
     try {
-        const playerScore = await PlayerScore.findAll({
-            where: {
-                id: req.params.id
-            }
-        });
-        res.json(playerScore[0]);
+        const playerScore = await PlayerScore.findByPk(req.params.id);
+        if (!playerScore) return res.status(404).json({ message: "Not found" });
+        res.json(playerScore);
     } catch (error) {
         res.json({ message: error.message });
-    }  
+    }
 }
 
 export const getPlayerScoreBySlugNId = async (req, res) => {

@@ -1,0 +1,145 @@
+// --- Spinner ---
+.noxi-spinner{
+    @apply flex flex-col items-center justify-center gap-4 py-16;
+
+    .spinner-ring{
+        @apply relative;
+        width: 40px;
+        height: 40px;
+
+        .ring{
+            @apply absolute inset-0 rounded-full;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-top-color: $main;
+            border-right-color: $secondary;
+            animation-name: spinnerRotate;
+            animation-duration: 1s;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+        }
+    }
+
+    .spinner-text{
+        @apply text-sm font-light;
+        color: rgba(255, 255, 255, 0.5);
+    }
+}
+
+@keyframes spinnerRotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+// --- Table row animation ---
+.table-row-animated{
+    animation-name: tableRowIn;
+    animation-duration: 0.35s;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    animation-fill-mode: both;
+}
+
+@keyframes tableRowIn {
+    0% {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+// --- Toasts ---
+.toast-container{
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.toast{
+    @apply flex flex-row items-center gap-3 px-5 py-3 rounded-xl text-sm font-light;
+    pointer-events: auto;
+    cursor: pointer;
+    min-width: 280px;
+    max-width: 420px;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    animation-name: toastIn;
+    animation-duration: 0.35s;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    animation-fill-mode: forwards;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+
+    &.toast-leaving{
+        opacity: 0;
+        transform: translateX(30px);
+    }
+
+    .toast-icon{
+        @apply flex items-center justify-center rounded-full text-xs font-bold;
+        width: 24px;
+        height: 24px;
+        flex-shrink: 0;
+    }
+
+    .toast-message{
+        @apply text-white;
+    }
+
+    &.toast-success{
+        background: rgba(25, 135, 84, 0.2);
+        border-color: rgba(25, 135, 84, 0.3);
+
+        .toast-icon{
+            background: rgba(25, 135, 84, 0.4);
+            color: #4ade80;
+        }
+    }
+
+    &.toast-error{
+        background: rgba(220, 53, 69, 0.2);
+        border-color: rgba(220, 53, 69, 0.3);
+
+        .toast-icon{
+            background: rgba(220, 53, 69, 0.4);
+            color: #f87171;
+        }
+    }
+
+    &.toast-info{
+        background: rgba(149, 253, 252, 0.1);
+        border-color: rgba(149, 253, 252, 0.2);
+
+        .toast-icon{
+            background: rgba(149, 253, 252, 0.2);
+            color: $main;
+        }
+    }
+
+    &.toast-warning{
+        background: rgba(255, 193, 7, 0.15);
+        border-color: rgba(255, 193, 7, 0.25);
+
+        .toast-icon{
+            background: rgba(255, 193, 7, 0.3);
+            color: #fbbf24;
+        }
+    }
+}
+
+@keyframes toastIn {
+    0% {
+        opacity: 0;
+        transform: translateX(40px) scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}

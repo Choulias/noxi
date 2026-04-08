@@ -16,7 +16,7 @@ const router = express.Router();
 // Protégé
 router.get('/', authMiddleware, getAllEventAttendees);
 router.get('/:id', authMiddleware, getEventAttendeeById);
-router.get('/event/:eventid', authMiddleware, getEventAttendeesByEventId);
+router.get('/event/:eventid', getEventAttendeesByEventId);
 router.get('/find/:eventid/:userid', authMiddleware, getEventAttendeeByEventNUser);
 router.post('/', authMiddleware, createEventAttendee);
 router.patch('/:id', authMiddleware, updateEventAttendee);

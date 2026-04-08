@@ -13,11 +13,17 @@ const Event = db.define('ncs_events',{
     description:{
         type: DataTypes.STRING
     },
+    image:{
+        type: DataTypes.STRING
+    },
     spotlight:{
         type: DataTypes.INTEGER
     }
 },{
-    freezeTableName: true
+    freezeTableName: true,
+    indexes: [
+        { fields: ['theme'] }
+    ]
 });
  
 export default Event;

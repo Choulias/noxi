@@ -11,15 +11,12 @@ export const getAllEventAttendees = async (req, res) => {
  
 export const getEventAttendeeById = async (req, res) => {
     try {
-        const eventAttendee = await EventAttendee.findAll({
-            where: {
-                id: req.params.id
-            }
-        });
-        res.json(eventAttendee[0]);
+        const eventAttendee = await EventAttendee.findByPk(req.params.id);
+        if (!eventAttendee) return res.status(404).json({ message: "Not found" });
+        res.json(eventAttendee);
     } catch (error) {
         res.json({ message: error.message });
-    }  
+    }
 }
 
 export const getEventAttendeesByEventId = async (req, res) => {

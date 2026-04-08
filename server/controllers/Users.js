@@ -1,9 +1,31 @@
 import User from "../models/userModel.js";
+import { Op } from "sequelize";
 import { isExistingUserMail, isExistingUserName, isNotEmpty } from "../functions.js"
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { v4 as uuid } from "uuid";
 import { sendEmail } from "../util/sendEmail.js";
+
+export const searchUsers = async (req, res) => {
+    try {
+        const query = req.params.query;
+        if (!query || query.length < 2) {
+            return res.json([]);
+        }
+        const users = await User.findAll({
+            where: {
+                username: { [Op.like]: `%${query}%` }
+            },
+            attributes: ['id', 'username'],
+            limit: 10
+        });
+        // Filter out the current user
+        const filtered = users.filter(u => u.id !== req.user.id);
+        res.json(filtered);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 
 export const getAllUsers = async (req, res) => {
     try {
@@ -14,14 +36,20 @@ export const getAllUsers = async (req, res) => {
     }
 }
 
+export const getUserCount = async (req, res) => {
+    try {
+        const count = await User.count();
+        res.json({ count });
+    } catch (error) {
+        res.json({ message: error.message });
+    }
+}
+
 export const getUserById = async (req, res) => {
     try {
-        const user = await User.findAll({
-            where: {
-                id: req.params.id
-            }
-        });
-        res.json(user[0]);
+        const user = await User.findByPk(req.params.id);
+        if (!user) return res.status(404).json({ message: "Not found" });
+        res.json(user);
     } catch (error) {
         res.json({ message: error.message });
     }
@@ -61,9 +89,9 @@ export const createUser = async (req, res) => {
         bodyInfo.status = "pending";
 
         if (await isExistingUserMail(bodyInfo.mail)){
-            res.status(409).json({ "message": "Existing Mail"})
+            return res.status(409).json({ "message": "Existing Mail"})
         }else if(await isExistingUserName(bodyInfo.username)){
-            res.status(409).json({ "message": "Existing Username"})
+            return res.status(409).json({ "message": "Existing Username"})
         }else{
             const passwordHash = await bcrypt.hash(bodyInfo.password, 10)
             bodyInfo.password = passwordHash;
@@ -81,7 +109,7 @@ export const createUser = async (req, res) => {
                 })
             }catch(err){
                 console.log(err);
-                res.sendStatus(500);
+                return res.sendStatus(500);
             }
 
             jwt.sign({
@@ -209,18 +237,15 @@ export const updateUser = async (req, res) => {
                     }
                 });
 
-                const user = await User.findAll({
-                    where: {
-                        id: req.params.id
-                    }
-                });
+                const user = await User.findByPk(req.params.id);
+                if (!user) return res.status(404).json({ message: "Not found" });
 
                 jwt.sign({
-                    id: user[0].dataValues.id,
-                    username: user[0].dataValues.username,
-                    mail: user[0].dataValues.mail,
-                    role: user[0].dataValues.role,
-                    status: user[0].dataValues.status,
+                    id: user.dataValues.id,
+                    username: user.dataValues.username,
+                    mail: user.dataValues.mail,
+                    role: user.dataValues.role,
+                    status: user.dataValues.status,
                 },
                 process.env.JWT_SECRET,
                 {
@@ -243,6 +268,22 @@ export const updateUser = async (req, res) => {
         res.json({ message: error.message });
     }
 }
+
+export const getUsersByIds = async (req, res) => {
+    try {
+        const ids = req.body.ids;
+        if (!Array.isArray(ids) || ids.length === 0) {
+            return res.json([]);
+        }
+        const users = await User.findAll({
+            where: { id: ids },
+            attributes: ['id', 'username']
+        });
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 
 export const deleteUser = async (req, res) => {
     try {

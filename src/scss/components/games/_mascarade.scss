@@ -1,0 +1,2462 @@
+.mascarade-board {
+  @apply relative z-10 px-4;
+
+  .mascarade-container {
+    @apply relative mb-12 mt-12 rounded-3xl p-8 flex flex-row;
+    min-height: 700px;
+    max-height: calc(100vh - 120px);
+    overflow: visible;
+    background-color: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  // --- Sidebar (match TicTacToe .boardinfo) ---
+  .mascarade-sidebar {
+    @apply flex flex-col justify-between border-r-2 border-white border-opacity-[0.07] pr-6;
+    width: 220px;
+
+    .mascarade-players {
+      .players-header {
+        @apply flex items-baseline justify-between mb-2;
+      }
+
+      .players-label {
+        @apply font-title font-semibold text-base uppercase tracking-wider;
+        color: rgba(255, 255, 255, 0.5);
+      }
+
+      .players-count {
+        @apply font-sans text-sm;
+        color: rgba(255, 255, 255, 0.35);
+
+        .players-current {
+          @apply font-bold text-base;
+          color: $main;
+        }
+      }
+
+      .players-bar {
+        @apply w-full rounded-full mb-4;
+        height: 3px;
+        background: rgba(255, 255, 255, 0.07);
+        overflow: hidden;
+
+        .players-bar-fill {
+          @apply h-full rounded-full;
+          background: linear-gradient(90deg, $main, $secondary);
+          transition: width 0.5s ease;
+        }
+      }
+    }
+
+    .mascarade-player-tag {
+      @apply text-sm py-1.5 px-3 mb-1.5 rounded-lg font-sans flex items-center gap-2;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      transition: all 0.3s ease;
+      &:hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .player-tag-avatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.08);
+        object-fit: contain;
+        flex-shrink: 0;
+        transition: all 0.3s ease;
+      }
+
+      &.is-current-turn {
+        .player-tag-avatar {
+          animation-name: avatarPulse;
+          animation-duration: 2s;
+          animation-timing-function: ease-in-out;
+          animation-iteration-count: infinite;
+        }
+      }
+    }
+
+    .mascarade-sidebar-buttons {
+      @apply flex flex-col gap-2 mt-4;
+    }
+
+    .mascarade-btn-copy {
+      @apply inline-flex w-full items-center justify-center gap-2 px-4 py-2.5 text-sm font-sans font-medium text-white;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 100px;
+      transition: all 0.3s;
+      cursor: pointer;
+
+      svg {
+        flex-shrink: 0;
+        transition: transform 0.3s;
+      }
+
+      &:hover {
+        background: rgba(149, 253, 252, 0.1);
+        border-color: rgba(149, 253, 252, 0.3);
+        color: $main;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(149, 253, 252, 0.1);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+
+      &.copied {
+        background: rgba(149, 253, 252, 0.15);
+        border-color: $main;
+        color: $main;
+        animation: copyPulse 0.4s ease-out;
+
+        svg {
+          animation: checkPop 0.3s ease-out;
+        }
+      }
+    }
+
+    @keyframes copyPulse {
+      0% { box-shadow: 0 0 0 0 rgba(149, 253, 252, 0.4); }
+      100% { box-shadow: 0 0 0 10px rgba(149, 253, 252, 0); }
+    }
+
+    @keyframes checkPop {
+      0% { transform: scale(0); }
+      50% { transform: scale(1.3); }
+      100% { transform: scale(1); }
+    }
+
+    .mascarade-btn-quit {
+      @apply px-4 py-2 text-sm font-medium text-center;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 100px;
+      transition: all 0.3s;
+      &:hover {
+        background: rgba(255, 107, 107, 0.15);
+        border-color: #FF6B6B;
+        color: #FF6B6B;
+      }
+    }
+  }
+
+  // --- Main area ---
+  .mascarade-game-area {
+    @apply flex-1 flex flex-row;
+    min-width: 0;
+    min-height: 0;
+    overflow: visible;
+    border-radius: 1rem;
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 1rem;
+      background: rgba(6, 18, 47, 0.4);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    > *:not(.mascarade-animations-overlay):not(.mascarade-music-control):not(.game-result-overlay) {
+      position: relative;
+      z-index: 1;
+    }
+  }
+
+  // --- Victory / Defeat overlay ---
+  .game-result-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 40;
+    pointer-events: none;
+    border-radius: 1rem;
+    overflow: hidden;
+    animation-name: resultFadeIn;
+    animation-duration: 1.5s;
+    animation-timing-function: ease-out;
+    animation-fill-mode: both;
+
+    .game-result-back {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 1rem;
+    }
+
+    .game-result-front {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 1rem;
+      animation-name: resultFrontPulse;
+      animation-duration: 4s;
+      animation-timing-function: ease-in-out;
+      animation-iteration-count: infinite;
+    }
+  }
+
+  @keyframes resultFadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+  @keyframes resultFrontPulse {
+    0%, 100% { opacity: 0.85; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.015); }
+  }
+
+  .mascarade-music-control {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    transition: all 0.3s ease;
+    overflow: hidden;
+
+    .music-icon-btn {
+      width: 36px;
+      height: 36px;
+      border: none;
+      background: none;
+      color: rgba(255, 255, 255, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: color 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .music-volume-slider {
+      width: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: width 0.4s ease, opacity 0.4s ease;
+      display: flex;
+      align-items: center;
+      padding: 0;
+
+      .volume-track {
+        position: relative;
+        width: 80px;
+        height: 6px;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 3px;
+        margin: 0 10px 0 0;
+
+        .volume-fill {
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 100%;
+          border-radius: 3px;
+          background: linear-gradient(90deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.7));
+          transition: width 0.1s ease;
+          pointer-events: none;
+        }
+
+        .volume-range {
+          position: absolute;
+          top: -5px;
+          left: 0;
+          width: 100%;
+          height: 16px;
+          -webkit-appearance: none;
+          appearance: none;
+          background: transparent;
+          outline: none;
+          cursor: pointer;
+          margin: 0;
+
+          &::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            cursor: pointer;
+            box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+          }
+
+          &::-moz-range-thumb {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+          }
+        }
+      }
+    }
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.6);
+      border-color: rgba(255, 255, 255, 0.3);
+
+      .music-icon-btn {
+        color: rgba(255, 255, 255, 0.8);
+      }
+    }
+
+    &.show-slider {
+      .music-volume-slider {
+        width: 100px;
+        opacity: 1;
+      }
+    }
+
+    &.playing {
+      $music-color: #4A90D9;
+      .music-icon-btn {
+        color: $music-color;
+      }
+      border-color: rgba($music-color, 0.4);
+      box-shadow: 0 0 12px rgba($music-color, 0.2);
+
+      &:hover {
+        border-color: rgba($music-color, 0.6);
+        box-shadow: 0 0 16px rgba($music-color, 0.3);
+      }
+
+      .volume-fill {
+        background: linear-gradient(90deg, rgba($music-color, 0.4), $music-color) !important;
+      }
+
+      .volume-range {
+        &::-webkit-slider-thumb {
+          background: $music-color !important;
+        }
+        &::-moz-range-thumb {
+          background: $music-color !important;
+        }
+      }
+    }
+  }
+
+  .mascarade-main {
+    @apply flex-1 flex flex-col items-center gap-6;
+    min-width: 0;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .mascarade-main-row {
+    @apply flex flex-row items-stretch w-full flex-1;
+    min-height: 0;
+  }
+
+  .mascarade-board-wrapper {
+    @apply flex-1 flex justify-center items-center;
+    min-width: 0;
+    padding: 1rem 0;
+  }
+
+  .mascarade-left-panel {
+    @apply flex flex-col gap-4 p-5;
+    width: 220px;
+    min-width: 220px;
+    background: rgba(0, 0, 0, 0.3);
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 1rem 0 0 1rem;
+    overflow-y: auto;
+    min-height: 0;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+  }
+
+  // --- Right sidebar (log) ---
+  .mascarade-log-sidebar {
+    @apply flex flex-col border-l-2 border-white border-opacity-[0.07] pl-4;
+    width: 250px;
+    min-width: 250px;
+    align-self: stretch;
+    overflow-y: auto;
+  }
+
+  // --- Waiting state ---
+  .mascarade-waiting {
+    @apply flex flex-col items-center justify-center flex-1 gap-4;
+
+    p {
+      @apply text-lg font-sans font-light;
+    }
+
+    .mascarade-wait-pulse {
+      animation: waitPulse 2s ease-in-out infinite;
+    }
+
+    .mascarade-wait-sub {
+      @apply text-sm opacity-50 font-sans;
+    }
+  }
+
+  @keyframes waitPulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+
+  // --- Game table (circular layout) ---
+  .mascarade-table {
+    @apply relative;
+    margin-top: -20px;
+    margin-bottom: 40px;
+
+    .player-seat {
+      @apply absolute flex flex-col items-center gap-1;
+      width: 100px;
+      transition: all 0.4s ease;
+
+      &.current-turn {
+        .mask-card {
+          animation-name: currentTurnGlow;
+          animation-duration: 2s;
+          animation-timing-function: ease-in-out;
+          animation-iteration-count: infinite;
+        }
+        .player-name {
+          color: #ffd700;
+        }
+      }
+
+      &.is-me {
+        .player-name {
+          @apply font-semibold;
+          color: rgba(255, 215, 0, 0.8);
+        }
+        .mask-card {
+          border: 1.5px solid rgba(255, 215, 0, 0.5);
+          box-shadow: 0 0 12px rgba(255, 215, 0, 0.15);
+        }
+      }
+
+      &:hover .mask-card,
+      &.picker-highlighted .mask-card {
+        transform: translateY(-3px);
+      }
+
+      &.picker-highlighted .mask-card {
+        box-shadow: 0 0 20px rgba(149, 253, 252, 0.4), 0 0 40px rgba(149, 253, 252, 0.1);
+      }
+    }
+
+    .player-info-card {
+      @apply flex flex-col items-center;
+      background: rgba(0, 0, 0, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 5px 8px 4px;
+      min-width: 70px;
+      backdrop-filter: blur(6px);
+    }
+
+    .player-info-top {
+      @apply flex items-center gap-1.5;
+    }
+
+    .player-avatar {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      object-fit: contain;
+      background: rgba(255, 255, 255, 0.1);
+      flex-shrink: 0;
+    }
+
+    .player-name {
+      @apply text-xs font-sans font-medium;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 72px;
+      line-height: 1.2;
+    }
+
+    .player-coins-row {
+      @apply flex items-center gap-1 justify-center;
+      margin-top: 2px;
+    }
+
+    .coin-icon {
+      font-size: 10px;
+      line-height: 1;
+    }
+
+    .coin-value {
+      font-family: 'Marcellus', serif !important;
+      font-weight: bold;
+      font-size: 11px;
+      color: #ffd700;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    }
+  }
+
+  // --- Mask cards ---
+  .mask-card {
+    width: 60px;
+    height: 90px;
+    border-radius: 8px;
+    @apply flex items-center justify-center text-center;
+    transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1), box-shadow 0.5s ease;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+    &.picker-highlighted {
+      transform: translateY(-3px);
+      box-shadow: 0 0 20px rgba(149, 253, 252, 0.4), 0 0 40px rgba(149, 253, 252, 0.1);
+    }
+
+    .mask-card-content {
+      @apply flex flex-col items-center gap-0.5;
+    }
+
+    .mask-card-back-content {
+      @apply flex flex-col items-center gap-0.5;
+    }
+
+    .mask-card-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+
+    &.face-down {
+      background: transparent;
+      border: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      overflow: hidden;
+      position: relative;
+      animation-name: centerCardSway;
+      animation-duration: 4s;
+      animation-timing-function: ease-in-out;
+      animation-iteration-count: infinite;
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 60%;
+        height: 100%;
+        background: linear-gradient(
+          105deg,
+          transparent 30%,
+          rgba(255, 215, 0, 0.06) 45%,
+          rgba(255, 255, 255, 0.1) 50%,
+          rgba(255, 215, 0, 0.06) 55%,
+          transparent 70%
+        );
+        animation-name: cardShimmer;
+        animation-duration: 5s;
+        animation-timing-function: ease-in-out;
+        animation-iteration-count: infinite;
+        pointer-events: none;
+        border-radius: 6px;
+      }
+    }
+
+    &.face-up {
+      background: transparent;
+      border: none;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 0 8px rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+      .mask-card-name {
+        @apply font-semibold font-sans px-1 text-white;
+        font-size: 10px;
+        line-height: 1.1;
+      }
+    }
+
+    &.revealing {
+      animation: cardFlip 0.5s ease-in-out;
+    }
+  }
+
+  @keyframes cardFlip {
+    0% { transform: rotateY(0deg); }
+    50% { transform: rotateY(90deg); }
+    100% { transform: rotateY(0deg); }
+  }
+
+  // --- Center (Justice + center cards) ---
+  .mascarade-center {
+    @apply absolute flex flex-col items-center gap-3;
+
+    .justice-board {
+      @apply relative flex items-center justify-center;
+      width: 140px;
+      height: 140px;
+
+      .justice-plateau-img {
+        @apply absolute inset-0 w-full h-full object-contain;
+        filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.25)) drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
+        animation: plateauGlow 4s ease-in-out infinite;
+        // animation: plateauSpin 180s linear infinite;
+      }
+
+      .justice-overlay {
+        @apply relative z-10 flex items-center justify-center;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 40% 35%, rgba(120, 90, 20, 0.6), rgba(80, 60, 10, 0.75));
+        backdrop-filter: blur(8px);
+        border: none;
+
+        .justice-ring {
+          display: none;
+          // position: absolute;
+          // inset: -3px;
+          // border-radius: 50%;
+          // border: 2px solid transparent;
+          // background: conic-gradient(from 0deg, rgba(255, 215, 0, 0.7), rgba(255, 180, 0, 0.2), rgba(255, 215, 0, 0.7), rgba(255, 180, 0, 0.2), rgba(255, 215, 0, 0.7)) border-box;
+          // -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+          // mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+          // -webkit-mask-composite: xor;
+          // mask-composite: exclude;
+          // animation: justiceRingSpin 8s linear infinite;
+        }
+
+        .justice-coin-big {
+          @apply relative flex items-center justify-center;
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          background: radial-gradient(circle at 38% 30%, #e8c44a, #d4a830 40%, #b8912a 80%, #9a7520);
+          border: 1px solid rgba(180, 140, 20, 0.8);
+          outline: 1px solid rgba(180, 140, 20, 0.8);
+          outline-offset: 2px;
+          box-shadow:
+            0 0 0 1.5px rgba(140, 100, 10, 0.5),
+            0 2px 6px rgba(0, 0, 0, 0.4),
+            inset 0 2px 3px rgba(255, 255, 255, 0.4),
+            inset 0 -2px 3px rgba(0, 0, 0, 0.2);
+
+          .justice-coins {
+            @apply leading-none;
+            font-family: 'Marcellus', serif !important;
+            font-size: 16px;
+            font-weight: 900;
+            position: relative;
+            top: 0px;
+            color: #3a2200;
+            opacity: 0.6;
+            -webkit-text-stroke: 1px #3a2200;
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+          }
+        }
+      }
+    }
+  }
+
+  @keyframes justiceRingSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+
+  @keyframes plateauGlow {
+    0%, 100% { filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.25)) drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4)); }
+    50% { filter: drop-shadow(0 0 35px rgba(255, 215, 0, 0.4)) drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4)); }
+  }
+
+  @keyframes currentTurnGlow {
+    0%, 100% { box-shadow: 0 0 12px rgba(255, 215, 0, 0.3), 0 0 24px rgba(255, 215, 0, 0.1); }
+    50% { box-shadow: 0 0 25px rgba(255, 215, 0, 0.6), 0 0 50px rgba(255, 215, 0, 0.2); }
+  }
+
+  @keyframes cardShimmer {
+    0%, 70%, 100% { left: -100%; }
+    40% { left: 200%; }
+  }
+
+  @keyframes centerCardSway {
+    0%, 100% { transform: rotate(-1.5deg); }
+    50% { transform: rotate(1.5deg); }
+  }
+
+  @keyframes particleFloat {
+    0% { transform: translateY(0) scale(0); opacity: 0; }
+    10% { opacity: 1; transform: translateY(-50px) scale(1); }
+    80% { opacity: 0.8; }
+    100% { transform: translateY(-400px) scale(0.5); opacity: 0; }
+  }
+
+  @keyframes coinFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+
+  @keyframes plateauSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  @keyframes starTwinkle {
+    0%, 100% { opacity: 0; transform: scale(0.5); }
+    50% { opacity: 1; transform: scale(1); }
+  }
+
+  @keyframes avatarPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+  }
+
+  // --- Board stars ---
+  .board-stars {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      border-radius: 50%;
+      background: rgba(255, 215, 0, 0.6);
+      box-shadow: 0 0 4px rgba(255, 215, 0, 0.4), 0 0 8px rgba(255, 215, 0, 0.2);
+      animation-name: starTwinkle;
+      animation-timing-function: ease-in-out;
+      animation-iteration-count: infinite;
+    }
+  }
+
+  // --- Board particles ---
+  .board-particles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+
+    .particle {
+      position: absolute;
+      bottom: 0;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 215, 0, 0.6), rgba(255, 215, 0, 0));
+      box-shadow: 0 0 4px rgba(255, 215, 0, 0.3);
+      animation-name: particleFloat;
+      animation-timing-function: ease-in-out;
+      animation-iteration-count: infinite;
+    }
+  }
+
+  // --- Actions panel ---
+  .mascarade-actions {
+    @apply flex flex-col items-center gap-3;
+  }
+
+  .waiting-for-player {
+    @apply flex flex-col items-center gap-3 py-2;
+
+    .waiting-label {
+      @apply text-xs font-sans opacity-50 uppercase tracking-widest;
+    }
+
+    .waiting-player-card {
+      @apply flex flex-col items-center gap-2 cursor-pointer;
+      padding: 12px 20px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.15);
+      }
+    }
+
+    .waiting-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      object-fit: contain;
+      background: rgba(255, 255, 255, 0.06);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .waiting-name {
+      @apply text-sm font-sans font-semibold;
+    }
+  }
+
+  .action-info {
+    @apply text-xs text-center font-sans;
+
+    &.action-cooldown {
+      opacity: 0.5;
+      animation-name: waitPulse;
+      animation-duration: 1.5s;
+      animation-timing-function: ease-in-out;
+      animation-iteration-count: infinite;
+    }
+  }
+
+  .action-buttons {
+    @apply flex flex-col w-full gap-2;
+  }
+
+  .action-btn {
+    @apply w-full px-3 py-2 font-sans font-medium text-xs text-center;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    transition: all 0.25s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.12);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    &.look-btn {
+      border-color: rgba(149, 253, 252, 0.4);
+      &:hover {
+        background: rgba(149, 253, 252, 0.15);
+        color: $main;
+      }
+    }
+
+    &.swap-btn, &.pretend-btn {
+      border-color: rgba(254, 190, 253, 0.4);
+      &:hover {
+        background: rgba(254, 190, 253, 0.15);
+        color: $secondary;
+      }
+    }
+
+    &.announce-btn {
+      border-color: rgba(233, 253, 149, 0.4);
+      &:hover {
+        background: rgba(233, 253, 149, 0.15);
+        color: #E9FD95;
+      }
+    }
+
+    &.contest-btn {
+      border-color: rgba(255, 107, 107, 0.5);
+      &:hover {
+        background: rgba(255, 107, 107, 0.2);
+        color: #FF6B6B;
+      }
+    }
+
+    &.pass-btn {
+      border-color: rgba(255, 255, 255, 0.15);
+      &:hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
+    }
+  }
+
+  .action-btn-back {
+    @apply text-xs mt-2 font-sans;
+    color: rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease;
+    &:hover {
+      color: rgba(255, 255, 255, 0.85);
+      transform: translateY(-1px);
+    }
+  }
+
+  // --- Primary action button (gradient, disconnect-link style) ---
+  .mascarade-btn-start {
+    @apply inline-flex justify-center w-full px-5 py-2.5 text-sm font-sans font-semibold rounded-xl;
+    background: linear-gradient(90deg, $main, $secondary);
+    color: $darker;
+    box-shadow: inset 0 0 0 100px transparent;
+    transition: box-shadow 0.3s, color 0.3s;
+
+    &:hover {
+      box-shadow: inset 0 0 0 100px rgba(6, 18, 47, 0.75);
+      color: white;
+    }
+  }
+
+  @keyframes btanimation {
+    0% { background-position: 0 0; }
+    50% { background-position: 100% 0; }
+    100% { background-position: 0 0; }
+  }
+
+  // --- Pickers ---
+  .mascarade-picker {
+    @apply w-full;
+
+    .picker-label {
+      @apply text-sm text-center mb-3 opacity-70 font-sans;
+    }
+
+    .picker-grid {
+      @apply flex flex-wrap gap-2 justify-center;
+    }
+
+    .picker-player {
+      @apply px-3 py-2 rounded-lg text-sm font-sans flex flex-col items-center gap-0.5;
+      width: 130px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s;
+
+      &:hover {
+        background: rgba(149, 253, 252, 0.1);
+        border-color: rgba(149, 253, 252, 0.3);
+        transform: scale(1.05);
+      }
+
+      .picker-avatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        object-fit: contain;
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .picker-coins {
+        @apply text-xs;
+        color: rgba(255, 255, 255, 0.6);
+      }
+    }
+
+    .picker-center-card {
+      @apply flex flex-col items-center gap-1 rounded-lg;
+      padding: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s;
+      cursor: pointer;
+      position: relative;
+
+      &:hover {
+        background: rgba(149, 253, 252, 0.1);
+        border-color: rgba(149, 253, 252, 0.3);
+        transform: translateY(-2px) scale(1.05);
+      }
+
+      .picker-center-img {
+        width: 40px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 4px;
+      }
+
+      .picker-center-label {
+        @apply text-xs font-sans font-medium;
+        color: rgba(255, 255, 255, 0.5);
+      }
+    }
+  }
+
+  .mask-grid {
+    @apply grid gap-2 justify-center;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .mask-option {
+    @apply p-2.5 rounded-lg flex flex-col items-center text-center cursor-pointer;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    transition: all 0.3s;
+
+    &:hover {
+      background: rgba(149, 253, 252, 0.1);
+      border-color: rgba(149, 253, 252, 0.3);
+      transform: scale(1.03);
+    }
+
+    .mask-option-img {
+      width: 48px;
+      height: 64px;
+      object-fit: cover;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .mask-option-name {
+      @apply text-sm font-sans font-medium;
+    }
+
+    .mask-option-desc {
+      @apply text-xs font-sans opacity-40 mt-0.5;
+    }
+  }
+
+  // --- Swap confirm ---
+  .mascarade-swap-confirm {
+    @apply flex flex-col items-center gap-3;
+
+    .swap-buttons {
+      @apply flex gap-3;
+    }
+  }
+
+  // --- Espionne reveal ---
+  .espionne-reveal {
+    @apply p-3 rounded-xl mb-3;
+    background: rgba(149, 253, 252, 0.08);
+    border: 1px solid rgba(149, 253, 252, 0.2);
+
+    p {
+      @apply text-sm font-sans;
+      strong {
+        color: $main;
+      }
+    }
+  }
+
+  // --- Contestation ---
+  .mascarade-contestation {
+    @apply w-full flex flex-col items-center gap-4 p-4 rounded-2xl;
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    max-width: 600px;
+
+    .contestation-header {
+      @apply flex flex-col items-center gap-2;
+
+      .contestation-announce {
+        @apply text-sm text-center font-sans opacity-70;
+      }
+
+      .contestation-chibi {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid rgba(255, 255, 255, 0.15);
+      }
+
+      .contestation-mask-name {
+        @apply text-base font-sans;
+      }
+    }
+
+    .contestation-players {
+      @apply flex flex-col gap-2 w-full;
+      overflow: hidden;
+    }
+
+    .contestation-player {
+      @apply px-4 py-2.5 rounded-lg text-sm font-sans flex items-center justify-between gap-2;
+      width: 100%;
+      white-space: nowrap;
+
+      span:first-child {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-width: 0;
+      }
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid transparent;
+      transition: all 0.3s;
+
+      &.contested {
+        background: rgba(255, 107, 107, 0.15);
+        border: 1px solid rgba(255, 107, 107, 0.3);
+      }
+
+      &.passed {
+        opacity: 0.35;
+      }
+
+      &.waiting {
+        border-color: rgba(255, 255, 255, 0.08);
+        animation: waitingPulse 1.5s ease-in-out infinite;
+      }
+
+      .contestation-status {
+        @apply text-xs opacity-60;
+      }
+    }
+
+    .contestation-action {
+      @apply flex flex-col items-center gap-2;
+    }
+
+    .contestation-buttons {
+      @apply flex flex-col gap-3 w-full;
+    }
+
+    .contestation-waiting {
+      @apply text-xs text-center font-sans px-3 py-2 rounded-lg;
+      color: rgba(255, 255, 255, 0.5);
+      background: rgba(255, 255, 255, 0.03);
+      animation-name: waitPulse;
+      animation-duration: 1.5s;
+      animation-timing-function: ease-in-out;
+      animation-iteration-count: infinite;
+    }
+  }
+
+  // --- Memorization ---
+  .mascarade-memorization {
+    @apply flex flex-col items-center gap-4;
+
+    p {
+      @apply text-center font-sans text-sm;
+      color: rgba(255, 255, 255, 0.7);
+      line-height: 1.5;
+    }
+
+    .mascarade-wait-sub {
+      @apply text-xs;
+      color: rgba(255, 255, 255, 0.35);
+    }
+  }
+
+  // --- Game over ---
+  .mascarade-gameover {
+    @apply flex flex-col gap-4 p-4;
+
+    h3 {
+      @apply text-xl font-title font-semibold text-center;
+      color: $main;
+    }
+
+    .gameover-ranking {
+      @apply flex flex-col gap-2;
+    }
+
+    .gameover-row {
+      @apply flex items-center gap-2 px-3 py-2 rounded-lg font-sans;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      transition: background 0.2s;
+
+      &.is-winner {
+        background: rgba(255, 215, 0, 0.08);
+        border-color: rgba(255, 215, 0, 0.25);
+      }
+    }
+
+    .gameover-rank {
+      @apply text-sm font-semibold;
+      width: 28px;
+      text-align: center;
+      opacity: 0.6;
+
+      .is-winner & {
+        opacity: 1;
+        font-size: 1.1rem;
+      }
+    }
+
+    .gameover-card-img {
+      width: 36px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 5px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      flex-shrink: 0;
+    }
+
+    .gameover-info {
+      @apply flex flex-col;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .gameover-name {
+      @apply text-sm font-semibold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .gameover-mask {
+      @apply text-xs;
+      opacity: 0.6;
+    }
+
+    .gameover-coins {
+      @apply text-sm font-semibold;
+      flex-shrink: 0;
+      white-space: nowrap;
+
+      .is-winner & {
+        color: #ffd700;
+      }
+    }
+
+    .gameover-buttons {
+      @apply flex gap-2 mt-2;
+    }
+  }
+
+  // --- Debug log modal ---
+  .debug-log-modal {
+    @apply fixed inset-0 z-50 flex items-center justify-center;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+  }
+
+  .debug-log-content {
+    @apply rounded-2xl p-6 flex flex-col gap-4;
+    background: $darker;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    max-width: 700px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+
+    h3 {
+      @apply text-xl font-title font-semibold text-center;
+      color: $main;
+    }
+
+    h4 {
+      @apply text-sm font-title font-semibold mb-2 opacity-60 uppercase tracking-wider;
+    }
+
+    .debug-log-players {
+      @apply rounded-xl p-4;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .debug-player-row {
+      @apply flex justify-between items-center py-1.5 px-2 text-sm font-sans;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .debug-mask-label {
+      @apply inline-flex items-center gap-1;
+    }
+
+    .debug-chibi {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .debug-center-cards {
+      @apply text-sm font-sans mt-2 pt-2 opacity-70 flex items-center flex-wrap;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .debug-log-entries {
+      @apply rounded-xl p-4;
+      background: rgba(255, 255, 255, 0.03);
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .debug-log-entry {
+      @apply flex gap-3 py-0.5 text-xs font-sans;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .debug-log-turn {
+      @apply opacity-30;
+      min-width: 28px;
+    }
+
+    .debug-log-msg {
+      @apply opacity-70;
+    }
+  }
+
+  // --- Game log ---
+  .mascarade-log {
+    @apply w-full rounded-xl p-2;
+    background: rgba(255, 255, 255, 0.03);
+    max-height: 100%;
+    height: 100%;
+    overflow-y: auto;
+    font-size: 0.7rem;
+
+    .log-title {
+      @apply text-xs font-title font-semibold mb-2 opacity-40 uppercase tracking-wider;
+    }
+
+    .log-entries {
+      @apply flex flex-col;
+    }
+
+    .log-entry {
+      @apply flex gap-1 py-0.5 font-sans;
+      font-size: inherit;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+
+      .log-turn {
+        @apply opacity-30 font-sans;
+        min-width: 20px;
+      }
+
+      .log-message {
+        @apply opacity-70;
+      }
+    }
+  }
+
+  // --- Turn indicator banner ---
+  .mascarade-turn-banner {
+    @apply text-center font-title font-semibold text-sm py-3 px-4 rounded-xl;
+    background: linear-gradient(135deg, rgba(149, 253, 252, 0.08), rgba(254, 190, 253, 0.06));
+    border: 1px solid rgba(149, 253, 252, 0.2);
+    color: $main;
+    animation: bannerPulse 2.5s ease-in-out infinite;
+    line-height: 1.5;
+
+    &.other-turn {
+      background: none;
+      border-color: rgba(255, 255, 255, 0.06);
+      color: rgba(255, 255, 255, 0.45);
+      animation: none;
+      @apply font-sans font-normal text-xs;
+    }
+
+    .turn-banner-sub {
+      @apply font-sans font-normal text-xs block mt-1;
+      color: rgba(255, 179, 71, 0.7);
+    }
+  }
+
+  @keyframes bannerPulse {
+    0%, 100% { box-shadow: 0 0 12px rgba(149, 253, 252, 0.1); }
+    50% { box-shadow: 0 0 30px rgba(149, 253, 252, 0.2), 0 0 60px rgba(149, 253, 252, 0.05); }
+  }
+
+  @keyframes waitingPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  // --- Center cards (between board and masks ref) ---
+  .center-cards-zone {
+    @apply flex flex-col items-center gap-3 self-start;
+    padding: 1rem 12px;
+
+    .center-cards-label {
+      @apply font-title font-semibold uppercase tracking-wider px-3 py-1 rounded-lg;
+      font-size: 0.65rem;
+      color: rgba(255, 255, 255, 0.7);
+      background: rgba(0, 0, 0, 0.4);
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    }
+
+    .center-cards {
+      @apply flex flex-col gap-3;
+
+      .mask-card {
+        width: 70px;
+        height: 105px;
+        border-radius: 8px;
+        animation-name: centerCardSway;
+        animation-duration: 4s;
+        animation-timing-function: ease-in-out;
+        animation-iteration-count: infinite;
+
+        &:nth-child(2) { animation-delay: -1.3s; }
+        &:nth-child(3) { animation-delay: -2.6s; }
+
+        &.picker-highlighted {
+          transform: translateY(-3px);
+          box-shadow: 0 0 20px rgba(149, 253, 252, 0.4), 0 0 40px rgba(149, 253, 252, 0.1);
+          animation: none;
+        }
+      }
+    }
+  }
+
+  // --- Masks reference panel (vertical strip) ---
+  .mascarade-masks-ref {
+    @apply flex flex-col items-center py-2 border-l-2 border-white border-opacity-[0.07];
+    width: 100px;
+    min-width: 100px;
+    align-self: stretch;
+    overflow: visible;
+    position: relative;
+
+    .masks-ref-title {
+      @apply font-title font-semibold mb-3 opacity-40 uppercase tracking-wider text-center;
+      font-size: 0.6rem;
+      flex-shrink: 0;
+    }
+
+    .masks-ref-scroll {
+      @apply flex-1 w-full;
+      overflow-y: auto;
+      padding: 6px 16px;
+      scrollbar-width: none;
+      &::-webkit-scrollbar {
+        width: 0;
+        display: none;
+      }
+    }
+
+    .masks-ref-list {
+      @apply flex flex-col gap-3 items-center relative;
+    }
+
+    .masks-ref-item {
+      @apply flex flex-col items-center gap-1 relative;
+      cursor: default;
+    }
+
+    .masks-ref-icon {
+      @apply flex items-center justify-center rounded-full overflow-hidden;
+      width: 44px;
+      height: 44px;
+      background: rgba(255, 255, 255, 0.07);
+      font-size: 1.2rem;
+      transition: transform 0.2s, filter 0.2s, background 0.2s, box-shadow 0.2s;
+      &:hover {
+        transform: scale(1.15);
+        filter: brightness(1.2);
+        background: rgba(255, 255, 255, 0.12);
+        box-shadow: 0 0 12px rgba(149, 253, 252, 0.3);
+      }
+
+      .masks-ref-chibi {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .masks-ref-name {
+      @apply font-sans text-center opacity-60;
+      font-size: 0.55rem;
+      line-height: 1.1;
+      max-width: 70px;
+    }
+
+  }
+
+  // tooltip styles moved to root level (portaled to body)
+
+  // --- Look result modal ---
+  .mascarade-look-modal {
+    @apply fixed inset-0 flex items-center justify-center;
+    background: rgba(6, 18, 47, 0.8);
+    z-index: 100;
+    backdrop-filter: blur(10px);
+  }
+
+  .look-modal-content {
+    @apply flex flex-col items-center gap-5 p-8 rounded-2xl;
+    background: linear-gradient(135deg, $darker, $dark);
+    border: 1px solid rgba(149, 253, 252, 0.3);
+    box-shadow: 0 0 50px rgba(149, 253, 252, 0.15), 0 0 100px rgba(6, 18, 47, 0.5);
+    animation: modalAppear 0.3s ease-out;
+  }
+
+  .look-modal-label {
+    @apply text-sm font-sans opacity-60;
+  }
+
+  .look-modal-card {
+    @apply flex flex-col items-center gap-3 p-4 rounded-xl;
+
+    .look-modal-card-img {
+      width: auto;
+      max-width: 80vw;
+      max-height: 60vh;
+      object-fit: contain;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(149, 253, 252, 0.15);
+    }
+
+    .look-modal-name {
+      @apply text-xl font-title font-bold text-white;
+    }
+
+    .look-modal-desc {
+      @apply text-sm font-sans opacity-60 text-center;
+      max-width: 200px;
+      line-height: 1.4;
+    }
+  }
+
+  .look-modal-close {
+    @apply inline-flex justify-center px-6 py-2 text-sm font-sans font-semibold text-darker;
+    background: linear-gradient(45deg, $main 0%, $secondary 60%);
+    background-size: 200% 100%;
+    border-radius: 100px;
+    transition: .3s;
+    &:hover {
+      animation: btanimation 3s linear infinite;
+    }
+  }
+
+  // --- Contestation result modal ---
+  .mascarade-contest-modal {
+    @apply fixed inset-0 flex items-center justify-center;
+    background: rgba(6, 18, 47, 0.75);
+    z-index: 100;
+    backdrop-filter: blur(6px);
+  }
+
+  .contest-modal-content {
+    @apply flex flex-col items-center gap-4 p-6 rounded-2xl;
+    background: linear-gradient(135deg, $darker, $dark);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 0 40px rgba(6, 18, 47, 0.5);
+    animation: modalAppear 0.3s ease-out;
+    max-width: 400px;
+    width: 90%;
+  }
+
+  .contest-modal-title {
+    @apply text-base font-title font-semibold;
+  }
+
+  .contest-modal-reveals {
+    @apply flex flex-col gap-2 w-full;
+  }
+
+  .contest-modal-player {
+    @apply flex items-center gap-3 px-3 py-2 rounded-lg font-sans;
+
+    &.is-true {
+      background: rgba(149, 253, 252, 0.1);
+      border: 1px solid rgba(149, 253, 252, 0.3);
+    }
+
+    &.is-liar {
+      background: rgba(255, 107, 107, 0.1);
+      border: 1px solid rgba(255, 107, 107, 0.2);
+    }
+
+    .contest-reveal-card-img {
+      width: 36px;
+      height: 48px;
+      object-fit: cover;
+      border-radius: 5px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+    .contest-reveal-name { @apply font-medium text-sm flex-1; }
+    .contest-reveal-mask { @apply text-xs opacity-60; }
+    .contest-reveal-badge {
+      @apply text-xs px-2 py-0.5 rounded-full font-semibold;
+      &.true-badge {
+        background: rgba(149, 253, 252, 0.2);
+        color: $main;
+      }
+      &.liar-badge {
+        background: rgba(255, 107, 107, 0.2);
+        color: #FF6B6B;
+      }
+    }
+  }
+
+  .contest-modal-nobody {
+    @apply text-sm font-sans text-center py-2;
+    color: #FF6B6B;
+  }
+
+  @keyframes modalAppear {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  // --- Contest result inline in left panel ---
+  .contest-result-panel {
+    @apply flex flex-col gap-3 p-4 rounded-xl;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    animation-name: cardInfoAppear;
+    animation-duration: 0.4s;
+    animation-timing-function: ease-out;
+    animation-fill-mode: both;
+  }
+
+  .contest-result-title {
+    @apply text-sm font-title font-semibold text-center;
+    margin-bottom: 0.25rem;
+  }
+
+  .contest-result-reveals {
+    @apply flex flex-col gap-2;
+  }
+
+  .contest-result-player {
+    @apply flex items-center gap-2 px-2 py-2 rounded-lg font-sans;
+    overflow: hidden;
+
+    &.is-true {
+      background: rgba(149, 253, 252, 0.1);
+      border: 1px solid rgba(149, 253, 252, 0.3);
+    }
+
+    &.is-liar {
+      background: rgba(255, 107, 107, 0.1);
+      border: 1px solid rgba(255, 107, 107, 0.2);
+    }
+  }
+
+  .contest-result-card-img {
+    width: 40px;
+    height: 56px;
+    object-fit: cover;
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    flex-shrink: 0;
+  }
+
+  .contest-result-info {
+    @apply flex flex-col;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .contest-result-name {
+    @apply font-medium text-sm;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .contest-result-mask {
+    @apply text-xs;
+    opacity: 0.6;
+  }
+
+  .contest-result-badge {
+    @apply text-xs px-1.5 py-0.5 rounded-full font-semibold;
+    align-self: flex-start;
+    white-space: nowrap;
+    font-size: 0.65rem;
+    margin-top: 0.15rem;
+
+    &.true-badge {
+      background: rgba(149, 253, 252, 0.2);
+      color: $main;
+    }
+
+    &.liar-badge {
+      background: rgba(255, 107, 107, 0.2);
+      color: #FF6B6B;
+    }
+  }
+
+  .contest-result-nobody {
+    @apply text-sm font-sans text-center py-2;
+    color: #FF6B6B;
+  }
+}
+
+// --- Card 3D modal (portaled to document.body) ---
+.card-3d-overlay {
+  @apply fixed inset-0 flex items-center justify-center;
+  background: rgba(2, 6, 18, 0.85);
+  z-index: 9999;
+  backdrop-filter: blur(16px);
+  animation: modalAppear 0.3s ease-out;
+}
+
+.card-3d-title-row {
+  @apply flex items-center;
+  gap: 0.5rem;
+}
+
+.card-3d-chibi {
+  height: 36px;
+  width: 36px;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 0 6px rgba(149, 253, 252, 0.3));
+}
+
+.card-3d-layout {
+  @apply flex flex-col items-center;
+  gap: 1.5rem;
+}
+
+.card-3d-scene {
+  perspective: 1000px;
+  aspect-ratio: 2 / 3;
+  height: min(55vh, 500px);
+  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 20px rgba(149, 253, 252, 0.08));
+}
+
+.card-3d {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  will-change: transform;
+  cursor: grab;
+  user-select: none;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.card-3d-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: 12px;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+  }
+}
+
+.card-3d-front {
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    background: linear-gradient(
+      105deg,
+      transparent calc(var(--shine-pos, 50%) - 15%),
+      rgba(255, 255, 255, 0.18) calc(var(--shine-pos, 50%) - 5%),
+      rgba(255, 255, 255, 0.1) var(--shine-pos, 50%),
+      rgba(255, 255, 255, 0.18) calc(var(--shine-pos, 50%) + 5%),
+      transparent calc(var(--shine-pos, 50%) + 15%)
+    );
+    pointer-events: none;
+  }
+}
+
+.card-3d-back {
+  transform: rotateY(180deg);
+}
+
+.card-3d-info {
+  @apply flex flex-col items-center text-center;
+  gap: 0.4rem;
+  animation: cardInfoAppear 0.5s ease-out 0.15s both;
+}
+
+.card-3d-name {
+  @apply font-title font-bold text-white;
+  font-size: 1.5rem;
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 20px rgba(149, 253, 252, 0.3);
+}
+
+.card-3d-desc {
+  @apply font-sans text-white;
+  font-size: 0.85rem;
+  opacity: 0.5;
+  max-width: 280px;
+  line-height: 1.5;
+}
+
+.card-3d-hint {
+  @apply font-sans text-white;
+  font-size: 0.7rem;
+  opacity: 0.25;
+  margin-top: 0.5rem;
+}
+
+.card-3d-label {
+  @apply font-sans text-white text-center;
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  margin-bottom: 0.5rem;
+  animation-name: cardInfoAppear;
+  animation-duration: 0.5s;
+  animation-timing-function: ease-out;
+  animation-fill-mode: both;
+}
+
+.card-3d-acknowledge {
+  @apply font-sans font-semibold;
+  font-size: 1rem;
+  padding: 0.7rem 2.5rem;
+  margin-top: 1rem;
+  background: linear-gradient(90deg, $main, $secondary);
+  color: $darker;
+  border: none;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(149, 253, 252, 0.3);
+  animation-name: cardInfoAppear;
+  animation-duration: 0.5s;
+  animation-timing-function: ease-out;
+  animation-fill-mode: both;
+  animation-delay: 0.3s;
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(149, 253, 252, 0.4);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+@keyframes cardInfoAppear {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// --- Mask announce picker popup overlay ---
+.mask-picker-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation-name: fadeIn;
+  animation-duration: 0.25s;
+  animation-timing-function: ease-out;
+  animation-fill-mode: both;
+}
+
+.mask-picker-popup {
+  @apply flex flex-col items-center rounded-2xl;
+  background: rgba(20, 20, 35, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 2rem 2.5rem;
+  max-width: 90vw;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation-name: cardInfoAppear;
+  animation-duration: 0.4s;
+  animation-timing-function: ease-out;
+  animation-fill-mode: both;
+}
+
+.mask-picker-title {
+  @apply font-sans text-white text-center;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.mask-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 1rem;
+  width: 100%;
+  max-width: 700px;
+}
+
+.mask-picker-card {
+  @apply flex flex-col items-center rounded-xl;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  padding: 0.8rem 0.5rem;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    transform: translateY(-4px) scale(1.03);
+    border-color: rgba(139, 92, 246, 0.6);
+    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+.mask-picker-card-img {
+  width: 100px;
+  height: 140px;
+  object-fit: contain;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.mask-picker-card-name {
+  @apply font-sans text-white text-center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.mask-picker-card-desc {
+  @apply font-sans text-center;
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.3;
+  max-width: 130px;
+}
+
+.mask-picker-back {
+  @apply font-sans text-white rounded-lg;
+  font-size: 0.9rem;
+  padding: 0.5rem 1.5rem;
+  margin-top: 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+// --- Portaled tooltips (rendered in document.body) ---
+.masks-ref-tooltip-fixed {
+  @apply fixed flex flex-col gap-0.5 rounded-lg p-2.5;
+  transform: translateX(calc(-100% - 16px)) translateY(-50%);
+  background: $darker;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
+  width: 180px;
+  z-index: 9999;
+  pointer-events: none;
+  animation: tooltipFadeIn 0.15s ease-out;
+
+  strong {
+    @apply font-title font-semibold text-xs;
+    color: $main;
+  }
+
+  span {
+    @apply font-sans text-xs opacity-70;
+    line-height: 1.3;
+  }
+}
+
+@keyframes tooltipFadeIn {
+  from { opacity: 0; transform: translateX(calc(-100% - 8px)) translateY(-50%); }
+  to { opacity: 1; transform: translateX(calc(-100% - 16px)) translateY(-50%); }
+}
+
+.card-tooltip-fixed {
+  @apply fixed flex flex-col gap-0.5 rounded-lg p-2.5;
+  transform: translateX(-50%) translateY(calc(-100% - 12px));
+  background: $darker;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
+  width: 180px;
+  z-index: 9999;
+  pointer-events: none;
+  animation: cardTooltipFadeIn 0.15s ease-out;
+  text-align: center;
+
+  strong {
+    @apply font-title font-semibold text-xs;
+    color: $main;
+  }
+
+  span {
+    @apply font-sans text-xs opacity-70;
+    line-height: 1.3;
+  }
+}
+
+@keyframes cardTooltipFadeIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(calc(-100% - 4px)); }
+  to { opacity: 1; transform: translateX(-50%) translateY(calc(-100% - 12px)); }
+}
+
+// --- Game animations overlay ---
+.mascarade-animations-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+  overflow: hidden;
+}
+
+// === CARD DEAL: fly from center to player ===
+.anim-card-deal {
+  position: absolute;
+  left: var(--from-x);
+  top: var(--from-y);
+  width: 40px;
+  height: 58px;
+  border-radius: 4px;
+  object-fit: cover;
+  opacity: 0;
+  z-index: 51;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+  animation-name: cardDeal;
+  animation-duration: var(--duration, 600ms);
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+  animation-delay: var(--delay, 0ms);
+}
+
+@keyframes cardDeal {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.3) rotate(0deg);
+  }
+  10% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.9) rotate(8deg);
+  }
+  70% {
+    opacity: 1;
+    transform: translate(
+      calc(var(--to-x) - var(--from-x) - 50%),
+      calc(var(--to-y) - var(--from-y) - 50%)
+    ) scale(1.05) rotate(-2deg);
+  }
+  85% {
+    opacity: 1;
+    transform: translate(
+      calc(var(--to-x) - var(--from-x) - 50%),
+      calc(var(--to-y) - var(--from-y) - 50%)
+    ) scale(1) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(
+      calc(var(--to-x) - var(--from-x) - 50%),
+      calc(var(--to-y) - var(--from-y) - 50%)
+    ) scale(1) rotate(0deg);
+  }
+}
+
+// === CARD SWAP: two cards fly in opposite arcs ===
+.anim-card-fly {
+  position: absolute;
+  width: 45px;
+  height: 65px;
+  border-radius: 4px;
+  object-fit: cover;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.4));
+  transform-origin: center;
+  opacity: 0;
+  z-index: 51;
+
+  &.anim-card-fly-1 {
+    animation-name: cardFlyArc1;
+    animation-duration: var(--duration, 800ms);
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: forwards;
+    animation-delay: var(--delay, 0ms);
+    left: var(--from-x);
+    top: var(--from-y);
+  }
+
+  &.anim-card-fly-2 {
+    animation-name: cardFlyArc2;
+    animation-duration: var(--duration, 800ms);
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: forwards;
+    left: var(--from-x);
+    top: var(--from-y);
+  }
+}
+
+@keyframes cardFlyArc1 {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5) rotate(-10deg);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotate(-5deg);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(
+      calc((var(--to-x) - var(--from-x)) * 0.5 - 50%),
+      calc((var(--to-y) - var(--from-y)) * 0.5 - 50% - 40px)
+    ) scale(1.1) rotate(5deg);
+  }
+  85% {
+    opacity: 1;
+    transform: translate(
+      calc(var(--to-x) - var(--from-x) - 50%),
+      calc(var(--to-y) - var(--from-y) - 50%)
+    ) scale(1) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(
+      calc(var(--to-x) - var(--from-x) - 50%),
+      calc(var(--to-y) - var(--from-y) - 50%)
+    ) scale(0.5) rotate(0deg);
+  }
+}
+
+@keyframes cardFlyArc2 {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5) rotate(10deg);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotate(5deg);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(
+      calc((var(--to-x) - var(--from-x)) * 0.5 - 50%),
+      calc((var(--to-y) - var(--from-y)) * 0.5 - 50% + 40px)
+    ) scale(1.1) rotate(-5deg);
+  }
+  85% {
+    opacity: 1;
+    transform: translate(
+      calc(var(--to-x) - var(--from-x) - 50%),
+      calc(var(--to-y) - var(--from-y) - 50%)
+    ) scale(1) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(
+      calc(var(--to-x) - var(--from-x) - 50%),
+      calc(var(--to-y) - var(--from-y) - 50%)
+    ) scale(0.5) rotate(0deg);
+  }
+}
+
+// === CARD PEEK: subtle glow pulse on player card ===
+.anim-card-peek {
+  position: absolute;
+  left: var(--pos-x);
+  top: var(--pos-y);
+  width: 70px;
+  height: 90px;
+  transform: translate(-50%, -50%);
+  border-radius: 6px;
+  z-index: 51;
+  animation-name: cardPeek;
+  animation-duration: var(--duration, 1000ms);
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: forwards;
+  pointer-events: none;
+}
+
+@keyframes cardPeek {
+  0% {
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+    opacity: 0;
+  }
+  20% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.4), 0 0 40px rgba(149, 253, 252, 0.2);
+    opacity: 1;
+    transform: translate(-50%, -55%) rotateY(15deg);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.6), 0 0 60px rgba(149, 253, 252, 0.3);
+    opacity: 1;
+    transform: translate(-50%, -55%) rotateY(0deg);
+  }
+  80% {
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+    opacity: 0.6;
+    transform: translate(-50%, -50%) rotateY(0deg);
+  }
+  100% {
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+    opacity: 0;
+    transform: translate(-50%, -50%) rotateY(0deg);
+  }
+}
+
+// === ANNOUNCE: mask image flash + name ===
+.anim-announce {
+  position: absolute;
+  left: var(--pos-x);
+  top: var(--pos-y);
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  z-index: 52;
+  animation-name: announceFade;
+  animation-duration: var(--duration, 1200ms);
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: forwards;
+
+  .anim-announce-img {
+    width: 60px;
+    height: 85px;
+    border-radius: 4px;
+    object-fit: cover;
+    filter: drop-shadow(0 0 15px rgba(254, 190, 253, 0.6));
+    animation-name: announceImgPop;
+    animation-duration: var(--duration, 1200ms);
+    animation-timing-function: ease-out;
+    animation-fill-mode: forwards;
+  }
+
+  .anim-announce-name {
+    font-family: sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #FEBEFD;
+    text-shadow: 0 0 10px rgba(254, 190, 253, 0.8), 0 1px 3px rgba(0, 0, 0, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+}
+
+@keyframes announceFade {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+  15% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+  40% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+}
+
+@keyframes announceImgPop {
+  0% { transform: scale(0.3) rotate(-5deg); }
+  20% { transform: scale(1.15) rotate(2deg); }
+  40% { transform: scale(1) rotate(0deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+// === VICTORY: golden ring burst + particles ===
+.anim-victory {
+  position: absolute;
+  left: var(--pos-x);
+  top: var(--pos-y);
+  transform: translate(-50%, -50%);
+  z-index: 52;
+  animation-name: victoryFade;
+  animation-duration: var(--duration, 2500ms);
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+
+  .anim-victory-ring {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 3px solid #e8c44a;
+    animation-name: victoryRingExpand;
+    animation-duration: var(--duration, 2500ms);
+    animation-timing-function: ease-out;
+    animation-fill-mode: forwards;
+    box-shadow: 0 0 20px rgba(232, 196, 74, 0.5), inset 0 0 20px rgba(232, 196, 74, 0.3);
+  }
+
+  .anim-victory-particle {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #e8c44a;
+    box-shadow: 0 0 6px rgba(232, 196, 74, 0.8);
+    animation: victoryParticle 1.5s ease-out forwards;
+    animation-delay: var(--delay, 0ms);
+    transform: translate(-50%, -50%) rotate(var(--angle)) translateY(0);
+  }
+
+  .anim-victory-text {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 30px;
+    animation-name: victoryTextPop;
+    animation-duration: var(--duration, 2500ms);
+    animation-timing-function: ease-out;
+    animation-fill-mode: forwards;
+    filter: drop-shadow(0 0 10px rgba(232, 196, 74, 0.8));
+  }
+}
+
+@keyframes victoryFade {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes victoryRingExpand {
+  0% { width: 20px; height: 20px; opacity: 1; }
+  50% { width: 140px; height: 140px; opacity: 0.7; }
+  100% { width: 180px; height: 180px; opacity: 0; }
+}
+
+@keyframes victoryParticle {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(var(--angle)) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(var(--angle)) translateY(-80px);
+  }
+}
+
+@keyframes victoryTextPop {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+  15% { transform: translate(-50%, -50%) scale(1.4); opacity: 1; }
+  30% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  80% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -60%) scale(1.2); opacity: 0; }
+}
+
+// === COIN FLY: arc trajectory between two points ===
+.anim-coin-fly {
+  position: absolute;
+  left: var(--from-x);
+  top: var(--from-y);
+  font-size: 18px;
+  opacity: 0;
+  z-index: 51;
+  animation-name: coinFlyArc;
+  animation-duration: var(--duration, 900ms);
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: forwards;
+  animation-delay: var(--delay, 0ms);
+  filter: drop-shadow(0 0 6px rgba(232, 196, 74, 0.6));
+}
+
+@keyframes coinFlyArc {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.3);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(
+      calc((var(--to-x) - var(--from-x)) * 0.5 - 50%),
+      calc((var(--to-y) - var(--from-y)) * 0.5 - 50% + var(--arc-y, -25px))
+    ) scale(1.1);
+  }
+  85% {
+    opacity: 1;
+    transform: translate(
+      calc(var(--to-x) - var(--from-x) - 50%),
+      calc(var(--to-y) - var(--from-y) - 50%)
+    ) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(
+      calc(var(--to-x) - var(--from-x) - 50%),
+      calc(var(--to-y) - var(--from-y) - 50%)
+    ) scale(0.3);
+  }
+}
+
+// === COIN POP UP (gain) ===
+.anim-coin-pop-up {
+  position: absolute;
+  left: var(--pos-x);
+  top: var(--pos-y);
+  font-size: 18px;
+  opacity: 0;
+  z-index: 51;
+  animation-name: coinPopUp;
+  animation-duration: var(--duration, 700ms);
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+  animation-delay: var(--delay, 0ms);
+  filter: drop-shadow(0 0 6px rgba(232, 196, 74, 0.6));
+}
+
+@keyframes coinPopUp {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.3);
+  }
+  30% {
+    opacity: 1;
+    transform: translate(-50%, calc(-50% - 15px)) scale(1.2);
+  }
+  70% {
+    opacity: 1;
+    transform: translate(-50%, calc(-50% - 30px)) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% - 45px)) scale(0.6);
+  }
+}
+
+// === COIN POP DOWN (loss) ===
+.anim-coin-pop-down {
+  position: absolute;
+  left: var(--pos-x);
+  top: var(--pos-y);
+  font-size: 18px;
+  opacity: 0;
+  z-index: 51;
+  animation-name: coinPopDown;
+  animation-duration: var(--duration, 700ms);
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+  animation-delay: var(--delay, 0ms);
+  filter: drop-shadow(0 0 6px rgba(232, 196, 74, 0.4));
+}
+
+@keyframes coinPopDown {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.3);
+  }
+  30% {
+    opacity: 1;
+    transform: translate(-50%, calc(-50% + 5px)) scale(1.1);
+  }
+  70% {
+    opacity: 0.6;
+    transform: translate(-50%, calc(-50% + 25px)) scale(0.8);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% + 40px)) scale(0.4);
+  }
+}

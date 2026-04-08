@@ -17,7 +17,11 @@ const PlayerScore = db.define('ncs_playerscores',{
         type: DataTypes.INTEGER
     }
 },{
-    freezeTableName: true
+    freezeTableName: true,
+    indexes: [
+        { fields: ['gameSlug'] },
+        { fields: ['playerId'] }
+    ]
 });
  
 export default PlayerScore;

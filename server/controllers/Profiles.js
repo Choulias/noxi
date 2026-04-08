@@ -11,15 +11,22 @@ export const getAllProfiles = async (req, res) => {
 
 export const getProfileById = async (req, res) => {
     try {
-        const profile = await Profile.findAll({
-            where: {
-                id: req.params.id
-            }
-        });
-        res.json(profile[0]);
+        const profile = await Profile.findByPk(req.params.id);
+        if (!profile) return res.status(404).json({ message: "Not found" });
+        res.json(profile);
     } catch (error) {
         res.json({ message: error.message });
-    }  
+    }
+}
+
+export const getProfileByUserId = async (req, res) => {
+    try {
+        const profile = await Profile.findOne({ where: { userId: req.params.userId } });
+        if (!profile) return res.status(404).json({ message: "Not found" });
+        res.json(profile);
+    } catch (error) {
+        res.json({ message: error.message });
+    }
 }
  
 export const createProfile = async (req, res) => {
@@ -35,6 +42,11 @@ export const createProfile = async (req, res) => {
  
 export const updateProfile = async (req, res) => {
     try {
+        const profile = await Profile.findByPk(req.params.id);
+        if (!profile) return res.status(404).json({ message: "Not found" });
+        if (profile.userId !== req.user.id && req.user.role !== "admin") {
+            return res.status(403).json({ message: "Not allowed" });
+        }
         await Profile.update(req.body, {
             where: {
                 id: req.params.id
@@ -45,11 +57,16 @@ export const updateProfile = async (req, res) => {
         });
     } catch (error) {
         res.json({ message: error.message });
-    }  
+    }
 }
  
 export const deleteProfile = async (req, res) => {
     try {
+        const profile = await Profile.findByPk(req.params.id);
+        if (!profile) return res.status(404).json({ message: "Not found" });
+        if (profile.userId !== req.user.id && req.user.role !== "admin") {
+            return res.status(403).json({ message: "Not allowed" });
+        }
         await Profile.destroy({
             where: {
                 id: req.params.id
@@ -60,5 +77,5 @@ export const deleteProfile = async (req, res) => {
         });
     } catch (error) {
         res.json({ message: error.message });
-    }  
+    }
 }

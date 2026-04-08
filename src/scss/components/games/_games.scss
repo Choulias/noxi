@@ -17,13 +17,13 @@
 
         .gameModel{
             background-color: rgba(255, 255, 255, 0.07);
-            @apply rounded-3xl flex flex-row max-h-[450px];
+            @apply rounded-3xl flex flex-row max-h-[400px] relative;
 
             .game-illustration{
-                @apply w-1/2 rounded-l-3xl max-h-[450px] overflow-hidden;
-                
+                @apply w-1/2 rounded-l-3xl max-h-[400px] overflow-hidden;
+
                 img{
-                    @apply object-cover rounded-l-3xl object-center max-h-[450px] w-full;  
+                    @apply object-cover rounded-l-3xl object-center max-h-[400px] w-full;
                 }
             }
 
@@ -44,7 +44,40 @@
                     @apply flex flex-row items-center justify-between;
 
                     .game-parameters{
-                        @apply flex flex-row font-medium items-center;
+                        @apply flex flex-row font-medium items-center flex-wrap gap-4;
+
+                        .players-input-wrap {
+                            @apply flex items-center rounded-full bg-white px-2 gap-1;
+                            height: 48px;
+
+                            .players-input-btn {
+                                @apply flex items-center justify-center rounded-full font-title font-bold text-gray-500 transition-colors border-none outline-none p-0;
+                                width: 28px;
+                                height: 28px;
+                                font-size: 1.1rem;
+                                background: transparent !important;
+                                line-height: 1;
+                                cursor: pointer;
+                                align-self: center;
+
+                                &:hover {
+                                    background: rgba(0, 0, 0, 0.08) !important;
+                                    color: #111;
+                                }
+                            }
+
+                            .players-input-value {
+                                @apply font-title font-semibold text-base text-gray-900;
+                                min-width: 24px;
+                                text-align: center;
+                            }
+
+                            .players-input-label {
+                                @apply font-title font-semibold text-base text-gray-900 uppercase;
+                                margin-left: 4px;
+                                margin-right: 6px;
+                            }
+                        }
                     }
 
                     button{
@@ -75,4 +108,218 @@
         @apply px-3 py-2 rounded-lg;
     }
 
+    // --- Variant selector (Mascarade) ---
+    .variant-selector {
+        @apply flex items-center gap-2;
+
+        .variant-buttons {
+            @apply flex rounded-lg overflow-hidden;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+
+            .variant-btn {
+                @apply px-3 py-1.5 font-title font-semibold text-sm transition-all;
+                background: rgba(255, 255, 255, 0.05);
+                color: rgba(255, 255, 255, 0.5);
+
+                &:hover {
+                    background: rgba(255, 255, 255, 0.1);
+                    color: rgba(255, 255, 255, 0.8);
+                }
+
+                &.active {
+                    background: linear-gradient(135deg, $main, $secondary);
+                    color: #0a0a1a;
+                }
+            }
+        }
+
+        .variant-info-btn {
+            @apply flex items-center justify-center rounded-full font-title font-bold text-sm transition-all;
+            width: 28px;
+            height: 28px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: rgba(255, 255, 255, 0.5);
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.15);
+                color: white;
+                border-color: $main;
+            }
+        }
+    }
+
+    .favorite-game-btn {
+        @apply flex items-center justify-center cursor-pointer;
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        z-index: 10;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        background: rgba(6, 18, 47, 0.6);
+        backdrop-filter: blur(8px);
+        color: rgba(255, 255, 255, 0.4);
+        transition: color 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+
+        &:hover {
+            color: $secondary;
+            border-color: rgba(254, 190, 253, 0.4);
+            background: rgba(254, 190, 253, 0.1);
+        }
+
+        &.active {
+            color: $secondary;
+            border-color: rgba(254, 190, 253, 0.5);
+            background: rgba(254, 190, 253, 0.15);
+
+            &:hover {
+                background: rgba(254, 190, 253, 0.08);
+            }
+        }
+    }
+
+    .games-public-table {
+        @apply mb-16 mt-5;
+
+        .admin-table-wrap {
+            min-height: 400px;
+
+            .empty-row {
+                height: 350px;
+                vertical-align: middle;
+            }
+        }
+    }
+}
+
+// --- Variant info modal (rendered as portal, outside .gameModels) ---
+.variant-info-modal {
+    @apply relative transform rounded-2xl text-left transition-all w-full;
+    max-width: 750px;
+    background: linear-gradient(160deg, #040e27 0%, $darker 50%, #030c22 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 2rem 2rem 1.5rem;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.9), 0 0 60px rgba($main, 0.06);
+
+    .variant-info-title {
+        @apply font-title font-bold text-xl text-center mb-1;
+        background: linear-gradient(135deg, $main, $secondary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: 0.5px;
+    }
+
+    .variant-info-subtitle {
+        @apply text-center font-sans text-xs mb-5;
+        color: rgba(255, 255, 255, 0.35);
+    }
+
+    .variant-info-content {
+        @apply flex gap-5;
+    }
+
+    .variant-info-block {
+        @apply flex-1 rounded-xl;
+        padding: 1rem 0.75rem;
+        background: rgba(255, 255, 255, 0.03);
+        border: 2px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.3s ease;
+
+        &.selected {
+            border-color: rgba($main, 0.5);
+            background: rgba($main, 0.04);
+            box-shadow: 0 0 20px rgba($main, 0.06), inset 0 0 20px rgba($main, 0.02);
+        }
+
+        h4 {
+            @apply font-title font-bold text-sm uppercase tracking-widest mb-1 text-center;
+            color: white;
+            letter-spacing: 3px;
+        }
+
+        .variant-block-divider {
+            width: 40px;
+            height: 2px;
+            margin: 0 auto 0.75rem;
+            border-radius: 2px;
+            background: linear-gradient(90deg, $main, $secondary);
+            opacity: 0.6;
+        }
+
+        .variant-center-info {
+            @apply text-xs font-sans mb-3 py-1 rounded-full text-center block;
+            background: rgba(255, 215, 0, 0.08);
+            color: rgba(255, 215, 0, 0.9);
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            font-weight: 500;
+        }
+    }
+
+    .variant-mask-list {
+        @apply flex flex-col gap-1;
+    }
+
+    .variant-mask-item {
+        @apply flex items-center gap-2.5 rounded-lg px-2.5 py-2;
+        transition: background 0.2s;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        &:nth-child(odd) {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .variant-mask-icon {
+            @apply flex items-center justify-center rounded-full shrink-0 overflow-hidden;
+            font-size: 1rem;
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+
+            .variant-mask-chibi {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+        }
+
+        .variant-mask-info {
+            @apply flex flex-col gap-0.5;
+
+            .variant-mask-name {
+                @apply font-title font-bold text-xs;
+                color: white;
+                letter-spacing: 0.3px;
+            }
+
+            .variant-mask-desc {
+                @apply font-sans;
+                font-size: 0.65rem;
+                color: rgba($main, 0.65);
+                line-height: 1.3;
+                font-weight: 500;
+            }
+        }
+    }
+
+    .variant-info-close {
+        @apply mt-5 w-full py-2.5 rounded-xl font-title font-bold text-sm uppercase tracking-wider transition-all;
+        background: linear-gradient(135deg, rgba($main, 0.15), rgba($secondary, 0.15));
+        color: white;
+        border: 1px solid rgba($main, 0.2);
+        letter-spacing: 1px;
+
+        &:hover {
+            background: linear-gradient(135deg, rgba($main, 0.25), rgba($secondary, 0.25));
+            border-color: rgba($main, 0.4);
+            box-shadow: 0 0 20px rgba($main, 0.1);
+        }
+    }
 }

@@ -11,15 +11,12 @@ export const getAllEventLikers = async (req, res) => {
  
 export const getEventLikerById = async (req, res) => {
     try {
-        const eventLiker = await EventLiker.findAll({
-            where: {
-                id: req.params.id
-            }
-        });
-        res.json(eventLiker[0]);
+        const eventLiker = await EventLiker.findByPk(req.params.id);
+        if (!eventLiker) return res.status(404).json({ message: "Not found" });
+        res.json(eventLiker);
     } catch (error) {
         res.json({ message: error.message });
-    }  
+    }
 }
 
 export const getEventLikersByEventId = async (req, res) => {

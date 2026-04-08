@@ -1,5 +1,5 @@
 .btn{
-    @apply border-none outline-none relative px-6 py-4 font-sans font-medium text-darker rounded-full;
+    @apply border-none outline-none relative px-6 py-3 font-sans font-medium text-darker rounded-full;
 
     background: linear-gradient(45deg, $main 0%, $secondary 60%);
     background-size: 200% 100%;
@@ -26,8 +26,30 @@
      }
  }
 
+.gradient-hover{
+    @apply relative overflow-hidden;
+
+    &::before{
+        content: '';
+        @apply absolute inset-0 pointer-events-none;
+        background: linear-gradient(45deg, $main, $secondary);
+        opacity: 0;
+        transition: opacity 0.3s;
+        z-index: 0;
+    }
+
+    &:hover::before{
+        opacity: 0.15;
+    }
+
+    & > *{
+        @apply relative;
+        z-index: 1;
+    }
+}
+
 .clicked-btn{
-    @apply flex flex-row items-center border-none outline-none relative px-6 py-4 font-sans font-medium text-darker rounded-full bg-white bg-opacity-60;
+    @apply flex flex-row items-center border-none outline-none relative px-6 py-3 font-sans font-medium text-darker rounded-full bg-white bg-opacity-60;
 
     svg{
         @apply ml-2 pb-[2px];

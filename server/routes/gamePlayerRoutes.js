@@ -14,11 +14,13 @@ import {
 
 const router = express.Router();
 
+// Public (consultation historique de parties)
+router.get('/username/:username', getGamesPlayerByUsername);
+router.get('/gameid/:gameid', getGamePlayersByGameId);
+
 // Protégé
 router.get('/', authMiddleware, getAllGamePlayers);
 router.get('/:id', authMiddleware, getGamePlayerById);
-router.get('/username/:username', authMiddleware, getGamesPlayerByUsername);
-router.get('/gameid/:gameid', authMiddleware, getGamePlayersByGameId);
 router.post('/', authMiddleware, createGamePlayer);
 router.patch('/:id', authMiddleware, updateGamePlayer);
 router.patch('/score/:gameId/:clientId', authMiddleware, updateGamePlayerScore);

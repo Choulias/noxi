@@ -20,7 +20,10 @@ const GamePlayer = db.define('ncs_gameplayers',{
         type: DataTypes.INTEGER
     }
 },{
-    freezeTableName: true
+    freezeTableName: true,
+    indexes: [
+        { fields: ['gameId'] }
+    ]
 });
  
 export default GamePlayer;

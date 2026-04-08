@@ -68,54 +68,53 @@ header{
                         li.dropdown{
                             a.dropdown-btn{
                                 @apply flex items-center gap-x-1 font-semibold leading-6;
-                                
+
                                 .chevron-icon{
                                     @apply  h-5 w-5 flex-none text-gray-400;
                                 }
                             }
 
                             .sub-menu{
-                                @apply absolute -left-8 top-full z-10 mt-3 w-screen max-w-xs overflow-hidden rounded-3xl bg-darker bg-opacity-70 shadow-lg ;
+                                @apply absolute -left-8 top-full z-10 mt-3 overflow-hidden rounded-2xl;
+                                width: 240px;
+                                background: rgba(6, 18, 47, 0.85);
+                                backdrop-filter: blur(16px);
+                                border: 1px solid rgba(255, 255, 255, 0.08);
+                                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
 
                                 li{
-                                    @apply relative flex items-center gap-x-6 rounded-lg p-4 leading-6 hover:bg-gray-50;
+                                    @apply relative flex items-center gap-x-2 rounded-xl px-4 py-3 leading-6 cursor-pointer;
+                                    transition: all 0.2s;
 
                                     .icon-container{
-                                        @apply flex h-11 w-11 flex-none items-center justify-center group-hover:bg-black;
-                                        
+                                        @apply flex h-9 w-9 flex-none items-center justify-center rounded-lg;
+                                        background: transparent;
+                                        transition: background 0.2s;
+
                                         .icon{
-                                            @apply invert;
+                                            @apply invert h-4/5;
+                                        }
+
+                                        .icon[src*="discord"]{
+                                            @apply h-3/5;
                                         }
                                     }
 
                                     a{
-                                        @apply block font-semibold text-white duration-0 pointer-events-none; 
+                                        @apply block font-medium text-sm text-white duration-0 pointer-events-none;
+                                        color: rgba(255, 255, 255, 0.75);
                                     }
 
                                     &:hover{
+                                        background: rgba(255, 255, 255, 0.04);
+
                                         .icon-container{
-                                            .icon{
-                                                @apply invert-0;
-                                            }
+                                            background: linear-gradient(45deg, rgba(149, 253, 252, 0.2), rgba(254, 190, 253, 0.2));
                                         }
-                                    }
-                                }
 
-                                li:hover{
-                                    a{
-                                        @apply text-black;
-                                    }
-                                }
-
-                                li:nth-child(1){
-                                    .icon{
-                                        @apply h-4/5;
-                                    }
-                                }
-
-                                li:nth-child(3){
-                                    .icon{
-                                        @apply h-4/5;
+                                        a{
+                                            @apply text-white;
+                                        }
                                     }
                                 }
 
@@ -161,9 +160,48 @@ header{
                             }
 
                             .dropdown-list{
-                                @apply absolute right-0 z-50 mt-2 w-48 origin-top-right rounded-xl bg-darker bg-opacity-70 p-4 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none;
+                                @apply absolute right-0 z-50 mt-3 origin-top-right rounded-2xl p-1 focus:outline-none;
+                                width: 200px;
+                                background: rgba(6, 18, 47, 0.85);
+                                backdrop-filter: blur(16px);
+                                border: 1px solid rgba(255, 255, 255, 0.08);
+                                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+
                                 a{
-                                    @apply font-medium block px-4 py-2 text-white rounded-md hover:bg-white hover:text-black;
+                                    @apply font-medium block px-4 py-2.5 text-sm rounded-xl;
+                                    color: rgba(255, 255, 255, 0.75);
+                                    background: transparent;
+                                    transition: background 0.3s, color 0.3s;
+
+                                    &.dropdown-item{
+                                        @apply flex items-center gap-2;
+
+                                        .dropdown-item-icon{
+                                            @apply h-4 w-4;
+                                        }
+                                    }
+
+                                    &:hover{
+                                        background: rgba(255, 255, 255, 0.08);
+                                        color: white;
+                                    }
+
+                                    &.disconnect-link{
+                                        @apply flex items-center gap-2;
+                                        background: linear-gradient(90deg, $main, $secondary) !important;
+                                        color: $darker;
+                                        box-shadow: inset 0 0 0 100px transparent;
+                                        transition: box-shadow 0.3s, color 0.3s !important;
+
+                                        .disconnect-icon{
+                                            @apply h-4 w-4;
+                                        }
+
+                                        &:hover{
+                                            box-shadow: inset 0 0 0 100px rgba(6, 18, 47, 0.75);
+                                            color: white;
+                                        }
+                                    }
                                 }
                             }
                         }

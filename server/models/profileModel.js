@@ -18,9 +18,24 @@ const Profile = db.define('ncs_profiles',{
     },
     picture:{
         type: DataTypes.STRING
+    },
+    xp: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+    },
+    level: {
+        type: DataTypes.INTEGER,
+        defaultValue: 1
+    },
+    favoriteGame: {
+        type: DataTypes.STRING,
+        allowNull: true
     }
 },{
-    freezeTableName: true
+    freezeTableName: true,
+    indexes: [
+        { fields: ['userId'] }
+    ]
 });
  
 export default Profile;

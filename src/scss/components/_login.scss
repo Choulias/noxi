@@ -1,3 +1,9 @@
+// Hide header and footer on auth pages
+.auth-page .header-navbar,
+.auth-page footer {
+    display: none;
+}
+
 // Login --------------------------------------------------------------------
 .Auth-global{
     @apply w-screen h-screen relative z-20 flex flex-row;
@@ -21,6 +27,13 @@
     
     .Auth-form-content {
         @apply px-10 py-10;
+
+        .fail {
+            @apply text-center text-sm font-sans py-2 px-4 rounded-lg mb-4;
+            background: rgba(255, 70, 70, 0.15);
+            color: $error-red;
+            border: 1px solid rgba(255, 70, 70, 0.3);
+        }
 
         .intro-msg{
             @apply flex flex-col items-center;

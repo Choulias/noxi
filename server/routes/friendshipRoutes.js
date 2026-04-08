@@ -2,6 +2,7 @@ import express from "express";
 import { authMiddleware } from "../middleware/auth.js";
 import {
     getAllFriendships,
+    getMyFriendships,
     createFriendship,
     getFriendshipById,
     updateFriendship,
@@ -12,6 +13,7 @@ const router = express.Router();
 
 // Protégé
 router.get('/', authMiddleware, getAllFriendships);
+router.get('/mine', authMiddleware, getMyFriendships);
 router.get('/:id', authMiddleware, getFriendshipById);
 router.post('/', authMiddleware, createFriendship);
 router.patch('/:id', authMiddleware, updateFriendship);

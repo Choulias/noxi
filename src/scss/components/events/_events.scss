@@ -6,172 +6,273 @@
     }
 
     .spotlight-border{
-        @apply w-[218px] mb-12;
+        @apply w-[218px] mb-10;
     }
 
     .other-border{
-        @apply w-[340px] mb-10;
+        @apply w-[340px] mb-8;
     }
-    
 
+    // --- Spotlight event ---
     .spotlight-event{
-        background-color: rgba($color: white, $alpha: 0.07);
-        @apply py-12 px-16 rounded-3xl flex flex-row mb-12;
+        @apply py-10 px-12 rounded-2xl flex flex-row mb-12;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s;
+
+        &:hover {
+            border-color: rgba(149, 253, 252, 0.15);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+        }
 
         img{
-            @apply w-64 rounded-full mr-16;
+            @apply w-48 h-48 rounded-full mr-12 object-cover;
         }
 
         .spotlight-text{
             @apply flex flex-col w-full;
 
             .spotlight-info{
-                @apply self-stretch h-full ;
+                @apply self-stretch h-full;
 
                 .spotlight-theme{
                     @apply flex flex-row items-center;
-                    
+
                     span{
-                        @apply font-normal;
+                        @apply font-normal text-sm;
+                        color: rgba(255, 255, 255, 0.5);
                     }
 
                     svg{
-                        @apply mr-4;
+                        @apply mr-3;
                     }
                 }
 
                 h2{
-                    @apply mt-4;
+                    @apply mt-3 text-2xl;
                 }
 
                 p{
-                    @apply font-light;
+                    @apply font-light text-sm mt-1;
+                    color: rgba(255, 255, 255, 0.6);
                 }
-        
             }
 
             .spotlight-interractions{
-                @apply flex flex-row items-center justify-between w-full;
+                @apply flex flex-row items-center justify-between w-full mt-4;
 
                 .event-info{
-                    @apply flex flex-row items-center font-medium;
+                    @apply flex flex-row items-center font-medium text-sm;
 
                     .event-attendees{
                         @apply flex flex-row items-center;
 
                         svg{
-                            @apply mr-3;
+                            @apply mr-2 w-5 h-5;
                         }
                     }
 
                     .event-likers{
-                        @apply flex flex-row ml-10 items-center;
+                        @apply flex flex-row ml-8 items-center;
 
                         svg{
-                            @apply mr-3;
+                            @apply mr-2 w-5 h-5;
                         }
                     }
                 }
             }
-           
         }
     }
 
+    // --- Event filter ---
     .event-filter{
-        @apply mb-8;
+        @apply mb-8 flex flex-wrap gap-2 items-center;
+
+        span {
+            @apply text-sm font-medium mr-2;
+            color: rgba(255, 255, 255, 0.4);
+        }
 
         button{
-            @apply inline-flex w-full justify-center rounded-md  px-3 py-2 text-sm font-semibold text-white shadow-sm sm:w-auto hover:text-main;
+            @apply inline-flex justify-center rounded-full px-5 py-1.5 text-sm font-semibold text-white;
+            background: rgba(255, 255, 255, 0.07);
         }
-
-        // .active{
-        //     background: rgb(149,253,252);
-        //     background: linear-gradient(45deg, rgba(149,253,252,1) 0%, rgba(254,190,253,1) 100%);
-        //     -webkit-background-clip: text;
-        //     -webkit-text-fill-color: transparent;
-        //     text-align: center;
-        // }
 
         .active{
-            @apply text-main;
+            background: linear-gradient(45deg, $main, $secondary);
+            @apply text-darker;
         }
-        
     }
 
+    // --- Event cards ---
     .notspotlight-event{
-        @apply flex flex-row flex-wrap justify-center gap-8 mb-20;
+        @apply grid gap-6 mb-20;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+
+        .empty-events{
+            @apply text-sm py-16 text-center;
+            grid-column: 1 / -1;
+            color: rgba(255, 255, 255, 0.4);
+        }
 
         .event-card{
-            background-color: rgba($color: white, $alpha: 0.07);
-            
-            @apply max-w-sm rounded-3xl flex flex-col;
+            @apply rounded-2xl flex flex-col overflow-hidden;
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            animation-name: eventCardIn;
+            animation-duration: 0.4s;
+            animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+            animation-fill-mode: both;
+            transition: all 0.3s;
+
+            &:hover {
+                transform: translateY(-4px);
+                border-color: rgba(149, 253, 252, 0.15);
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+            }
 
             img{
-                @apply w-[384px] max-h-52 object-cover h-auto rounded-t-3xl;
+                @apply w-full h-36 object-cover;
             }
 
             .event-text{
-                @apply flex flex-col px-8 py-10 self-stretch h-full;
-                
+                @apply flex flex-col px-5 py-5 self-stretch h-full;
+
                 .event-info{
-                    @apply h-full mb-6;
+                    @apply h-full mb-4;
 
                     h2{
-                        @apply mt-5 text-3xl;
+                        @apply mt-3 text-xl leading-tight;
                     }
-    
+
                     p{
-                        @apply font-light;
+                        @apply font-light text-sm mt-1;
+                        color: rgba(255, 255, 255, 0.55);
                     }
 
                     .event-theme{
                         @apply flex flex-row items-center;
-    
+
+                        span {
+                            @apply text-xs;
+                            color: rgba(255, 255, 255, 0.45);
+                        }
+
                         svg{
-                            @apply mr-4;
+                            @apply mr-3;
+                            width: 20px;
                         }
                     }
                 }
 
                 .event-interractions{
-                    @apply flex flex-row justify-between;
+                    @apply flex flex-row justify-between items-center;
+
+                    .btn, .clicked-btn {
+                        @apply text-xs px-4 py-1.5;
+                    }
 
                     .event-interactors{
                         @apply flex flex-row items-center;
 
                         .event-attendees{
-                            @apply flex flex-row items-center mr-5;
+                            @apply flex flex-row items-center mr-4;
 
                             svg{
-                                @apply mr-2;
+                                @apply mr-1.5 w-4 h-4;
                             }
+
+                            span { @apply text-xs; }
                         }
 
                         .event-likers{
                             @apply flex flex-row items-center;
 
                             svg{
-                                @apply mr-2;
+                                @apply mr-1.5 w-4 h-4;
                             }
+
+                            span { @apply text-xs; }
                         }
                     }
                 }
-                
+
             }
         }
     }
 
+    .spotlight-empty{
+        @apply items-center justify-center;
+        p{
+            @apply text-sm;
+            color: rgba(255, 255, 255, 0.4);
+        }
+    }
+}
+
+// --- Login modal ---
+.login-modal-overlay{
+    @apply fixed inset-0 z-50 flex items-center justify-center;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(6px);
+
+    .login-modal{
+        @apply relative rounded-2xl px-10 py-8 text-center;
+        background: rgba(6, 18, 47, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+        max-width: 400px;
+        width: 90%;
+
+        .login-modal-close{
+            @apply absolute top-3 right-4 text-2xl leading-none;
+            color: rgba(255, 255, 255, 0.4);
+            transition: color 0.2s;
+            &:hover{ color: white; }
+        }
+
+        h3{
+            @apply text-xl font-semibold mb-3;
+            background: linear-gradient(45deg, $main, $secondary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p{
+            @apply text-sm mb-6;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .login-modal-actions{
+            @apply flex flex-col gap-3 items-center;
+
+            .btn{
+                @apply w-full text-center;
+            }
+
+            .login-modal-cancel{
+                @apply text-sm;
+                color: rgba(255, 255, 255, 0.4);
+                transition: color 0.2s;
+                &:hover{ color: white; }
+            }
+        }
+    }
 }
 
 .message-banner{
 
-    @apply relative z-20 w-full bg-gradient-to-r from-main to-secondary text-darker py-20;
+    @apply relative z-20 w-full bg-gradient-to-r from-main to-secondary text-darker py-16;
 
     .message-container {
         @apply flex flex-row justify-between items-center;
 
         h6{
-            @apply font-medium text-3xl leading-normal;
+            @apply font-medium text-2xl leading-normal;
         }
         div{
             @apply flex-grow pl-5 flex justify-center;
@@ -179,6 +280,17 @@
                 @apply mr-5;
             }
         }
-        
+
+    }
+}
+
+@keyframes eventCardIn {
+    0% {
+        opacity: 0;
+        transform: translateY(15px) scale(0.97);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
     }
 }

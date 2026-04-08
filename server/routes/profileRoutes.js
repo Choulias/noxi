@@ -4,11 +4,15 @@ import {
     getAllProfiles,
     createProfile,
     getProfileById,
+    getProfileByUserId,
     updateProfile,
     deleteProfile
 } from "../controllers/Profiles.js";
 
 const router = express.Router();
+
+// Public (consultation de profil)
+router.get('/user/:userId', getProfileByUserId);
 
 // Protégé
 router.get('/', authMiddleware, getAllProfiles);

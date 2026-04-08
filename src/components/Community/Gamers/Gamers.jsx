@@ -1,7 +1,8 @@
-import { React, useState, useEffect } from "react";
-import { DataGrid } from '@mui/x-data-grid';
+import { React, useState, useEffect, useMemo, useLayoutEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../../api";
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 export default function Gamers() {
 
@@ -17,6 +18,43 @@ export default function Gamers() {
 
   const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState("tictactoe");
+
+  useLayoutEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    const title = document.querySelector('.gamers > h2');
+    const border = document.querySelector('.gamers > .title-border');
+    const leaderboard = document.querySelector('.leaderboard');
+
+    if (title) {
+      gsap.fromTo(title,
+        { opacity: 0, y: 25 },
+        { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out',
+          scrollTrigger: { trigger: title, start: 'top 90%', toggleActions: 'play none none none' }
+        }
+      );
+    }
+    if (border) {
+      gsap.fromTo(border,
+        { scaleX: 0, transformOrigin: 'left center' },
+        { scaleX: 1, duration: 0.6, ease: 'power2.inOut',
+          scrollTrigger: { trigger: border, start: 'top 90%', toggleActions: 'play none none none' }
+        }
+      );
+    }
+    if (leaderboard) {
+      gsap.fromTo(leaderboard,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out',
+          scrollTrigger: { trigger: leaderboard, start: 'top 85%', toggleActions: 'play none none none' }
+        }
+      );
+    }
+
+    return () => {
+      ScrollTrigger.getAll().forEach(t => t.kill());
+    };
+  }, []);
   const [clientName, setClientName] = useState("");
   
   const [playerScores, setPlayerScores] = useState([]);
@@ -43,13 +81,14 @@ export default function Gamers() {
     }
   }
 
-  const columns = [
-    { field: 'id', headerName: 'ID', width: 70 },
-    { field: 'gameSlug', headerName: "Slug de la partie", width: 200 },
-    { field: 'playerId', headerName: 'Id du joueur', width: 200 },
-    { field: 'clientName', headerName: 'Nom du joueur', width: 130 },
-    { field: 'bestScore', headerName: 'Score du joueur', width: 130 }
-  ];
+  const [page, setPage] = useState(0);
+  const perPage = 9;
+
+  const paged = useMemo(() => {
+    return playerScores.slice(page * perPage, (page + 1) * perPage);
+  }, [playerScores, page]);
+
+  const totalPages = Math.ceil(playerScores.length / perPage);
 
   return (
     <div className='conteneur gamers'>
@@ -63,11 +102,12 @@ export default function Gamers() {
               <button
                 key={item.slug}
                 type="button"
-                className={activeFilter === item.slug ? "active" : ""}
+                className={activeFilter === item.slug ? "active" : "gradient-hover"}
                 onClick={() => {
                   setActiveFilter(item.slug);
                   getPlayerScores(item.slug);
                   setClientName("");
+                  setPage(0);
                 }}
                 >{item.name}
               </button>
@@ -82,91 +122,48 @@ export default function Gamers() {
           </div>
         </div>
 
-        {/* <div style={{ height: 400, width: '100%' }}>
-          <DataGrid
-          rows={playerScores}
-          columns={columns}
-          initialState={{
-              pagination: {
-              paginationModel: { page: 0, pageSize: 5 },
-              },
-          }}
-          pageSizeOptions={[5, 10]}
-          // checkboxSelection
-          />
-        </div> */}
+        <div className="admin-table-custom">
+          <div className="admin-table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Joueur</th>
+                  <th>Meilleur score</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody key={`filter-${activeFilter}`}>
+                {paged.length === 0 ? (
+                  <tr><td colSpan="3" className="empty-row">Aucun score enregistré</td></tr>
+                ) : paged.map((item, idx) => (
+                  <tr key={item.id} className="table-row-animated" style={{ animationDelay: `${idx * 0.05}s` }}>
+                    <td>
+                      <div className="cell-user">
+                        <img className="cell-avatar" src={'https://robohash.org/' + item.clientName} alt="" />
+                        <span>{item.clientName}</span>
+                      </div>
+                    </td>
+                    <td className="cell-center cell-bold">{item.bestScore}</td>
+                    <td className="cell-actions">
+                      <button className="join-btn btn" onClick={() => navigate(`/profile/${item.clientName}`)}>Voir le profil</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-        <div className="games-table">
-          <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
-            {(playerScores.length > 0) ? (
-              <div className="fond-table">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Joueurs</th>
-                      <th>Meilleurs scores</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {playerScores.map((item, i) => (
-                      <tr key={item.id}>
-                        <td>
-                          <div className="flex items-center">
-                            <div className="flex-shrink-0 w-10 h-10">
-                              <img
-                                className="w-full h-full rounded-full"
-                                src={'https://robohash.org/'+ item.clientName }
-                                alt=""
-                              />
-                            </div>
-
-                            <div className="ml-3">
-                              <p className="whitespace-no-wrap">
-                                {item.clientName}
-                              </p>
-                            </div>
-                          </div>
-                        </td>
-
-                        <td >
-                          <p>{item.bestScore}</p>
-                        </td>
-
-                        <td >
-                          <button
-                            type="button"
-                            className="join-btn btn"
-                            onClick={() => {
-                              navigate(`/profile/${item.clientName}`)
-                            }}
-                            >Voir le profil
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+          <div className="admin-table-footer">
+            <span className="admin-table-count">Vue {playerScores.length === 0 ? 0 : page * perPage + 1}–{Math.min((page + 1) * perPage, playerScores.length)} sur {playerScores.length} éléments</span>
+            {totalPages > 1 && (
+              <div className="admin-pagination">
+                <button disabled={page === 0} onClick={() => setPage(page - 1)}>&laquo;</button>
+                {Array.from({ length: totalPages }, (_, i) => (
+                  <button key={i} className={page === i ? 'active' : ''} onClick={() => setPage(i)}>{i + 1}</button>
+                ))}
+                <button disabled={page >= totalPages - 1} onClick={() => setPage(page + 1)}>&raquo;</button>
               </div>
-            ) : (
-              <div className="fond-table">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Utilisateur</th>
-                      <th >Jeu</th>
-                      <th>Lobby</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                </table>
-                <div className="empty-table">
-                  <span>Il n'y a malheureusement aucune partie en cours, lancez-en une !</span>
-                </div>
-              </div>
-            )   
-          }
+            )}
           </div>
         </div>
       </div>
