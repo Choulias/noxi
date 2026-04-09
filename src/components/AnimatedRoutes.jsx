@@ -13,7 +13,7 @@ import PleaseVerifyEmail from './Email/PleaseVerifyEmail';
 import { EmailVerificationLandingPage } from './Email/EmailVerificationLanding';
 import ForgotPassword from './Login/ForgotPassword';
 import { PrivateRoute } from './Auth/PrivateRoute';
-import { RedirectRoute } from './Auth/redirectRoute';
+import { RedirectRoute } from './Auth/RedirectRoute';
 import { AdminRoute } from './Auth/AdminRoute';
 
 // Lazy load heavy components
