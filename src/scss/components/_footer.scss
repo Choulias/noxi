@@ -45,6 +45,12 @@ footer{
                 gap: 24px 16px;
             }
 
+            // Ultra-mobile (< 420px) : 1 colonne pour les textes longs
+            @media (max-width: 420px) {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
             h4{
                 @apply font-semibold text-white text-lg mb-6;
                 &::after{

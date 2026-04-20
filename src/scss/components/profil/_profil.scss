@@ -92,6 +92,11 @@
                     .barre{
                         @apply bg-white bg-opacity-20 relative w-64 h-2 rounded-full cursor-pointer;
 
+                        @include mobile {
+                            width: 100%;
+                            max-width: 240px;
+                        }
+
                         .filled{
                             @apply absolute top-0 left-0 h-2 bg-gradient-to-r from-main to-secondary rounded-full;
                             transition: width 0.5s ease;
@@ -452,6 +457,11 @@
                 .stats-grid {
                     @apply grid grid-cols-4 gap-4 mt-2;
 
+                    // Tablette : 2 colonnes pour éviter le surserrage
+                    @include tablet {
+                        grid-template-columns: 1fr 1fr;
+                        gap: 16px;
+                    }
                     // Mobile : 2 colonnes pour les stats
                     @include mobile {
                         grid-template-columns: 1fr 1fr;

@@ -255,7 +255,7 @@ export default function Nav() {
                                     <Disclosure.Button
                                       key={item.name}
                                       as="li"
-                                      className="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                                      className="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-white/80 hover:bg-white/10 hover:text-white"
                                     >
                                       {item.link}
                                     </Disclosure.Button>

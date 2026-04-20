@@ -44,10 +44,10 @@ DELETE FROM `ncs_eventattendees` WHERE userId NOT IN (SELECT id FROM `ncs_users`
 -- 2f. User badges orphelins (la colonne est userId)
 DELETE FROM `ncs_user_badges` WHERE userId NOT IN (SELECT id FROM `ncs_users`);
 
--- 2g. Friend requests orphelins
+-- 2g. Friend requests orphelins (à vérifier selon ton schéma)
 DELETE FROM `ncs_friendrequests`
-  WHERE inviterId NOT IN (SELECT id FROM `ncs_users`)
-     OR invitedId NOT IN (SELECT id FROM `ncs_users`);
+  WHERE senderId NOT IN (SELECT id FROM `ncs_users`)
+     OR receiverId NOT IN (SELECT id FROM `ncs_users`);
 
 
 -- ════════════════════════════════════════════════════════════════

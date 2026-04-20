@@ -96,9 +96,20 @@
                     .game-parameters{
                         @apply flex flex-row font-medium items-center flex-wrap gap-4;
 
+                        @include mobile {
+                            width: 100%;
+                            justify-content: center;
+                            gap: 10px;
+                        }
+
                         .players-input-wrap {
                             @apply flex items-center rounded-full bg-white px-2 gap-1;
                             height: 48px;
+
+                            @include mobile {
+                                height: 42px;
+                                padding: 0 10px;
+                            }
 
                             .players-input-btn {
                                 @apply flex items-center justify-center rounded-full font-title font-bold text-gray-500 transition-colors border-none outline-none p-0;
