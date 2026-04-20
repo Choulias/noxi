@@ -20,6 +20,7 @@ import { AdminRoute } from './Auth/AdminRoute';
 const Games = lazy(() => import('./Games/Games'));
 const TicTacToe = lazy(() => import('./Games/TicTacToe'));
 const Mascarade = lazy(() => import('./Games/Mascarade/Mascarade'));
+const Undercover = lazy(() => import('./Games/Undercover/Undercover'));
 const Board = lazy(() => import('./Games/Board'));
 const Events = lazy(() => import('./Community/Events/Events'));
 const Gamers = lazy(() => import('./Community/Gamers/Gamers'));
@@ -45,6 +46,11 @@ export default function AnimatedRoutes() {
         <Route path="/mascarade/:id" element={<PageTransition><Mascarade/></PageTransition>} />
         <Route path="/mascarade/:reach/:numberplayers" element={<PageTransition><Mascarade/></PageTransition>} />
         <Route path="/mascarade/:reach/:numberplayers/:mode" element={<PageTransition><Mascarade/></PageTransition>} />
+
+        <Route path="/undercover" element={<PageTransition><Undercover/></PageTransition>} />
+        <Route path="/undercover/:id" element={<PageTransition><Undercover/></PageTransition>} />
+        <Route path="/undercover/:reach/:numberplayers" element={<PageTransition><Undercover/></PageTransition>} />
+        <Route path="/undercover/:reach/:numberplayers/:difficulty" element={<PageTransition><Undercover/></PageTransition>} />
 
         <Route path="/events" element={<PageTransition><Events/></PageTransition>} />
         <Route path="/events/:model" element={<PageTransition><Events/></PageTransition>} />

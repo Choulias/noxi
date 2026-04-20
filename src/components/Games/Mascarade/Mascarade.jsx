@@ -783,6 +783,15 @@ export default function Mascarade() {
 
                       <div className="gameover-buttons">
                         <button type="button" className="action-btn look-btn" onClick={() => setDebugLogOpen(true)}>Journal complet</button>
+                        <button
+                          type="button"
+                          className="action-btn announce-btn"
+                          onClick={() => {
+                            const base = `/mascarade/${reach || "public"}/${playersLimitRef.current}${isHiddenMode ? "/cache" : ""}`;
+                            navigate(base);
+                            setTimeout(() => window.location.reload(), 50);
+                          }}
+                        >Rejouer</button>
                         <button type="button" className="action-btn announce-btn" onClick={quitGame}>Retour aux jeux</button>
                       </div>
                     </div>

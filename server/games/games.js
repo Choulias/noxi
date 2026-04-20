@@ -28,3 +28,13 @@ export const getMascaradeGameInfo = (gameId, playersLimit, engine) => {
         "engine": engine
     }
 }
+
+export const getUndercoverGameInfo = (gameId, playersLimit, engine) => {
+    return {
+        "id": gameId,
+        "model": "undercover",
+        "playersLimit": playersLimit,
+        "clients": [],
+        "engine": engine
+    }
+}

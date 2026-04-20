@@ -227,6 +227,9 @@ export const seedBadges = async () => {
         { slug: 'tictactoe_20wins', name: 'Imbattable', description: 'Gagner 20 parties de Tic Tac Toe', icon: '⭕', condition_type: 'game_wins', condition_value: 20, condition_game: 'tictactoe' },
         { slug: 'mascarade_10games', name: 'Mascarade Addict', description: 'Jouer 10 parties de Mascarade', icon: '🃏', condition_type: 'game_played', condition_value: 10, condition_game: 'mascarade' },
         { slug: 'tictactoe_10games', name: 'OXO Fan', description: 'Jouer 10 parties de Tic Tac Toe', icon: '✨', condition_type: 'game_played', condition_value: 10, condition_game: 'tictactoe' },
+        { slug: 'undercover_5wins', name: 'Detective Aguerri', description: 'Gagner 5 parties de Undercover', icon: '🔍', condition_type: 'game_wins', condition_value: 5, condition_game: 'undercover' },
+        { slug: 'undercover_20wins', name: 'Espion Confirme', description: 'Gagner 20 parties de Undercover', icon: '🕵️', condition_type: 'game_wins', condition_value: 20, condition_game: 'undercover' },
+        { slug: 'undercover_10games', name: 'Undercover Addict', description: 'Jouer 10 parties de Undercover', icon: '🎭', condition_type: 'game_played', condition_value: 10, condition_game: 'undercover' },
     ];
 
     await Badge.bulkCreate(badges);

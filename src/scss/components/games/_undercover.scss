@@ -1,0 +1,699 @@
+// Undercover — SCSS de base (s'inspire de _mascarade.scss pour rester cohérent avec Noxi)
+
+.undercover-board {
+  min-height: 100vh;
+  padding: 80px 24px 40px;
+  background: linear-gradient(180deg, $darker 0%, darken($darker, 2%) 100%);
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+}
+
+.undercover-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ─── Sidebar ────────────────────────────────────────────────────────────────
+
+.undercover-sidebar {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 20px;
+  height: fit-content;
+  position: sticky;
+  top: 80px;
+
+  .undercover-players {
+    margin-bottom: 18px;
+  }
+
+  .players-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+
+    .players-label {
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: rgba(255,255,255,0.6);
+      font-size: 0.72rem;
+    }
+    .players-count {
+      font-weight: 600;
+      .players-current {
+        color: $main;
+      }
+    }
+  }
+
+  .players-bar {
+    height: 4px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 14px;
+
+    .players-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, $main, $secondary);
+      transition: width 0.3s ease;
+    }
+  }
+
+  .undercover-player-tag {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+
+    &.is-current-turn {
+      box-shadow: 0 0 0 2px rgba(149, 253, 252, 0.15);
+    }
+
+    .player-tag-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .host-badge {
+      margin-left: auto;
+      font-size: 0.8rem;
+    }
+  }
+}
+
+.undercover-sidebar-info {
+  background: rgba(0,0,0,0.2);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 14px;
+
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    padding: 4px 0;
+
+    .info-label {
+      color: rgba(255,255,255,0.55);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 0.7rem;
+    }
+    .info-value {
+      color: #fff;
+      font-weight: 600;
+    }
+  }
+}
+
+.undercover-sidebar-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  button {
+    padding: 9px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.04);
+    color: #fff;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+
+    &:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    &.undercover-btn-copy.copied {
+      color: $main;
+      border-color: rgba(149, 253, 252, 0.3);
+    }
+
+    &.undercover-btn-quit {
+      color: #ff7c8a;
+      border-color: rgba(255, 124, 138, 0.25);
+      &:hover { background: rgba(255, 124, 138, 0.08); }
+    }
+  }
+}
+
+// ─── Main area ──────────────────────────────────────────────────────────────
+
+.undercover-main {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  padding: 32px;
+  min-height: 500px;
+  position: relative;
+}
+
+.undercover-error-toast {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  z-index: 5;
+}
+
+// ─── Lobby ──────────────────────────────────────────────────────────────────
+
+.undercover-lobby {
+  text-align: center;
+  padding: 40px 20px;
+
+  .lobby-title {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 2rem;
+    background: linear-gradient(90deg, $main, $secondary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 14px;
+  }
+
+  .lobby-sub {
+    font-size: 1.1rem;
+    color: rgba(255,255,255,0.8);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .lobby-help {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 28px;
+  }
+
+  .lobby-host-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 320px;
+    margin: 28px auto 0;
+
+    .lobby-btn {
+      padding: 12px 20px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
+      color: #fff;
+      transition: all 0.2s;
+
+      &:hover:not(:disabled) {
+        background: rgba(255,255,255,0.1);
+      }
+
+      &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .lobby-wait {
+    margin-top: 24px;
+    color: rgba(255,255,255,0.5);
+    font-style: italic;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+// ─── Memorize ───────────────────────────────────────────────────────────────
+
+.undercover-memorize {
+  text-align: center;
+  padding: 60px 20px;
+
+  .memorize-title {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+  }
+
+  .memorize-sub {
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 28px;
+  }
+}
+
+.undercover-card-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 18, 47, 0.88);
+  backdrop-filter: blur(8px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.undercover-card-modal {
+  max-width: 400px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.undercover-card {
+  width: 100%;
+  padding: 24px;
+  border-radius: 20px;
+  background: linear-gradient(160deg, rgba(149, 253, 252, 0.12), rgba(254, 190, 253, 0.12));
+  border: 1px solid rgba(149, 253, 252, 0.3);
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+
+  &.is-impostor {
+    background: linear-gradient(160deg, rgba(254, 100, 100, 0.15), rgba(254, 190, 253, 0.12));
+    border-color: rgba(254, 100, 100, 0.4);
+
+    .card-role-banner {
+      background: linear-gradient(90deg, #ff6b6b, $secondary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+
+  .card-role-banner {
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+    background: linear-gradient(90deg, $main, $secondary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .card-image {
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 14px;
+  }
+
+  .card-image-fallback {
+    width: 180px;
+    height: 180px;
+    margin: 0 auto 14px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(149, 253, 252, 0.15), rgba(254, 190, 253, 0.15));
+    border: 2px solid rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .fallback-initials {
+      font-family: 'Quicksand', sans-serif;
+      font-size: 4rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      background: linear-gradient(90deg, $main, $secondary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+
+  .card-name {
+    font-size: 1.5rem;
+    margin-bottom: 4px;
+  }
+
+  .card-anime {
+    color: rgba(255,255,255,0.55);
+    font-style: italic;
+    margin-bottom: 14px;
+  }
+
+  .card-hint {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.7);
+    padding: 10px;
+    border-radius: 10px;
+    background: rgba(0,0,0,0.2);
+  }
+}
+
+.card-modal-ok {
+  min-width: 160px;
+}
+
+// ─── Clue Board ─────────────────────────────────────────────────────────────
+
+.undercover-clueboard {
+  .clueboard-header {
+    margin-bottom: 24px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+
+    h2 {
+      font-family: 'Quicksand', sans-serif;
+      font-size: 1.5rem;
+      margin-bottom: 6px;
+    }
+
+    .clueboard-turn-mine {
+      color: $main;
+      font-weight: 500;
+    }
+    .clueboard-turn-other {
+      color: rgba(255,255,255,0.7);
+    }
+  }
+
+  .clueboard-my-card {
+    padding: 12px 16px;
+    background: rgba(149, 253, 252, 0.08);
+    border: 1px solid rgba(149, 253, 252, 0.2);
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+
+    .my-card-label {
+      color: rgba(255,255,255,0.6);
+      font-size: 0.85rem;
+    }
+  }
+
+  .clueboard-input-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 28px;
+
+    .clueboard-input {
+      flex: 1;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 1rem;
+
+      &:focus {
+        outline: none;
+        border-color: $main;
+      }
+    }
+  }
+
+  .clueboard-rounds {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .clueboard-round {
+    padding: 16px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.06);
+
+    .round-title {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 10px;
+    }
+
+    .round-entries {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .round-entry {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 0;
+
+      .entry-player {
+        font-weight: 600;
+        min-width: 120px;
+      }
+
+      .entry-clue {
+        font-style: italic;
+        color: rgba(255,255,255,0.85);
+      }
+    }
+  }
+}
+
+// ─── Vote ───────────────────────────────────────────────────────────────────
+
+.undercover-vote {
+  h2 {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 1.6rem;
+    margin-bottom: 8px;
+  }
+
+  .vote-sub {
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 24px;
+  }
+
+  .vote-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+  }
+
+  .vote-target {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px;
+    border-radius: 14px;
+    border: 2px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.03);
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover:not(:disabled) {
+      background: rgba(255,255,255,0.08);
+      transform: translateY(-2px);
+    }
+
+    &:disabled, &.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    &.is-me {
+      opacity: 0.35;
+    }
+
+    .vote-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+    }
+
+    .vote-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .vote-me-tag {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.4);
+    }
+  }
+}
+
+// ─── Reveal ─────────────────────────────────────────────────────────────────
+
+.undercover-reveal {
+  text-align: center;
+
+  .reveal-banner {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 2.5rem;
+    margin-bottom: 24px;
+
+    &.won {
+      background: linear-gradient(90deg, $main, $secondary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    &.lost {
+      color: #ff7c8a;
+    }
+    &.intermediate {
+      color: rgba(255,255,255,0.85);
+      font-size: 2rem;
+    }
+  }
+
+  .eliminated-tag {
+    color: #ff7c8a;
+    font-size: 0.9em;
+    margin-left: 4px;
+  }
+
+  &.undercover-reveal-midgame {
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  .reveal-eliminated {
+    padding: 20px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    max-width: 400px;
+    margin: 0 auto 20px;
+
+    h3 { margin-bottom: 10px; }
+    .reveal-char-name { margin-bottom: 6px; }
+
+    .reveal-role {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 4px;
+
+      &.role-impostor {
+        background: rgba(255, 124, 138, 0.15);
+        color: #ff7c8a;
+      }
+      &.role-majority {
+        background: rgba(149, 253, 252, 0.15);
+        color: $main;
+      }
+    }
+  }
+
+  .reveal-verdict {
+    font-size: 1.1rem;
+    margin-bottom: 24px;
+    color: rgba(255,255,255,0.85);
+  }
+
+  .reveal-pair {
+    max-width: 420px;
+    margin: 0 auto 24px;
+    padding: 16px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+
+    h4 {
+      margin-bottom: 8px;
+      color: rgba(255,255,255,0.6);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+  }
+
+  .reveal-all-players {
+    max-width: 500px;
+    margin: 0 auto 28px;
+
+    h4 {
+      text-align: left;
+      margin-bottom: 10px;
+      color: rgba(255,255,255,0.6);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .reveal-players-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .reveal-player-row {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr auto;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      text-align: left;
+
+      &.impostor {
+        background: rgba(255, 124, 138, 0.06);
+        border-color: rgba(255, 124, 138, 0.15);
+      }
+    }
+
+    .reveal-player-name {
+      font-weight: 600;
+    }
+    .reveal-player-char {
+      color: rgba(255,255,255,0.75);
+      font-size: 0.9rem;
+    }
+    .reveal-player-role {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 3px 8px;
+      border-radius: 8px;
+
+      &.role-impostor {
+        background: rgba(255, 124, 138, 0.15);
+        color: #ff7c8a;
+      }
+      &.role-majority {
+        background: rgba(149, 253, 252, 0.12);
+        color: $main;
+      }
+    }
+  }
+
+  .reveal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+  }
+}

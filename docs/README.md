@@ -22,12 +22,14 @@ Bienvenue dans la documentation du projet **Noxi** -- Plateforme de Gaming Multi
 - Le systeme de **chat** (messages prives entre joueurs et chat en partie) est integre via WebSocket et l'API REST. Voir [protocole WebSocket](websocket/protocol.md) et [endpoints API](api/routes.md).
 
 ### Jeux
+- **[Guide : Ajouter un nouveau jeu](games/ADD_NEW_GAME.md)** -- Etapes completes pour creer un nouveau jeu
 - [Mascarade](games/mascarade/README.md) -- Jeu de bluff multijoueur (4-8 joueurs)
   - [Regles du jeu](games/mascarade/regles.md) -- Regles completes de Mascarade
   - [Implementation technique](games/mascarade/implementation.md) -- Moteur de jeu, WebSocket, animations
 
-### Installation
+### Installation et serveur
 - [Guide d'installation](setup/installation.md) -- Prerequis, configuration, lancement
+- [Memo serveur production](setup/server.md) -- Commandes SSH, phpMyAdmin, deploiement, DNS
 
 ### Design
 - [Systeme de design](design/ui-guidelines.md) -- Palette, typographie, composants, effets visuels

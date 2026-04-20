@@ -24,9 +24,11 @@ import { fileURLToPath } from "url";
 import cors from "cors";
 import { createServer } from "http";
 import { server as websocketServer } from "websocket";
-import { getBoardGameInfo, getTicTacToeGameInfo, getMascaradeGameInfo } from "./games/games.js";
+import { getBoardGameInfo, getTicTacToeGameInfo, getMascaradeGameInfo, getUndercoverGameInfo } from "./games/games.js";
 import { MascaradeGame } from "./games/mascarade/MascaradeGame.js";
 import { SUPPORTED_PLAYER_COUNTS } from "./games/mascarade/mascaradeScenarios.js";
+import { UndercoverGame } from "./games/undercover/UndercoverGame.js";
+import { IMPOSTOR_TABLE as UNDERCOVER_IMPOSTOR_TABLE } from "./games/undercover/generator.js";
 
 // ---------------------------------------------------------------
 // SERVER BDD
@@ -174,6 +176,29 @@ function broadcastMascaradeState(gameId) {
     });
 }
 
+function broadcastUndercoverState(gameId) {
+    const game = games[gameId];
+    if (!game || game.model !== "undercover") return;
+
+    const engine = game.engine;
+    game.clients.forEach(c => {
+        if (clients[c.clientId] && clients[c.clientId].connection.connected) {
+            const payLoad = {
+                "method": "update",
+                "game": {
+                    id: game.id,
+                    model: game.model,
+                    clients: game.clients.map(cl => ({ clientId: cl.clientId, clientName: cl.clientName, color: cl.color })),
+                    playersLimit: game.playersLimit,
+                    state: engine.getPublicState(),
+                    privateState: engine.getPrivateState(c.clientId)
+                }
+            };
+            clients[c.clientId].connection.send(JSON.stringify(payLoad));
+        }
+    });
+}
+
 function sendPrivateMessage(clientId, data) {
     if (clients[clientId] && clients[clientId].connection.connected) {
         clients[clientId].connection.send(JSON.stringify({ method: "private", data }));
@@ -202,8 +227,8 @@ wsServer.on("request", request => {
             const clientName = game.clients.find(c => c.clientId === disconnectedClientId)?.clientName;
             game.clients = game.clients.filter(c => c.clientId !== disconnectedClientId);
 
-            // Remove from engine if mascarade
-            if (game.model === "mascarade" && game.engine) {
+            // Remove from engine if mascarade or undercover
+            if ((game.model === "mascarade" || game.model === "undercover") && game.engine) {
                 try { game.engine.removePlayer?.(disconnectedClientId); } catch(e) {}
             }
 
@@ -215,7 +240,7 @@ wsServer.on("request", request => {
                 } else {
                     await Game.update({ numberPlayers: game.clients.length }, { where: { gameId } });
                     // Notify remaining players
-                    const safeGame = game.model === "mascarade"
+                    const safeGame = (game.model === "mascarade" || game.model === "undercover")
                         ? { id: game.id, model: game.model, clients: game.clients.map(cl => ({ clientId: cl.clientId, clientName: cl.clientName, color: cl.color })), playersLimit: game.playersLimit }
                         : game;
                     game.clients.forEach(c => {
@@ -277,6 +302,16 @@ wsServer.on("request", request => {
                 const hiddenMode = result.hiddenMode === true;
                 const engine = new MascaradeGame(limit, variant, hiddenMode);
                 games[gameId] = getMascaradeGameInfo(gameId, limit, engine);
+            }else if(result.gameModel === "undercover"){
+                const limit = parseInt(result.playersLimit);
+                if (!UNDERCOVER_IMPOSTOR_TABLE[limit]) {
+                    const con = clients[clientId]?.connection;
+                    if (con) con.send(JSON.stringify({ method: "error", message: `Nombre de joueurs non supporté: ${limit}. Valeurs : 3-10` }));
+                    return;
+                }
+                const difficulty = ["easy","medium","hard","hardcore"].includes(result.difficulty) ? result.difficulty : "medium";
+                const engine = new UndercoverGame(limit, difficulty);
+                games[gameId] = getUndercoverGameInfo(gameId, limit, engine);
             }
 
             const payLoad = {
@@ -363,6 +398,18 @@ wsServer.on("request", request => {
                         broadcastMascaradeState(gameId);
                         return;
                     }
+                }else if(game.model === "undercover"){
+                    const undercoverColor = MASCARADE_COLORS[game.clients.length] || "#FFFFFF";
+                    game.clients.push({
+                        "clientId": clientId,
+                        "clientName": clientName,
+                        "color": undercoverColor
+                    });
+                    game.engine.addPlayer(clientId, clientName);
+                    // Undercover ne démarre PAS automatiquement quand plein :
+                    // l'hôte doit cliquer "start_game" (permet le re-roll avant démarrage).
+                    broadcastUndercoverState(gameId);
+                    return;
                 }
 
                 // Mettre à jour numberPlayers en BDD
@@ -428,7 +475,7 @@ wsServer.on("request", request => {
                 console.error("Error updating numberPlayers on quit:", e);
             }
 
-            const safeGame = game.model === "mascarade"
+            const safeGame = (game.model === "mascarade" || game.model === "undercover")
                 ? { id: game.id, model: game.model, clients: game.clients.map(cl => ({ clientId: cl.clientId, clientName: cl.clientName, color: cl.color })), playersLimit: game.playersLimit }
                 : game;
 
@@ -496,6 +543,38 @@ wsServer.on("request", request => {
                 broadcastMascaradeState(gameId);
             } catch (e) {
                 console.error("Mascarade action error:", e);
+            }
+        }
+
+        // Action dans une partie Undercover
+        if(result.method === "undercover_action"){
+            const gameId = result.gameId;
+            const game = games[gameId];
+            if (!game || game.model !== "undercover") return;
+
+            try {
+                const actionResult = game.engine.handleAction(result.clientId, result.action);
+
+                // Erreur renvoyée uniquement à l'émetteur
+                if (actionResult && actionResult.error) {
+                    const con = clients[result.clientId]?.connection;
+                    if (con && con.connected) {
+                        con.send(JSON.stringify({ method: "error", message: actionResult.error }));
+                    }
+                    return;
+                }
+
+                // Messages privés (notamment le card_reveal à l'issue du start_game)
+                if (actionResult && actionResult.privateMessages) {
+                    actionResult.privateMessages.forEach(pm => {
+                        sendPrivateMessage(pm.clientId, pm.data);
+                    });
+                }
+
+                // Broadcast état public + privé à chaque joueur
+                broadcastUndercoverState(gameId);
+            } catch (e) {
+                console.error("Undercover action error:", e);
             }
         }
 

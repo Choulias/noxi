@@ -14,7 +14,8 @@
     "server:dev": "nodemon server/index.js",
     "audit": "npm audit",
     "audit:fix": "npm audit fix",
-    "test:all": "node scripts/test-all.js"
+    "test:all": "node scripts/test-all.js",
+    "undercover:validate": "node server/games/undercover/__tests__/validate.js"
   },
   "dependencies": {
     "@emotion/react": "^11.11.0",

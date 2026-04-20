@@ -23,3 +23,6 @@ noctis.code-workspace
 *.njsproj
 *.sln
 *.sw?
+
+# Claude Code / AI assistant
+.claude/
