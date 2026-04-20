@@ -96,7 +96,10 @@ export default function Nav() {
             <>
               <div className="navbar-container">
                 <div className="navbar-container-child">
-                    
+
+                  {/* Spacer pour équilibrer le burger à droite et centrer le logo sur mobile */}
+                  <div className="mobile-spacer md:hidden" aria-hidden="true"></div>
+
                   <div className="navbar-brand">
                     <NavLink to="/">
                       <img
@@ -220,14 +223,14 @@ export default function Nav() {
                   </div>
 
                   <div className="mobile-btn">
-                    {/* Mobile menu button */}
-                    <Disclosure.Button> 
-                      <span className="">Open main menu</span>
-                      {open ? (
-                        <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
-                      ) : (
-                        <Bars3Icon className="block h-6 w-6" aria-hidden="true" />
-                      )}
+                    {/* Mobile menu button — burger animé custom */}
+                    <Disclosure.Button
+                      className={`hamburger-btn ${open ? 'is-open' : ''}`}
+                      aria-label={open ? 'Fermer le menu' : 'Ouvrir le menu'}
+                    >
+                      <span className="hamburger-line" aria-hidden="true"></span>
+                      <span className="hamburger-line" aria-hidden="true"></span>
+                      <span className="hamburger-line" aria-hidden="true"></span>
                     </Disclosure.Button>
                   </div>
                 </div>

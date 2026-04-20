@@ -109,7 +109,13 @@
             .home-paragraph{
                 @apply flex justify-around items-center gap-16 relative z-20;
 
+                &:nth-child(2n) {
+                    @apply flex-row-reverse;
+                }
+
                 // Mobile/tablette : empiler verticalement — texte puis image
+                // (défini APRÈS nth-child(2n) pour que la cascade CSS fasse
+                // bien gagner column sur row-reverse au breakpoint tablet)
                 @include tablet {
                     flex-direction: column;
                     gap: 24px;
@@ -117,10 +123,6 @@
                     &:nth-child(2n) {
                         flex-direction: column;
                     }
-                }
-
-                &:nth-child(2n) {
-                    @apply flex-row-reverse;
                 }
 
                 &:first-child{
@@ -137,7 +139,7 @@
 
                     .paragraph-image{
                         img{
-                            @apply left-[10%] top-[-20px] ;
+                            @apply left-[10%] top-[-20px];
                         }
                     }
                 }
@@ -157,12 +159,7 @@
 
                     .paragraph-image{
                         img{
-                            @apply left-[20%] top-[-7.7%] ;
-
-                            @include tablet {
-                                left: 10%;
-                                top: -20px;
-                            }
+                            @apply left-[20%] top-[-7.7%];
                         }
                     }
                 }
@@ -187,7 +184,7 @@
 
                     .paragraph-image{
                         img{
-                            @apply left-[10%] top-[-20px] ;
+                            @apply left-[10%] top-[-20px];
                         }
                     }
                 }
@@ -237,6 +234,14 @@
                     @include tablet {
                         width: 100%;
                         max-width: 400px;
+                        // Sur tablette/mobile : layout simple, image centrée
+                        // On neutralise la mise en page absolute qui déborde
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        padding-top: 0;
+                        min-height: 260px;
                     }
 
                     .gradient-circle{
@@ -245,6 +250,18 @@
                         @include mobile {
                             max-width: 280px;
                         }
+
+                        // Sur tablette/mobile : le cercle devient un arrière-plan décoratif
+                        @include tablet {
+                            position: absolute;
+                            inset: 0;
+                            width: 100%;
+                            height: 100%;
+                            max-width: none;
+                            object-fit: contain;
+                            opacity: 0.5;
+                            pointer-events: none;
+                        }
                     }
 
                     img{
@@ -252,6 +269,20 @@
 
                         @include mobile {
                             max-width: 280px;
+                        }
+
+                        // Sur tablette/mobile : positionnement normal dans le flex
+                        @include tablet {
+                            position: relative;
+                            top: auto !important;
+                            left: auto !important;
+                            max-width: 260px;
+                            width: 100%;
+                            height: auto;
+                            z-index: 2;
+                        }
+                        @include mobile {
+                            max-width: 220px;
                         }
                     }
                 }
