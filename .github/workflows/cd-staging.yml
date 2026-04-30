@@ -63,7 +63,9 @@ jobs:
             --name vm-noxi-staging
 
       - name: Wait for VM to be ready
-        run: sleep 30
+        run: |
+          echo "Waiting for VM and cloud-init to complete..."
+          sleep 120
 
       - name: Deploy to staging VM
         uses: appleboy/ssh-action@v1
@@ -72,10 +74,11 @@ jobs:
           username: azureuser
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            cloud-init status --wait || true
             cd /app/noxi
-            docker compose pull
-            docker compose up -d
-            docker image prune -f
+            sudo docker compose pull
+            sudo docker compose up -d
+            sudo docker image prune -f
 
       - name: Verify deployment
         uses: appleboy/ssh-action@v1
