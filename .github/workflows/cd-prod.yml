@@ -39,7 +39,7 @@ jobs:
 
       - name: Login to ACR
         run: |
-          az acr login --name noxiacr
+          az acr login --name noxiacrus92xw
 
       - name: Build & Push Frontend image
         uses: docker/build-push-action@v5
