@@ -46,7 +46,7 @@ jobs:
           context: .
           file: Dockerfile.frontend
           push: true
-          tags: noxiacr.azurecr.io/noxi-frontend:latest,noxiacr.azurecr.io/noxi-frontend:${{ github.sha }}
+          tags: noxiacrus92xw.azurecr.io/noxi-frontend:latest,noxiacrus92xw.azurecr.io/noxi-frontend:${{ github.sha }}
 
       - name: Build & Push Backend image
         uses: docker/build-push-action@v5
@@ -54,7 +54,7 @@ jobs:
           context: .
           file: Dockerfile.backend
           push: true
-          tags: noxiacr.azurecr.io/noxi-backend:latest,noxiacr.azurecr.io/noxi-backend:${{ github.sha }}
+          tags: noxiacrus92xw.azurecr.io/noxi-backend:latest,noxiacrus92xw.azurecr.io/noxi-backend:${{ github.sha }}
 
       - name: Start staging VM
         run: |
