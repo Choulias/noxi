@@ -1,125 +1,123 @@
-# Noxi -- Plateforme de Gaming Multijoueur en Temps Reel
+# Noxi — Plateforme Gaming
 
-Noxi est une plateforme communautaire de jeux multijoueur en temps reel, construite autour d'un univers nocturne et futuriste. Les joueurs peuvent s'affronter en ligne, participer a des evenements, consulter des classements et personnaliser leur profil.
+Projet de fin de formation DevOps Engineer 2025-2026.  
+Déploiement complet d'une application web avec pipeline CI/CD, infrastructure as code, conteneurisation et monitoring.
 
----
+## Stack applicative
 
-## Table des matieres
+- **Frontend** : React + Vite
+- **Backend** : Node.js + Express + Sequelize
+- **Base de données** : MariaDB 10.11
+- **Conteneurisation** : Docker + Docker Compose
+- **Registry** : Azure Container Registry (ACR)
 
-- [Apercu du projet](#aperçu-du-projet)
-- [Stack technique](#stack-technique)
-- [Fonctionnalites](#fonctionnalités)
-- [Jeux disponibles](#jeux-disponibles)
-- [Installation rapide](#installation-rapide)
-- [Documentation](#documentation)
+## Infrastructure
 
----
+- **Cloud** : Microsoft Azure (Sweden Central)
+- **IaC** : Terraform
+- **VMs** : 3 x Azure Linux VM (dev / staging / prod)
+- **Firewall** : Network Security Groups Azure
 
-## Apercu du projet
+## CI/CD
 
-**Type** : Application web full-stack (SPA + API REST + WebSocket)
-**Theme** : Plateforme de gaming communautaire a l'esthetique cyberpunk/nocturne
-**Langue de l'interface** : Francais
+- **Outil** : GitHub Actions
+- **Stratégie de branches** : GitFlow (feature → develop → staging → main)
+- **Pipeline CI** : build, tests, lint, docker build check
+- **Pipeline CD Staging** : déploiement automatique sur merge vers `staging`
+- **Pipeline CD Prod** : déploiement manuel avec approbation sur merge vers `main`
+- **Stratégie de déploiement** : Rolling update
 
-Noxi permet aux utilisateurs de :
-- Jouer a des jeux multijoueur en temps reel (Tic-Tac-Toe, Board Game, Mascarade)
-- Creer et rejoindre des parties publiques ou privees
-- Participer a des evenements communautaires
-- Consulter les classements et profils des joueurs
-- Gerer un systeme d'amis (demandes, acceptation)
-- Personnaliser leur profil (pseudo, bio, avatar)
+## Monitoring
 
----
+- **Métriques** : Prometheus + Grafana
+- **Logs** : Loki + Promtail + Grafana
+- **Alerting** : Alertmanager (email)
+- **Alertes** : CPU élevé, mémoire faible, service down
 
-## Stack technique
+## Prérequis
 
-| Couche | Technologies |
-|---|---|
-| **Frontend** | React 18, Vite 4, Tailwind CSS 3, SCSS, Material UI, Framer Motion, GSAP, Swiper |
-| **Backend** | Express.js 4, Sequelize 6, JWT, bcryptjs, SendGrid |
-| **Temps reel** | WebSocket natif (librairie `ws`) |
-| **Base de donnees** | MySQL / MariaDB |
+- Docker Desktop
+- Terraform >= 1.5.0
+- Azure CLI
+- Compte Azure actif
+- Node.js 20+
 
-> Voir [docs/architecture/](docs/architecture/) pour les details complets.
+## Déploiement local
 
----
-
-## Fonctionnalites
-
-- **Jeux multijoueur temps reel** : Tic-Tac-Toe, Board Game, Mascarade
-- **Authentification** : JWT + verification email (SendGrid)
-- **Profils** : Personnalisation, avatars RoboHash, historique
-- **Communaute** : Evenements, classements, systeme d'amis
-- **Administration** : Dashboard avec gestion joueurs/jeux/evenements
-
----
-
-## Jeux disponibles
-
-| Jeu | Joueurs | Description |
-|---|---|---|
-| **Tic-Tac-Toe** | 2 | Grille 3x3, tour par tour, score cumule |
-| **Board Game** | 2-3 | Placement de balles colorees en temps reel |
-| **Mascarade** | 4-8 | Jeu de bluff avec 16 masques et pouvoirs uniques |
-
-> Voir [docs/games/mascarade/](docs/games/mascarade/) pour la documentation complete de Mascarade.
-
----
-
-## Installation rapide
-
-```bash
-# Cloner et installer
-git clone https://github.com/ahandriourochdi/noxi.git
+\```bash
+# 1. Cloner le repo
+git clone https://github.com/TON_USERNAME/noxi.git
 cd noxi
-npm install
 
-# Configurer la BDD
-mysql -u root -p < noxi_database.sql
+# 2. Créer le fichier .env
+cp .env.example .env
+# Remplir les valeurs dans .env
 
-# Creer un fichier .env (voir docs/setup/installation.md)
+# 3. Lancer l'application
+docker compose up -d
 
-# Lancer
-npm run server:dev   # Terminal 1 - Backend
-npm run dev          # Terminal 2 - Frontend
-```
+# 4. Accéder à l'application
+# App : http://localhost
+# Grafana : http://localhost:3001 (admin / admin2026!)
+# Prometheus : http://localhost:9090
+\```
 
-Ouvrir `http://localhost:3006`
+## Déploiement infrastructure Azure
 
-> Voir [docs/setup/installation.md](docs/setup/installation.md) pour le guide complet.
+\```bash
+cd terraform
 
-### Comptes de test (BDD locale)
+# 1. Configurer les credentials Azure
+export ARM_CLIENT_ID="..."
+export ARM_CLIENT_SECRET="..."
+export ARM_TENANT_ID="..."
+export ARM_SUBSCRIPTION_ID="..."
 
-Le dump `docs/db/noxi_database.sql` inclut 3 comptes pre-verifies pour tester rapidement :
+# 2. Initialiser Terraform
+terraform init
 
-| Role | Username | Email | Mot de passe |
-|---|---|---|---|
-| **Admin** | `admin` | admin@noxi.local | `Admin123!` |
-| User | `NoxiPlayer1` | player1@noxi.local | `Player1!` |
-| User | `NoxiPlayer2` | player2@noxi.local | `Player2!` |
+# 3. Vérifier le plan
+terraform plan -var-file="terraform.tfvars"
 
-> Si la BDD est vide (Sequelize `db.sync()` ne cree que les tables), importe le dump via phpMyAdmin : onglet "Importer" -> `docs/db/noxi_database.sql`. Alternativement, tu peux t'inscrire normalement puis faire passer le role a admin :
-> ```sql
-> UPDATE ncs_users SET role='admin', status='verified' WHERE mail='ton@email.com';
-> ```
+# 4. Créer l'infrastructure
+terraform apply -var-file="terraform.tfvars"
 
----
+# 5. Détruire l'infrastructure après utilisation
+terraform destroy -var-file="terraform.tfvars"
+\```
 
-## Documentation
+## Structure du projet
 
-Toute la documentation detaillee est dans le dossier [`docs/`](docs/) :
+\```
+noxi/
+├── src/                    # Code source frontend React
+├── server/                 # Code source backend Node.js
+├── public/                 # Assets statiques
+├── monitoring/             # Configuration monitoring
+│   ├── prometheus/         # Config Prometheus + alertes
+│   ├── grafana/            # Dashboards et datasources
+│   ├── loki/               # Config Loki
+│   └── alertmanager/       # Config Alertmanager
+├── terraform/              # Infrastructure as Code
+│   ├── modules/
+│   │   ├── vm/             # Module VM Azure
+│   │   └── acr/            # Module Azure Container Registry
+│   └── environments/       # Variables par environnement
+├── .github/
+│   └── workflows/          # Pipelines CI/CD
+│       ├── ci.yml          # Pipeline CI
+│       ├── cd-staging.yml  # Pipeline CD Staging
+│       └── cd-prod.yml     # Pipeline CD Production
+├── Dockerfile.frontend     # Image Docker frontend
+├── Dockerfile.backend      # Image Docker backend
+├── docker-compose.yml      # Stack complète locale
+└── nginx.conf              # Config Nginx frontend
+\```
 
-| Section | Description |
-|---|---|
-| [Architecture](docs/architecture/) | Vue d'ensemble, frontend, backend, base de donnees |
-| [API](docs/api/routes.md) | Reference complete des endpoints REST |
-| [WebSocket](docs/websocket/protocol.md) | Protocole de communication temps reel |
-| [Jeux](docs/games/) | Documentation des jeux (regles, implementation) |
-| [Installation](docs/setup/installation.md) | Guide d'installation detaille |
-| [Design](docs/design/ui-guidelines.md) | Systeme de design, palette, typographie |
+## Sécurité
 
----
-
-## Licence
-
-ISC
+- Secrets gérés via GitHub Encrypted Secrets et Azure Key Vault
+- Aucun secret en clair dans le dépôt Git
+- Conteneurs non-root
+- HTTPS uniquement en production
+- Principe du moindre privilège sur les accès Azure

@@ -1,0 +1,40 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+# ─────────────────────────────────────────────────────────
+# RÈGLES D'ALERTES
+# Fichier contenant les 3 alertes obligatoires
+# ─────────────────────────────────────────────────────────
+rule_files:
+  - "alerts.yml"
+
+# ─────────────────────────────────────────────────────────
+# ALERTMANAGER
+# Où envoyer les alertes déclenchées
+# ─────────────────────────────────────────────────────────
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ["alertmanager:9093"]
+
+# ─────────────────────────────────────────────────────────
+# SCRAPE CONFIGS
+# Liste des services dont Prometheus collecte les métriques
+# ─────────────────────────────────────────────────────────
+scrape_configs:
+  # Prometheus se monitore lui-même
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  # Métriques système de la VM (CPU, RAM, disque)
+  - job_name: "node-exporter"
+    static_configs:
+      - targets: ["node-exporter:9100"]
+
+  # Métriques du backend Node.js
+  - job_name: "backend"
+    static_configs:
+      - targets: ["backend:3000"]
+    metrics_path: "/metrics"

@@ -9,7 +9,6 @@ lerna-debug.log*
 
 node_modules
 dist
-.env
 dist-ssr
 *.local
 noctis.code-workspace
@@ -29,3 +28,21 @@ noctis.code-workspace
 
 # Docs sensibles (infos serveur / déploiement)
 docs/setup/server.md
+
+# Vite temp files
+vite.config.js.timestamp-*
+
+# Env files
+.env
+.env.*
+!.env.example
+
+# Docker
+.docker/
+
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+!*.tfvars.example
