@@ -1,0 +1,13 @@
+# ─────────────────────────────────────────────────────────
+# EXEMPLE DE FICHIER DE VARIABLES
+# Copie ce fichier en terraform.tfvars et remplis les valeurs.
+# terraform.tfvars est dans le .gitignore — jamais commité.
+# ─────────────────────────────────────────────────────────
+location         = "swedencentral"
+vm_size          = "Standard_D4s_v4"
+ssh_public_key   = "ssh-rsa AAAA..."
+db_name          = "noxi"
+db_user          = "noxi_user"
+db_password      = "changeme"
+db_root_password = "changeme_root"
+jwt_secret       = "changeme_jwt_very_long_secret"

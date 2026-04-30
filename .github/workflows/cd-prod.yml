@@ -1,0 +1,89 @@
+name: CD — Deploy Production
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy-prod:
+    name: Build, Push & Deploy Production
+    runs-on: ubuntu-latest
+    environment: production  # ← Déclenche l'approbation manuelle
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install --ignore-scripts
+
+      - name: Run tests
+        run: npm test --if-present
+
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: |
+            {
+              "clientId": "${{ secrets.AZURE_CLIENT_ID }}",
+              "clientSecret": "${{ secrets.AZURE_CLIENT_SECRET }}",
+              "tenantId": "${{ secrets.AZURE_TENANT_ID }}",
+              "subscriptionId": "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+            }
+
+      - name: Login to ACR
+        run: |
+          az acr login --name noxiacr
+
+      - name: Build & Push Frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile.frontend
+          push: true
+          tags: noxiacr.azurecr.io/noxi-frontend:${{ github.sha }},noxiacr.azurecr.io/noxi-frontend:latest
+
+      - name: Build & Push Backend image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile.backend
+          push: true
+          tags: noxiacr.azurecr.io/noxi-backend:${{ github.sha }},noxiacr.azurecr.io/noxi-backend:latest
+
+      - name: Start prod VM
+        run: |
+          az vm start \
+            --resource-group rg-noxi-prod \
+            --name vm-noxi-prod
+
+      - name: Wait for VM to be ready
+        run: sleep 30
+
+      - name: Deploy to prod VM
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VM_PROD_IP }}
+          username: azureuser
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /app/noxi
+            docker compose pull
+            docker compose up -d
+            docker image prune -f
+
+      - name: Verify deployment
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VM_PROD_IP }}
+          username: azureuser
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            docker compose ps
+            curl -f http://localhost || exit 1
