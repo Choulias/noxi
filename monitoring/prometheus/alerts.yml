@@ -1,0 +1,41 @@
+groups:
+  - name: noxi-alerts
+    rules:
+      # ─────────────────────────────────────────────────────
+      # ALERTE 1 — CPU élevé
+      # Se déclenche si le CPU dépasse 80% pendant 2 minutes
+      # ─────────────────────────────────────────────────────
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 80
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "CPU élevé sur {{ $labels.instance }}"
+          description: "CPU à {{ $value }}% depuis 2 minutes"
+
+      # ─────────────────────────────────────────────────────
+      # ALERTE 2 — Mémoire faible
+      # Se déclenche si la RAM disponible passe sous 10%
+      # ─────────────────────────────────────────────────────
+      - alert: LowMemory
+        expr: (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100 < 10
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Mémoire faible sur {{ $labels.instance }}"
+          description: "Seulement {{ $value }}% de RAM disponible"
+
+      # ─────────────────────────────────────────────────────
+      # ALERTE 3 — Service down
+      # Se déclenche si un job Prometheus ne répond plus
+      # ─────────────────────────────────────────────────────
+      - alert: ServiceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Service down : {{ $labels.job }}"
+          description: "Le service {{ $labels.job }} ne répond plus depuis 1 minute"

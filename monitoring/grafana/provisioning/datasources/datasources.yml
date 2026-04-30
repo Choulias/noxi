@@ -1,0 +1,19 @@
+apiVersion: 1
+
+datasources:
+  # ─────────────────────────────────────────────────────
+  # Prometheus — source des métriques
+  # ─────────────────────────────────────────────────────
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+
+  # ─────────────────────────────────────────────────────
+  # Loki — source des logs
+  # ─────────────────────────────────────────────────────
+  - name: Loki
+    type: loki
+    access: proxy
+    url: http://loki:3100
