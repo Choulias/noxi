@@ -44,7 +44,7 @@ module "vm_prod" {
   source      = "./modules/vm"
   environment = "prod"
   location    = var.location
-  vm_size     = "Standard_D2s_v4"
+  vm_size     = var.vm_size
 
   ssh_public_key   = var.ssh_public_key
   acr_login_server = module.acr.login_server

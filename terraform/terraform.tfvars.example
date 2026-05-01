@@ -4,7 +4,7 @@
 # terraform.tfvars est dans le .gitignore — jamais commité.
 # ─────────────────────────────────────────────────────────
 location         = "swedencentral"
-vm_size          = "Standard_D4s_v4"
+vm_size          = "Standard_D2s_v4"
 ssh_public_key   = "ssh-rsa AAAA..."
 db_name          = "noxi"
 db_user          = "noxi_user"

@@ -147,7 +147,7 @@ resource "azurerm_network_interface_security_group_association" "nsg_assoc" {
 
 # ─────────────────────────────────────────────────────────
 # LINUX VIRTUAL MACHINE — Ubuntu 22.04
-# Standard_D4s_v4 = 4 vCPU, 16GB RAM
+# Standard_D2s_v4 = 4 vCPU, 16GB RAM
 # ─────────────────────────────────────────────────────────
 resource "azurerm_linux_virtual_machine" "vm" {
   name                = "vm-noxi-${var.environment}"
