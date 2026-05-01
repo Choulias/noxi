@@ -38,7 +38,7 @@ jobs:
 
       - name: Login to ACR
         run: |
-          az acr login --name noxiacrcd45nx
+          az acr login --name noxiacrxeadow
 
       - name: Build & Push Frontend image
         uses: docker/build-push-action@v5
@@ -46,7 +46,7 @@ jobs:
           context: .
           file: Dockerfile.frontend
           push: true
-          tags: noxiacrcd45nx.azurecr.io/noxi-frontend:latest,noxiacrcd45nx.azurecr.io/noxi-frontend:${{ github.sha }}
+          tags: noxiacrxeadow.azurecr.io/noxi-frontend:latest,noxiacrxeadow.azurecr.io/noxi-frontend:${{ github.sha }}
 
       - name: Build & Push Backend image
         uses: docker/build-push-action@v5
@@ -54,7 +54,7 @@ jobs:
           context: .
           file: Dockerfile.backend
           push: true
-          tags: noxiacrcd45nx.azurecr.io/noxi-backend:latest,noxiacrcd45nx.azurecr.io/noxi-backend:${{ github.sha }}
+          tags: noxiacrxeadow.azurecr.io/noxi-backend:latest,noxiacrxeadow.azurecr.io/noxi-backend:${{ github.sha }}
 
       - name: Start staging VM
         run: |
