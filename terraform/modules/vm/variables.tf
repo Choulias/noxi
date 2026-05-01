@@ -9,7 +9,7 @@ variable "location" {
 
 variable "vm_size" {
   type    = string
-  default = "Standard_D4s_v4"
+  default = "Standard_D2s_v4"
 }
 
 variable "ssh_public_key" {
