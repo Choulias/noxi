@@ -37,8 +37,7 @@ jobs:
             }
 
       - name: Login to ACR
-        run: |
-          az acr login --name noxiacrxeadow
+        run: az acr login --name noxiacrxeadow
 
       - name: Build & Push Frontend image
         uses: docker/build-push-action@v5
@@ -63,18 +62,7 @@ jobs:
             --name vm-noxi-staging
 
       - name: Wait for VM to be ready
-        run: |
-          echo "Waiting for VM and cloud-init to complete..."
-          sleep 120
-
-      - name: Copy files to staging VM
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.VM_STAGING_IP }}
-          username: azureuser
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "docker-compose.prod.yml,monitoring/"
-          target: "/app/noxi/"
+        run: sleep 60
 
       - name: Deploy to staging VM
         uses: appleboy/ssh-action@v1
@@ -83,21 +71,114 @@ jobs:
           username: azureuser
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cloud-init status --wait || true
+            sudo mkdir -p /app/noxi
 
             # Créer le .env
-            cat > /app/noxi/.env << EOF
+            sudo tee /app/noxi/.env << EOF
             DB_NAME=${{ secrets.DB_NAME }}
             DB_USER=${{ secrets.DB_USER }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             DB_ROOT_PASSWORD=${{ secrets.DB_ROOT_PASSWORD }}
             JWT_SECRET=${{ secrets.JWT_SECRET }}
-            ACR_LOGIN_SERVER=${{ secrets.ACR_LOGIN_SERVER }}
+            ACR_LOGIN_SERVER=noxiacrxeadow.azurecr.io
             DB_HOST=db
             DB_PORT=3306
             ENVIRONMENT=staging
             EOF
 
+            # Créer le docker-compose.prod.yml
+            sudo tee /app/noxi/docker-compose.prod.yml << 'EOF'
+            services:
+              frontend:
+                image: noxiacrxeadow.azurecr.io/noxi-frontend:latest
+                ports:
+                  - "80:80"
+                depends_on:
+                  - backend
+                restart: unless-stopped
+
+              backend:
+                image: noxiacrxeadow.azurecr.io/noxi-backend:latest
+                ports:
+                  - "3000:3000"
+                env_file: /app/noxi/.env
+                depends_on:
+                  db:
+                    condition: service_healthy
+                restart: unless-stopped
+
+              db:
+                image: mariadb:10.11
+                env_file: /app/noxi/.env
+                environment:
+                  MYSQL_ROOT_PASSWORD: $DB_ROOT_PASSWORD
+                  MYSQL_DATABASE: $DB_NAME
+                  MYSQL_USER: $DB_USER
+                  MYSQL_PASSWORD: $DB_PASSWORD
+                volumes:
+                  - db_data:/var/lib/mysql
+                healthcheck:
+                  test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+                  interval: 10s
+                  timeout: 5s
+                  retries: 5
+                restart: unless-stopped
+
+              node-exporter:
+                image: prom/node-exporter:latest
+                restart: unless-stopped
+                volumes:
+                  - /proc:/host/proc:ro
+                  - /sys:/host/sys:ro
+                  - /:/rootfs:ro
+                command:
+                  - "--path.procfs=/host/proc"
+                  - "--path.rootfs=/rootfs"
+                  - "--path.sysfs=/host/sys"
+
+              prometheus:
+                image: prom/prometheus:latest
+                restart: unless-stopped
+                ports:
+                  - "9090:9090"
+                volumes:
+                  - prometheus_data:/prometheus
+                command:
+                  - "--storage.tsdb.retention.time=15d"
+
+              loki:
+                image: grafana/loki:2.9.0
+                restart: unless-stopped
+                ports:
+                  - "3100:3100"
+                volumes:
+                  - loki_data:/loki
+                command: -config.file=/etc/loki/local-config.yaml
+
+              grafana:
+                image: grafana/grafana:latest
+                restart: unless-stopped
+                ports:
+                  - "3001:3000"
+                environment:
+                  GF_SECURITY_ADMIN_PASSWORD: "admin2026!"
+                volumes:
+                  - grafana_data:/var/lib/grafana
+
+              alertmanager:
+                image: prom/alertmanager:latest
+                restart: unless-stopped
+                ports:
+                  - "9093:9093"
+
+            volumes:
+              db_data:
+              prometheus_data:
+              grafana_data:
+              loki_data:
+            EOF
+
+            # Pull et démarrer
             cd /app/noxi
             sudo docker compose -f docker-compose.prod.yml pull
             sudo docker compose -f docker-compose.prod.yml up -d
@@ -110,5 +191,5 @@ jobs:
           username: azureuser
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            docker compose ps
+            sudo docker compose -f /app/noxi/docker-compose.prod.yml ps
             curl -f http://localhost || exit 1
