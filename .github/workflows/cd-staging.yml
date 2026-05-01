@@ -62,7 +62,7 @@ jobs:
             --name vm-noxi-staging
 
       - name: Wait for VM to be ready
-        run: sleep 60
+        run: sleep 120
 
       - name: Deploy to staging VM
         uses: appleboy/ssh-action@v1
