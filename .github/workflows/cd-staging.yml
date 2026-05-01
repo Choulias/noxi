@@ -62,7 +62,7 @@ jobs:
             --name vm-noxi-staging
 
       - name: Wait for VM to be ready
-        run: sleep 120
+        run: sleep 60
 
       - name: Deploy to staging VM
         uses: appleboy/ssh-action@v1
@@ -183,6 +183,8 @@ jobs:
             sudo docker compose -f docker-compose.prod.yml pull
             sudo docker compose -f docker-compose.prod.yml up -d
             sudo docker image prune -f
+            echo "Waiting for containers to be ready..."
+            sleep 60
 
       - name: Verify deployment
         uses: appleboy/ssh-action@v1
