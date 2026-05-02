@@ -37,7 +37,7 @@ jobs:
             }
 
       - name: Login to ACR
-        run: az acr login --name noxiacrypujci
+        run: az acr login --name noxiacrwnblqe
 
       - name: Build & Push Frontend image
         uses: docker/build-push-action@v5
@@ -45,7 +45,7 @@ jobs:
           context: .
           file: Dockerfile.frontend
           push: true
-          tags: noxiacrypujci.azurecr.io/noxi-frontend:latest,noxiacrypujci.azurecr.io/noxi-frontend:${{ github.sha }}
+          tags: noxiacrwnblqe.azurecr.io/noxi-frontend:latest,noxiacrwnblqe.azurecr.io/noxi-frontend:${{ github.sha }}
 
       - name: Build & Push Backend image
         uses: docker/build-push-action@v5
@@ -53,7 +53,7 @@ jobs:
           context: .
           file: Dockerfile.backend
           push: true
-          tags: noxiacrypujci.azurecr.io/noxi-backend:latest,noxiacrypujci.azurecr.io/noxi-backend:${{ github.sha }}
+          tags: noxiacrwnblqe.azurecr.io/noxi-backend:latest,noxiacrwnblqe.azurecr.io/noxi-backend:${{ github.sha }}
 
       - name: Start staging VM
         run: |
@@ -80,7 +80,7 @@ jobs:
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             DB_ROOT_PASSWORD=${{ secrets.DB_ROOT_PASSWORD }}
             JWT_SECRET=${{ secrets.JWT_SECRET }}
-            ACR_LOGIN_SERVER=noxiacrypujci.azurecr.io
+            ACR_LOGIN_SERVER=noxiacrwnblqe.azurecr.io
             DB_HOST=db
             DB_PORT=3306
             ENVIRONMENT=staging
@@ -90,7 +90,7 @@ jobs:
             sudo tee /app/noxi/docker-compose.prod.yml << 'EOF'
             services:
               frontend:
-                image: noxiacrypujci.azurecr.io/noxi-frontend:latest
+                image: noxiacrwnblqe.azurecr.io/noxi-frontend:latest
                 ports:
                   - "80:80"
                 depends_on:
@@ -98,7 +98,7 @@ jobs:
                 restart: unless-stopped
 
               backend:
-                image: noxiacrypujci.azurecr.io/noxi-backend:latest
+                image: noxiacrwnblqe.azurecr.io/noxi-backend:latest
                 ports:
                   - "3000:3000"
                 env_file: /app/noxi/.env
