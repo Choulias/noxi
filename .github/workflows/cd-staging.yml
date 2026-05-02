@@ -83,40 +83,6 @@ jobs:
           script: |
             sudo mkdir -p /app/noxi
 
-            # Créer server.js
-            sudo tee /app/noxi/webhook/server.js > /dev/null << 'EOF'
-            const express = require("express");
-            const fetch = require("node-fetch");
-
-            const app = express();
-            app.use(express.json());
-
-            const DISCORD_WEBHOOK = process.env.DISCORD_WEBHOOK;
-
-            app.post("/", async (req, res) => {
-              try {
-                const alerts = req.body.alerts || [];
-
-                const message = alerts.map(a =>
-                  `🚨 ${a.annotations?.summary || "Alert"}`
-                ).join("\n");
-
-                await fetch(DISCORD_WEBHOOK, {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ content: message || "Alert triggered" })
-                });
-
-                res.sendStatus(200);
-              } catch (err) {
-                console.error(err);
-                res.sendStatus(500);
-              }
-            });
-
-            app.listen(5001, () => console.log("Webhook running on 5001"));
-            EOF
-
             # Créer le .env
             sudo tee /app/noxi/.env > /dev/null << EOF
             DB_NAME=${{ secrets.DB_NAME }}
@@ -187,21 +153,15 @@ jobs:
               group_by: ['alertname']
               group_wait: 10s
               group_interval: 5m
-              repeat_interval: 1h
+              repeat_interval: 1halertmanager
               receiver: 'discord'
 
             receivers:
               - name: 'discord'
-                webhook_configs:
-                  - url: 'http://webhook:5001/'
-            EOF
-
-            sudo tee /app/noxi/alert.tmpl > /dev/null << 'EOF'
-            {{ define "discord.message" }}
-            {
-              "content": "🚨 {{ range .Alerts }}{{ .Annotations.summary }} {{ end }}"
-            }
-            {{ end }}
+                discord_configs:
+                  - webhook_url: '${{ secrets.DISCORD_WEBHOOK_URL }}'
+                    title: '🚨 Alerte Noxi'
+                    message: '{{ range .Alerts }}**{{ .Labels.alertname }}** - {{ .Annotations.summary }}{{ end }}'
             EOF
 
             # Créer promtail-config.yml
@@ -340,18 +300,8 @@ jobs:
                   - "9093:9093"
                 volumes:
                   - /app/noxi/alertmanager.yml:/etc/alertmanager/alertmanager.yml
-                  - /app/noxi/alert.tmpl:/etc/alertmanager/alert.tmpl
                 command:
                   - "--config.file=/etc/alertmanager/alertmanager.yml"
-              
-              webhook:
-                image: node:20
-                working_dir: /app
-                volumes:
-                  - /app/noxi/webhook:/app
-                command: sh -c "npm install express node-fetch && node server.js"
-                ports:
-                  - "5001:5001"
 
             volumes:
               db_data:
