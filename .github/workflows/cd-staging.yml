@@ -163,6 +163,14 @@ jobs:
                     send_resolved: true
             EOF
 
+            sudo tee /app/noxi/alert.tmpl > /dev/null << 'EOF'
+            {{ define "discord.message" }}
+            {
+              "content": "🚨 {{ range .Alerts }}{{ .Annotations.summary }} {{ end }}"
+            }
+            {{ end }}
+            EOF
+
             # Créer promtail-config.yml
             sudo tee /app/noxi/promtail-config.yml > /dev/null << 'EOF'
             server:
@@ -299,6 +307,7 @@ jobs:
                   - "9093:9093"
                 volumes:
                   - /app/noxi/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+                  - /app/noxi/alert.tmpl:/etc/alertmanager/alert.tmpl
                 command:
                   - "--config.file=/etc/alertmanager/alertmanager.yml"
 
