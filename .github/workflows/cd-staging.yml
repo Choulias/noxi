@@ -187,6 +187,11 @@ jobs:
               loki_data:
             EOF
 
+            # Login ACR
+            sudo docker login ${{ secrets.ACR_LOGIN_SERVER }} \
+              -u ${{ secrets.AZURE_CLIENT_ID }} \
+              -p ${{ secrets.AZURE_CLIENT_SECRET }}
+
             # Pull et démarrer
             cd /app/noxi
             sudo docker compose -f docker-compose.prod.yml pull
