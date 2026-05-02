@@ -45,7 +45,7 @@ jobs:
           context: .
           file: Dockerfile.frontend
           push: true
-          tags: noxiacrwnblqe.azurecr.io/noxi-frontend:latest,noxiacrwnblqe.azurecr.io/noxi-frontend:${{ github.sha }}
+          tags: ${{ secrets.ACR_LOGIN_SERVER }}/noxi-frontend:latest,${{ secrets.ACR_LOGIN_SERVER }}/noxi-frontend:${{ github.sha }}
 
       - name: Build & Push Backend image
         uses: docker/build-push-action@v5
@@ -53,7 +53,7 @@ jobs:
           context: .
           file: Dockerfile.backend
           push: true
-          tags: noxiacrwnblqe.azurecr.io/noxi-backend:latest,noxiacrwnblqe.azurecr.io/noxi-backend:${{ github.sha }}
+          tags: ${{ secrets.ACR_LOGIN_SERVER }}/noxi-backend:latest,${{ secrets.ACR_LOGIN_SERVER }}/noxi-backend:${{ github.sha }}
 
       - name: Start staging VM
         run: |
@@ -62,7 +62,17 @@ jobs:
             --name vm-noxi-staging
 
       - name: Wait for VM to be ready
-        run: sleep 60
+        run: |
+          echo "Waiting for SSH to be available..."
+          for i in {1..30}; do
+            if nc -z -w5 ${{ secrets.VM_STAGING_IP }} 22 2>/dev/null; then
+              echo "VM SSH port is open!"
+              sleep 10
+              break
+            fi
+            echo "Attempt $i/30 - waiting 10s..."
+            sleep 10
+          done
 
       - name: Deploy to staging VM
         uses: appleboy/ssh-action@v1
@@ -74,23 +84,23 @@ jobs:
             sudo mkdir -p /app/noxi
 
             # Créer le .env
-            sudo tee /app/noxi/.env << EOF
+            sudo tee /app/noxi/.env > /dev/null << EOF
             DB_NAME=${{ secrets.DB_NAME }}
             DB_USER=${{ secrets.DB_USER }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             DB_ROOT_PASSWORD=${{ secrets.DB_ROOT_PASSWORD }}
             JWT_SECRET=${{ secrets.JWT_SECRET }}
-            ACR_LOGIN_SERVER=noxiacrwnblqe.azurecr.io
+            ACR_LOGIN_SERVER=${{ secrets.ACR_LOGIN_SERVER }}
             DB_HOST=db
             DB_PORT=3306
             ENVIRONMENT=staging
             EOF
 
             # Créer le docker-compose.prod.yml
-            sudo tee /app/noxi/docker-compose.prod.yml << 'EOF'
+            sudo tee /app/noxi/docker-compose.prod.yml > /dev/null << EOF
             services:
               frontend:
-                image: noxiacrwnblqe.azurecr.io/noxi-frontend:latest
+                image: ${{ secrets.ACR_LOGIN_SERVER }}/noxi-frontend:latest
                 ports:
                   - "80:80"
                 depends_on:
@@ -98,7 +108,7 @@ jobs:
                 restart: unless-stopped
 
               backend:
-                image: noxiacrwnblqe.azurecr.io/noxi-backend:latest
+                image: ${{ secrets.ACR_LOGIN_SERVER }}/noxi-backend:latest
                 ports:
                   - "3000:3000"
                 env_file: /app/noxi/.env
@@ -109,12 +119,11 @@ jobs:
 
               db:
                 image: mariadb:10.11
-                env_file: /app/noxi/.env
                 environment:
-                  MYSQL_ROOT_PASSWORD: $DB_ROOT_PASSWORD
-                  MYSQL_DATABASE: $DB_NAME
-                  MYSQL_USER: $DB_USER
-                  MYSQL_PASSWORD: $DB_PASSWORD
+                  MYSQL_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
+                  MYSQL_DATABASE: ${{ secrets.DB_NAME }}
+                  MYSQL_USER: ${{ secrets.DB_USER }}
+                  MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
                 volumes:
                   - db_data:/var/lib/mysql
                 healthcheck:
@@ -183,8 +192,6 @@ jobs:
             sudo docker compose -f docker-compose.prod.yml pull
             sudo docker compose -f docker-compose.prod.yml up -d
             sudo docker image prune -f
-            echo "Waiting for containers to be ready..."
-            sleep 120
 
       - name: Verify deployment
         uses: appleboy/ssh-action@v1
@@ -193,5 +200,14 @@ jobs:
           username: azureuser
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            echo "Waiting for app to be ready..."
+            for i in $(seq 1 24); do
+              if curl -sf http://localhost > /dev/null 2>&1; then
+                echo "App is ready!"
+                break
+              fi
+              echo "Attempt $i/24 - waiting 5s..."
+              sleep 5
+            done
             sudo docker compose -f /app/noxi/docker-compose.prod.yml ps
             curl -f http://localhost || exit 1
