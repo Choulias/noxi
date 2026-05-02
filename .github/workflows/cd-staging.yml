@@ -161,6 +161,7 @@ jobs:
                 webhook_configs:
                   - url: '${{ secrets.DISCORD_WEBHOOK_URL }}'
                     send_resolved: true
+                    body: '{{ template "discord.message" . }}'
             EOF
 
             sudo tee /app/noxi/alert.tmpl > /dev/null << 'EOF'
