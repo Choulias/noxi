@@ -84,6 +84,8 @@ services:
       - "9093:9093"
     volumes:
       - /app/noxi/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    command:
+      - "--config.file=/etc/alertmanager/alertmanager.yml"
 
 volumes:
   db_data:
