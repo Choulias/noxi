@@ -37,8 +37,7 @@ jobs:
             }
 
       - name: Login to ACR
-        run: |
-          az acr login --name noxiacrus92xw
+        run: az acr login --name noxiacrlvxj1k
 
       - name: Build & Push Frontend image
         uses: docker/build-push-action@v5
@@ -46,7 +45,7 @@ jobs:
           context: .
           file: Dockerfile.frontend
           push: true
-          tags: noxiacrus92xw.azurecr.io/noxi-frontend:latest,noxiacrus92xw.azurecr.io/noxi-frontend:${{ github.sha }}
+          tags: ${{ secrets.ACR_LOGIN_SERVER }}/noxi-frontend:latest,${{ secrets.ACR_LOGIN_SERVER }}/noxi-frontend:${{ github.sha }}
 
       - name: Build & Push Backend image
         uses: docker/build-push-action@v5
@@ -54,7 +53,7 @@ jobs:
           context: .
           file: Dockerfile.backend
           push: true
-          tags: noxiacrus92xw.azurecr.io/noxi-backend:latest,noxiacrus92xw.azurecr.io/noxi-backend:${{ github.sha }}
+          tags: ${{ secrets.ACR_LOGIN_SERVER }}/noxi-backend:latest,${{ secrets.ACR_LOGIN_SERVER }}/noxi-backend:${{ github.sha }}
 
       - name: Start staging VM
         run: |
@@ -64,8 +63,16 @@ jobs:
 
       - name: Wait for VM to be ready
         run: |
-          echo "Waiting for VM and cloud-init to complete..."
-          sleep 120
+          echo "Waiting for SSH to be available..."
+          for i in {1..30}; do
+            if nc -z -w5 ${{ secrets.VM_STAGING_IP }} 22 2>/dev/null; then
+              echo "VM SSH port is open!"
+              sleep 10
+              break
+            fi
+            echo "Attempt $i/30 - waiting 10s..."
+            sleep 10
+          done
 
       - name: Deploy to staging VM
         uses: appleboy/ssh-action@v1
@@ -74,10 +81,244 @@ jobs:
           username: azureuser
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cloud-init status --wait || true
+            sudo mkdir -p /app/noxi
+
+            # Créer le .env
+            sudo tee /app/noxi/.env > /dev/null << EOF
+            DB_NAME=${{ secrets.DB_NAME }}
+            DB_USER=${{ secrets.DB_USER }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            DB_ROOT_PASSWORD=${{ secrets.DB_ROOT_PASSWORD }}
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            ACR_LOGIN_SERVER=${{ secrets.ACR_LOGIN_SERVER }}
+            DB_HOST=db
+            DB_PORT=3306
+            ENVIRONMENT=staging
+            EOF
+
+            # Créer prometheus.yml
+            sudo tee /app/noxi/prometheus.yml > /dev/null << 'EOF'
+            global:
+              scrape_interval: 15s
+              evaluation_interval: 15s
+            rule_files:
+              - "alerts.yml"
+            alerting:
+              alertmanagers:
+                - static_configs:
+                    - targets: ["alertmanager:9093"]
+            scrape_configs:
+              - job_name: "prometheus"
+                static_configs:
+                  - targets: ["localhost:9090"]
+              - job_name: "node-exporter"
+                static_configs:
+                  - targets: ["node-exporter:9100"]
+            EOF
+
+            # Créer alerts.yml
+            sudo tee /app/noxi/alerts.yml > /dev/null << 'EOF'
+            groups:
+              - name: noxi-alerts
+                rules:
+                  - alert: HighCPUUsage
+                    expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 80
+                    for: 2m
+                    labels:
+                      severity: warning
+                    annotations:
+                      summary: "CPU élevé sur {{ $labels.instance }}"
+                  - alert: LowMemory
+                    expr: (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100 < 10
+                    for: 1m
+                    labels:
+                      severity: critical
+                    annotations:
+                      summary: "Mémoire faible sur {{ $labels.instance }}"
+                  - alert: ServiceDown
+                    expr: up == 0
+                    for: 1m
+                    labels:
+                      severity: critical
+                    annotations:
+                      summary: "Service down : {{ $labels.job }}"
+            EOF
+
+            # Créer alertmanager.yml
+            sudo tee /app/noxi/alertmanager.yml > /dev/null << EOF
+            global:
+              resolve_timeout: 5m
+
+            route:
+              group_by: ['alertname']
+              group_wait: 10s
+              group_interval: 5m
+              repeat_interval: 1h
+              receiver: 'discord'
+
+            receivers:
+              - name: 'discord'
+                discord_configs:
+                  - webhook_url: '${{ secrets.DISCORD_WEBHOOK_URL }}'
+                    title: '🚨 Alerte Noxi'
+                    message: '{{ range .Alerts }}**{{ .Labels.alertname }}** - {{ .Annotations.summary }}{{ end }}'
+            EOF
+
+            # Créer promtail-config.yml
+            sudo tee /app/noxi/promtail-config.yml > /dev/null << 'EOF'
+            server:
+              http_listen_port: 9080
+              grpc_listen_port: 0
+            positions:
+              filename: /tmp/positions.yaml
+            clients:
+              - url: http://loki:3100/loki/api/v1/push
+            scrape_configs:
+              - job_name: docker
+                static_configs:
+                  - targets:
+                      - localhost
+                    labels:
+                      job: docker
+                      __path__: /var/lib/docker/containers/*/*-json.log
+                pipeline_stages:
+                  - json:
+                      expressions:
+                        output: log
+                        stream: stream
+                        attrs:
+                  - json:
+                      expressions:
+                        tag: attrs.tag
+                      source: attrs
+                  - regex:
+                      expression: (?P<container_name>(?:[^|]*[^|]))
+                      source: tag
+                  - timestamp:
+                      format: RFC3339Nano
+                      source: time
+                  - labels:
+                      stream:
+                      container_name:
+                  - output:
+                      source: output
+            EOF
+
+            # Créer le docker-compose.prod.yml
+            sudo tee /app/noxi/docker-compose.prod.yml > /dev/null << EOF
+            services:
+              frontend:
+                image: ${{ secrets.ACR_LOGIN_SERVER }}/noxi-frontend:latest
+                ports:
+                  - "80:80"
+                depends_on:
+                  - backend
+                restart: unless-stopped
+
+              backend:
+                image: ${{ secrets.ACR_LOGIN_SERVER }}/noxi-backend:latest
+                ports:
+                  - "3000:3000"
+                env_file: /app/noxi/.env
+                depends_on:
+                  db:
+                    condition: service_healthy
+                restart: unless-stopped
+
+              db:
+                image: mariadb:10.11
+                environment:
+                  MYSQL_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
+                  MYSQL_DATABASE: ${{ secrets.DB_NAME }}
+                  MYSQL_USER: ${{ secrets.DB_USER }}
+                  MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
+                volumes:
+                  - db_data:/var/lib/mysql
+                healthcheck:
+                  test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+                  interval: 10s
+                  timeout: 5s
+                  retries: 5
+                restart: unless-stopped
+
+              node-exporter:
+                image: prom/node-exporter:latest
+                restart: unless-stopped
+                volumes:
+                  - /proc:/host/proc:ro
+                  - /sys:/host/sys:ro
+                  - /:/rootfs:ro
+                command:
+                  - "--path.procfs=/host/proc"
+                  - "--path.rootfs=/rootfs"
+                  - "--path.sysfs=/host/sys"
+
+              prometheus:
+                image: prom/prometheus:latest
+                restart: unless-stopped
+                ports:
+                  - "9090:9090"
+                volumes:
+                  - /app/noxi/prometheus.yml:/etc/prometheus/prometheus.yml
+                  - /app/noxi/alerts.yml:/etc/prometheus/alerts.yml
+                  - prometheus_data:/prometheus
+                command:
+                  - "--config.file=/etc/prometheus/prometheus.yml"
+                  - "--storage.tsdb.retention.time=15d"
+
+              loki:
+                image: grafana/loki:2.9.0
+                restart: unless-stopped
+                ports:
+                  - "3100:3100"
+                volumes:
+                  - loki_data:/loki
+                command: -config.file=/etc/loki/local-config.yaml
+
+              promtail:
+                image: grafana/promtail:2.9.0
+                restart: unless-stopped
+                volumes:
+                  - /var/lib/docker/containers:/var/lib/docker/containers:ro
+                  - /app/noxi/promtail-config.yml:/etc/promtail/config.yml
+                command: -config.file=/etc/promtail/config.yml
+
+              grafana:
+                image: grafana/grafana:latest
+                restart: unless-stopped
+                ports:
+                  - "3001:3000"
+                environment:
+                  GF_SECURITY_ADMIN_PASSWORD: "admin2026!"
+                volumes:
+                  - grafana_data:/var/lib/grafana
+
+              alertmanager:
+                image: prom/alertmanager:latest
+                restart: unless-stopped
+                ports:
+                  - "9093:9093"
+                volumes:
+                  - /app/noxi/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+                command:
+                  - "--config.file=/etc/alertmanager/alertmanager.yml"
+
+            volumes:
+              db_data:
+              prometheus_data:
+              grafana_data:
+              loki_data:
+            EOF
+
+            # Login ACR
+            sudo docker login ${{ secrets.ACR_LOGIN_SERVER }} \
+              -u ${{ secrets.AZURE_CLIENT_ID }} \
+              -p ${{ secrets.AZURE_CLIENT_SECRET }}
+
+            # Pull et démarrer
             cd /app/noxi
-            sudo docker compose pull
-            sudo docker compose up -d
+            sudo docker compose -f docker-compose.prod.yml pull
+            sudo docker compose -f docker-compose.prod.yml up -d
             sudo docker image prune -f
 
       - name: Verify deployment
@@ -87,5 +328,14 @@ jobs:
           username: azureuser
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            docker compose ps
+            echo "Waiting for app to be ready..."
+            for i in $(seq 1 24); do
+              if curl -sf http://localhost > /dev/null 2>&1; then
+                echo "App is ready!"
+                break
+              fi
+              echo "Attempt $i/24 - waiting 5s..."
+              sleep 5
+            done
+            sudo docker compose -f /app/noxi/docker-compose.prod.yml ps
             curl -f http://localhost || exit 1

@@ -22,7 +22,7 @@ services:
       context: .
       dockerfile: Dockerfile.backend
     ports:
-      - "3001:3000"
+      - "3002:3000"
     environment:
       NODE_ENV: development
       DB_HOST: db
