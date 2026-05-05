@@ -204,8 +204,8 @@ jobs:
                       source: output
             EOF
 
-            # Créer le docker-compose.prod.yml
-            sudo tee /app/noxi/docker-compose.prod.yml > /dev/null << EOF
+            # Créer le docker-compose.deploy.yml
+            sudo tee /app/noxi/docker-compose.deploy.yml > /dev/null << EOF
             services:
               frontend:
                 image: ${{ secrets.ACR_LOGIN_SERVER }}/noxi-frontend:latest
@@ -317,8 +317,8 @@ jobs:
 
             # Pull et démarrer
             cd /app/noxi
-            sudo docker compose -f docker-compose.prod.yml pull
-            sudo docker compose -f docker-compose.prod.yml up -d
+            sudo docker compose -f docker-compose.deploy.yml pull
+            sudo docker compose -f docker-compose.deploy.yml up -d
             sudo docker image prune -f
 
       - name: Verify deployment
@@ -337,5 +337,5 @@ jobs:
               echo "Attempt $i/24 - waiting 5s..."
               sleep 5
             done
-            sudo docker compose -f /app/noxi/docker-compose.prod.yml ps
+            sudo docker compose -f /app/noxi/docker-compose.deploy.yml ps
             curl -f http://localhost || exit 1
