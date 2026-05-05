@@ -289,7 +289,7 @@ jobs:
                 ports:
                   - "3001:3000"
                 environment:
-                  GF_SECURITY_ADMIN_PASSWORD: "admin2026!"
+                  GF_SECURITY_ADMIN_PASSWORD: ${{ secrets.GRAFANA_PASSWORD }}
                 volumes:
                   - grafana_data:/var/lib/grafana
 

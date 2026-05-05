@@ -81,7 +81,7 @@ docker compose logs -f
 
 ### Via Grafana (interface web)
 1. Ouvrir `http://IP_DE_LA_VM:3001`
-2. Login : `admin` / `admin2026!`
+2. Login : `admin`
 3. Aller dans **Explore** → sélectionner **Loki**
 4. Filtrer par service : `{compose_service="backend"}`
 
@@ -160,6 +160,6 @@ terraform destroy -var-file="terraform.tfvars"
 
 | Interface | URL | Login |
 |---|---|---|
-| Grafana | http://IP_VM:3001 | admin / admin2026! |
+| Grafana | http://IP_VM:3001 | - |
 | Prometheus | http://IP_VM:9090 | - |
 | Alertmanager | http://IP_VM:9093 | - |
