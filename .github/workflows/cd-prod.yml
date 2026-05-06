@@ -211,6 +211,7 @@ jobs:
                 image: ${{ secrets.ACR_LOGIN_SERVER }}/noxi-frontend:latest
                 ports:
                   - "80:80"
+                  - "443:443"
                 depends_on:
                   - backend
                 restart: unless-stopped
