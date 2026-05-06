@@ -58,7 +58,7 @@ docker compose up -d
 
 # 4. Accéder à l'application
 # App : http://localhost
-# Grafana : http://localhost:3001 (admin / admin2026!)
+# Grafana : http://localhost:3001
 # Prometheus : http://localhost:9090
 \```
 
