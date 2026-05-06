@@ -216,7 +216,7 @@ jobs:
                   - DOMAIN_NAME=noxi-staging.swedencentral.cloudapp.azure.com
                   - CERT_NAME=noxi-staging
                 volumes:
-                  - /app/noxi/certs:/etc/letsencrypt/live/noxi-staging:ro
+                  - /etc/letsencrypt:/etc/letsencrypt:ro
                 depends_on:
                   - backend
                 restart: unless-stopped
