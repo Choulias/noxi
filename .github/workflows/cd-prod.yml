@@ -212,6 +212,9 @@ jobs:
                 ports:
                   - "80:80"
                   - "443:443"
+                environment:
+                  - DOMAIN_NAME=noxi-prod.swedencentral.cloudapp.azure.com
+                  - CERT_NAME=noxi-prod
                 volumes:
                   - /app/noxi/certs:/etc/letsencrypt/live/noxi-prod:ro
                 depends_on:
