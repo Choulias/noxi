@@ -213,7 +213,7 @@ jobs:
                   - "80:80"
                   - "443:443"
                 volumes:
-                  - /app/noxi/certs:/etc/letsencrypt/live/noxi-staging:ro
+                  - /app/noxi/certs:/etc/letsencrypt/live/noxi-prod:ro
                 depends_on:
                   - backend
                 restart: unless-stopped

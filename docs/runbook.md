@@ -163,3 +163,27 @@ terraform destroy -var-file="terraform.tfvars"
 | Grafana | http://IP_VM:3001 | - |
 | Prometheus | http://IP_VM:9090 | - |
 | Alertmanager | http://IP_VM:9093 | - |
+
+---
+
+## 8. Recréer les certificats SSL (après terraform apply)
+
+```bash
+# Installer Certbot
+sudo apt update && sudo apt install -y certbot
+
+# Arrêter le frontend
+sudo docker compose -f /app/noxi/docker-compose.deploy.yml stop frontend
+
+# Générer le certificat Let's Encrypt
+sudo certbot certonly --standalone -d noxi-staging.swedencentral.cloudapp.azure.com
+
+# Copier les certificats dans le dossier app
+sudo mkdir -p /app/noxi/certs
+sudo cp /etc/letsencrypt/live/noxi-staging.swedencentral.cloudapp.azure.com/fullchain.pem /app/noxi/certs/
+sudo cp /etc/letsencrypt/live/noxi-staging.swedencentral.cloudapp.azure.com/privkey.pem /app/noxi/certs/
+sudo chmod 644 /app/noxi/certs/*.pem
+
+# Redémarrer le frontend
+sudo docker compose -f /app/noxi/docker-compose.deploy.yml up -d frontend
+```
