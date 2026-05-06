@@ -212,6 +212,9 @@ jobs:
                 ports:
                   - "80:80"
                   - "443:443"
+                environment:
+                  - DOMAIN_NAME=noxi-staging.swedencentral.cloudapp.azure.com
+                  - CERT_NAME=noxi-staging
                 volumes:
                   - /app/noxi/certs:/etc/letsencrypt/live/noxi-staging:ro
                 depends_on:
