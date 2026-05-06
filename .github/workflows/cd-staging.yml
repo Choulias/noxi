@@ -214,7 +214,6 @@ jobs:
                   - "443:443"
                 environment:
                   - DOMAIN_NAME=noxi-staging.swedencentral.cloudapp.azure.com
-                  - CERT_NAME=noxi-staging
                 volumes:
                   - /etc/letsencrypt:/etc/letsencrypt:ro
                 depends_on:
