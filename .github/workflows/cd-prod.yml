@@ -216,7 +216,7 @@ jobs:
                   - DOMAIN_NAME=noxi-prod.swedencentral.cloudapp.azure.com
                   - CERT_NAME=noxi-prod
                 volumes:
-                  - /app/noxi/certs:/etc/letsencrypt/live/noxi-prod:ro
+                  - /etc/letsencrypt:/etc/letsencrypt:ro
                 depends_on:
                   - backend
                 restart: unless-stopped
